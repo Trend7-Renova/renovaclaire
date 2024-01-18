@@ -1,0 +1,17 @@
+.card-image> svg {
+    margin-top: 2rem;
+    max-width: 200px;
+    height: 100%;
+    aspect-ratio: 1;
+}
+
+
+#renovation-energetique svg {
+    fill:var(--vert);
+}
+#extension svg {
+    fill:var(--orange);
+}
+#eligibilite svg {
+    fill:var(--rouge);
+}
