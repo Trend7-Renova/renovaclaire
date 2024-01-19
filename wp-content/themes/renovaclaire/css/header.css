@@ -10,3 +10,11 @@
     object-fit: cover;
     opacity: 0.5;
 }
+
+body:not(.home) .header .hero-body {
+    padding:0
+}
+body:not(.home) .header .logo {
+    height:20vh;
+    object-fit: contain;
+}

@@ -8,14 +8,13 @@
                         {{ post.title }}
                     </h2>
                 {% endif %}
-                <p class="subtitle">
+                <div class="has-text-left">
                     {{ post.description }}
-                </p>
-                <div style="text-align:left">
-                    {{ post.content }}
                 </div>
             </div>
         </div>
     </div>
+    {% include "extension/solutions.twig" %}
+    {% include "extension/accompagnement.twig" %}
 
 {% endblock %}
