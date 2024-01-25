@@ -1,0 +1,21 @@
+{% extends "base.twig" %}
+{% block content %}
+    <div class="box mt-5">
+        <div class="columns">
+            <div class="intro column is-8 is-offset-2">
+                {% if post.title %}
+                    <h2 class="title">
+                        {{ post.title }}
+                    </h2>
+                {% endif %}
+                <p class="subtitle">
+                    {{ post.description }}
+                </p>
+                <div style="text-align:left">
+                    {{ post.content }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

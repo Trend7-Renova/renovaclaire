@@ -1,0 +1,15 @@
+.bouton {
+    display: inline-flex;
+    padding:1rem 1.5rem;
+    border-radius:.5rem;
+    background-color: var(--couleur-principale);
+    color:white;
+    text-decoration: none;
+    font-weight:bold;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+        background-color: var(--couleur-alt);
+        color: white;
+    }
+}

@@ -1,0 +1,28 @@
+.header {
+    background-color:white;
+    display:flex;
+    gap:2rem;
+    margin-bottom:2rem;
+    position:sticky;
+    top:0
+}
+
+body.admin-bar .header{
+    position:relative;
+}
+
+.header .logo {
+    width:300px;
+}
+
+.header .logo img{
+    height:100%;
+    width:100%;
+    object-fit:contain;    
+}
+
+
+.header .navbar{
+    flex:1;
+    background-color: transparent;
+}

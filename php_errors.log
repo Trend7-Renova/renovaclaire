@@ -1,0 +1,12 @@
+[25-Jan-2024 17:20:07 UTC] PHP Fatal error:  Uncaught Twig\Error\LoaderError: Unable to find template "html-header.twig" (looked into: D:\web\renovaclaire\wp-content\themes\renovaclaire, , D:\web\renovaclaire\wp-content\themes\renovaclaire\views, D:\web\renovaclaire\wp-content\themes\renovaclaire\views, D:\web\renovaclaire\wp-content\themes\renovaclaire\views) in "base.twig" at line 3. in D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src\Loader\FilesystemLoader.php:227
+Stack trace:
+#0 D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src\Loader\FilesystemLoader.php(131): Twig\Loader\FilesystemLoader->findTemplate('html-header.twi...')
+#1 D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src\Environment.php(264): Twig\Loader\FilesystemLoader->getCacheKey('html-header.twi...')
+#2 D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src\Template.php(319): Twig\Environment->getTemplateClass('html-header.twi...')
+#3 D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src in D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src\Loader\FilesystemLoader.php on line 227
+[25-Jan-2024 17:20:12 UTC] PHP Fatal error:  Uncaught Twig\Error\LoaderError: Unable to find template "html-header.twig" (looked into: D:\web\renovaclaire\wp-content\themes\renovaclaire, , D:\web\renovaclaire\wp-content\themes\renovaclaire\views, D:\web\renovaclaire\wp-content\themes\renovaclaire\views, D:\web\renovaclaire\wp-content\themes\renovaclaire\views) in "base.twig" at line 3. in D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src\Loader\FilesystemLoader.php:227
+Stack trace:
+#0 D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src\Loader\FilesystemLoader.php(131): Twig\Loader\FilesystemLoader->findTemplate('html-header.twi...')
+#1 D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src\Environment.php(264): Twig\Loader\FilesystemLoader->getCacheKey('html-header.twi...')
+#2 D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src\Template.php(319): Twig\Environment->getTemplateClass('html-header.twi...')
+#3 D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src in D:\web\renovaclaire\wp-content\themes\renovaclaire\vendor\twig\twig\src\Loader\FilesystemLoader.php on line 227

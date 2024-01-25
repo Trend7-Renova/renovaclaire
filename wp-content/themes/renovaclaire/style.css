@@ -6,14 +6,7 @@
 */
 
 @import "./css/body.css";
-@import "./css/bulma.css";
-@import "./css/components.css";
+@import "./css/boutons.css";
 @import "./css/header.css";
-@import "./css/helpers.css";
-@import "./css/hero.css";
-@import "./css/images.css";
-@import "./css/menu.css";
-@import "./css/partenaires.css";
-@import "./css/polices.css";
+@import "./css/liens.css";
 @import "./css/props.css";
-@import "./css/utils.css";

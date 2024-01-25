@@ -1,28 +1,26 @@
-.header {
-    background-color:white;
-    display:flex;
-    gap:2rem;
-    margin-bottom:2rem;
-    position:sticky;
-    top:0
-}
-
-body.admin-bar .header{
-    position:relative;
-}
-
-.header .logo {
-    width:300px;
-}
-
-.header .logo img{
-    height:100%;
-    width:100%;
-    object-fit:contain;    
-}
-
-
-.header .navbar{
-    flex:1;
-    background-color: transparent;
+#header {
+    display: flex;
+    gap: var(--gap);
+    height:64px;
+    background:white;
+    padding: var(--gap);
+    >.logo {
+        flex: 1;
+        img {
+            object-fit: contain;
+            height:100%;
+        }
+    }
+    >nav {
+        display: flex;
+        align-items: center;
+        gap:var(--gap);
+        a {
+            color:var(--couleur-texte);
+            text-decoration: none;
+            &:hover {
+                color:var(--couleur-alt);
+            }
+        }
+    }
 }

@@ -1,0 +1,8 @@
+a {
+    color:var(--couleur-liens);
+    font-weight: bold;
+    text-decoration: none;
+}
+a:hover {
+    color:var(--couleur-alt);
+}

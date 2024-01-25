@@ -1,0 +1,28 @@
+<!-- <section class="container"> -->
+    <div class="tile is-ancestor">
+        <div class="tile is-parent is-shady">
+            <article class="tile is-child notification is-white">
+                <div class="duo">
+                    <h2 class="title">
+                        Certifications et
+                        partenaires
+                    </h2>
+                    <p class="subtitle">
+                        Rénova Claire travaille directement avec les organismes
+                        dédiés à la Rénovation Energétique. Elle est également
+                        certifiée pour mener les travaux de rénovation et
+                        d’extensions.
+                    </p>
+                </div>
+                <br>
+                <div class="partenaires">
+                    {% for partenaire in partenaires %}
+                    <div><img src="{{ partenaire }}"></div>
+                    {% endfor %}
+                </div>
+
+            </article>
+        </div>
+
+    </div>
+<!-- </section> -->
