@@ -1,20 +1,28 @@
-.header > .hero {
-    position: relative;
-    background-color: black;
+.header {
+    background-color:white;
+    display:flex;
+    gap:2rem;
+    margin-bottom:2rem;
+    position:sticky;
+    top:0
 }
 
-.header > .hero > .header__fond{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.5;
+body.admin-bar .header{
+    position:relative;
 }
 
-body:not(.home) .header .hero-body {
-    padding:0
+.header .logo {
+    width:300px;
 }
-body:not(.home) .header .logo {
-    height:20vh;
-    object-fit: contain;
+
+.header .logo img{
+    height:100%;
+    width:100%;
+    object-fit:contain;    
+}
+
+
+.header .navbar{
+    flex:1;
+    background-color: transparent;
 }

@@ -4,12 +4,16 @@
  * Description: Starter Theme to use with Timber
  * Author: Upstatement and YOU!
 */
-@import "./css/accompagnement.css";
-@import "./css/cta.css";
+
+@import "./css/body.css";
+@import "./css/bulma.css";
+@import "./css/components.css";
 @import "./css/header.css";
+@import "./css/helpers.css";
 @import "./css/hero.css";
-@import "./css/home.css";
 @import "./css/images.css";
+@import "./css/menu.css";
+@import "./css/partenaires.css";
+@import "./css/polices.css";
 @import "./css/props.css";
-@import "./css/solutions.css";
 @import "./css/utils.css";

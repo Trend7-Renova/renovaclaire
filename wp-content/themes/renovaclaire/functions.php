@@ -14,6 +14,9 @@ Timber\Timber::init();
 // Sets the directories (inside your theme) to find .twig files.
 Timber::$dirname = [ 'templates', 'views' ];
 
+foreach(glob(__DIR__.'/inc/*.inc.php') as $php) {
+    include $php;
+}
 foreach(glob(__DIR__.'/php/*.php') as $php) {
     include $php;
 }

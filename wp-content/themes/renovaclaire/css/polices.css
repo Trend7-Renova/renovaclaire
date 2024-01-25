@@ -1,0 +1,8 @@
+
+@font-face {
+    font-display: swap;
+    font-family: 'baron-neue-black';
+    src: url('/wp-content/themes/renovaclaire/fonts/baron-neue-black.woff2') format('woff2'),
+        url('/wp-content/themes/renovaclaire/fonts/baron-neue-black.woff') format('woff');
+
+}

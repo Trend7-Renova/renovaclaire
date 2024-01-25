@@ -1,0 +1,40 @@
+body .hero.is-primary {
+    background-color: #ffd2bb;
+}
+
+body .hero.is-primary .subtitle,
+body .hero.is-primary,
+body .hero.is-primary .title {
+    color: #333 !important;
+}
+
+.duo>*:first-child {
+    font-size: 3rem;
+    flex: 0 0 40%;
+}
+.duo {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+@media screen and (min-width: 800px) {
+
+    .duo {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .duo>* {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .duo>*:first-child {
+        margin: 0;
+        padding-left: 2rem;
+        border-right: 1px solid black;
+    }
+}
+

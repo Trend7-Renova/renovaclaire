@@ -1,0 +1,26 @@
+body 
+    .button.is-primary {
+        background-color: var(--vert);
+        border-color: transparent;
+        color: #fff;
+    }
+
+body .button.is-primary.is-hovered, body .button.is-primary:hover {
+    background-color: var(--orange);
+    border-color: transparent;
+    color: #fff;
+}    
+
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body .title {
+    font-family:'baron-neue-black';
+    line-height:0.9
+}
+
+body  .title:not(:last-child) {
+    margin-bottom:0.8rem;
+}
