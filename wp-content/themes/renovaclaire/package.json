@@ -117,7 +117,8 @@
     "zx": "^7.2.3"
   },
   "scripts": {
-    "dev": "watch -n 0.5 ./gen-style.sh",
+    "css": "watch -n 0.5 ./gen-style.sh",
+    "js": "watch -n 0.5 ./gen-js.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

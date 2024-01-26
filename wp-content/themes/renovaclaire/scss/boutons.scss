@@ -1,4 +1,6 @@
 .bouton {
+    cursor: pointer;
+    border: 0;
     display: inline-flex;
     padding: 1rem 1.5rem;
     border-radius: var(--radius);
@@ -42,5 +44,8 @@
         }
 
         color: white;
+    }
+    &[href=""] {
+        display: none !important;
     }
 }

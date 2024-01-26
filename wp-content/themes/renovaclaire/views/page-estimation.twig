@@ -1,0 +1,36 @@
+{% extends "base.twig" %}
+{% block content %}
+<div class="container">
+  <section class="section">
+    {% if post.title %}
+    <h2 class="grand-titre">
+      {{ post.title }}
+    </h2>
+    {% endif %}
+    <p class="subtitle">
+      {{ post.description }}
+    </p>
+    <div>
+      {{ post.content }}
+    </div>
+
+    <hr>
+    <form>
+      <fieldset data-etape="1" data-active="true">
+
+        <div>
+          <label for="rfr">Quel est votre revenu fiscal de référence</label>
+          <div><input type="text" id="rfr" name="data[rfr]" placeholder="Montant en euros" required></div>
+        </div>
+        <div>
+          <label for="personnes">Combien de personnes composent votre foyer ?</label>
+          <div><input type="number" id="personnes" name="data[personnes]" required value="2"></div>
+        </div>
+
+        <div><button type="submit" class="bouton">Continuer</button></div>
+      </fieldset>
+    </form>
+  </section>
+</div>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+.section {
+    max-width: var(--largeur-page);
+    margin: 0 auto;
+    background-color: white;
+    padding: var(--gap);
+    display: flex;
+    flex-direction: column;
+    gap:var(--half-gap)
+}

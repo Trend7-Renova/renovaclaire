@@ -10,21 +10,21 @@
     >div {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-gap: var(--gap);
+        grid-gap: var(--small-gap);
 
         >article {
-            padding: var(--gap);
-            box-shadow: 0px 14px 24px 0px rgba(0, 0, 0, 0.15);
+            padding: var(--small-gap);
+            box-shadow: var(--ombre);
             display: flex;
             flex-direction: column;
-            gap: var(--gap);
+            gap: var(--small-gap);
             background: white url(/wp-content/themes/renovaclaire/svg/Vector-10.svg);
             background-size: cover;
             border-radius: var(--radius);
 
             >figure {
-                width: 64px;
-                height: 64px;
+                width: 48px;
+                height: 48px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
@@ -71,7 +71,20 @@
 
     @media screen and (min-width: 800px) {
         >div {
+            content:'';
+            grid-gap: var(--gap);
             grid-template-columns: 1fr 1fr 1fr;
+
+            >article {
+                padding: var(--gap);
+                gap: var(--gap);
+
+                >figure {
+                    width: 64px;
+                    height: 64px;
+
+                }
+            }
         }
     }
 
@@ -79,6 +92,7 @@
         margin-inline: var(--large-gap);
 
         >div {
+
             grid-template-columns: 1fr 1fr 1fr 1fr;
 
         }
