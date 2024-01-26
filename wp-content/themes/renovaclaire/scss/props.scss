@@ -1,0 +1,24 @@
+:root {
+    --vert: #77a85f;
+    --beige: #cebfa8;
+    --orange: #d0701c;
+    --rouge: #b44c49;
+    --gris-fonce: #2E2C39;
+    --gris-fonce-alt:#3F3F3F;
+    --gap: 2rem;
+    --half-gap: 1rem;
+    --large-gap: 5rem;
+
+    --couleur-texte: var(--gris-fonce-alt);
+    --couleur-liens: var(--vert);
+    --couleur-principale: var(--vert);
+    --couleur-alt: var(--rouge);
+
+    --hauteur-header:64px;
+    --hauteur-fenetre:calc(100vh - (var(--hauteur-header) + 2 * var(--gap)))
+}
+
+
+body.admin-bar {
+    --hauteur-fenetre:calc(100vh - (var(--hauteur-header) + 2 * var(--gap)) - 32px)
+}

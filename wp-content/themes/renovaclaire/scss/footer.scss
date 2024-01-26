@@ -1,0 +1,41 @@
+#footer {
+    >div {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        gap: var(--large-gap);
+
+        >div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        >div:first-child {
+            max-width: 300px;
+            gap: var(--half-gap);
+        }
+
+        >div:not(:first-child) {
+            flex: 1;
+            gap: var(--gap);
+
+            >ul {
+                display: flex;
+                flex-direction: column;
+                gap: var(--half-gap);
+            }
+
+            >div {
+                display: flex;
+                gap: var(--half-gap);
+                align-items: start;
+
+                >svg {
+                    fill: var(--couleur-principale);
+                    width: 24px;
+                    ;
+                }
+            }
+        }
+    }
+}

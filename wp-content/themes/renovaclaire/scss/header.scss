@@ -1,0 +1,57 @@
+#header {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: var(--gap);
+    background: white;
+    padding-inline: var(--gap);
+
+    >.logo {
+        flex: 1;
+
+        img {
+            object-fit: contain;
+            height: 100%;
+        }
+    }
+
+    >nav {
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+        gap: var(--gap);
+
+        a {
+            color: var(--couleur-texte);
+            text-decoration: none;
+
+            &:hover {
+                color: var(--couleur-alt);
+            }
+        }
+    }
+
+    >div {
+        display: flex;
+        align-items: center;
+        gap: var(--gap);
+    }
+
+
+    @media screen and (min-width: 1024px) {
+        flex-wrap: nowrap;
+        height: var(--hauteur-header);
+
+
+        >nav {
+            width: auto;
+            order: 2;
+        }
+
+        >div {
+            order: 3;
+        }
+
+    }
+}

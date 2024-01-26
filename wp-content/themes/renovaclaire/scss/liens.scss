@@ -1,0 +1,10 @@
+a {
+    color: var(--couleur-liens);
+    font-weight: bold;
+    text-decoration: none;
+    transition: all .3s ease;
+
+    &:hover {
+        color: var(--couleur-alt);
+    }
+}

@@ -1,0 +1,19 @@
+html,
+body {
+  color: var(--couleur-texte);
+  font-family: "Raleway-Regular", Sans-serif;
+}
+
+p {
+  line-height: 1.5;
+  margin: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap:var(--gap);
+  margin-block: var(--gap);
+  >* {
+  }
+}

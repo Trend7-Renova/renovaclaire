@@ -117,8 +117,7 @@
     "zx": "^7.2.3"
   },
   "scripts": {
-    "css": "lightningcss --minify --bundle style.css -o style-min.css",
-    "dev": "./gen-style.sh --watch",
+    "dev": "watch ./gen-style.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

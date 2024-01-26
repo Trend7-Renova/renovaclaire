@@ -1,5 +1,4 @@
 uploads
 wp-config.php
-wp-content/themes/renovaclaire/style.css
-wp-content/themes/renovaclaire/style-min.css
 wp-content/themes/renovaclaire/node_modules
+wp-content/themes/renovaclaire/dist
