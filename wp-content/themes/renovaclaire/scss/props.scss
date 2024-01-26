@@ -3,9 +3,11 @@
     --beige: #cebfa8;
     --orange: #d0701c;
     --rouge: #b44c49;
+    --gris-clair: #e3eaf4;
     --gris-fonce: #2E2C39;
-    --gris-fonce-alt:#3F3F3F;
+    --gris-fonce-alt: #3F3F3F;
     --gap: 2rem;
+    --small-gap: 0.8rem;
     --half-gap: 1rem;
     --large-gap: 5rem;
 
@@ -13,12 +15,20 @@
     --couleur-liens: var(--vert);
     --couleur-principale: var(--vert);
     --couleur-alt: var(--rouge);
+    --couleur-ter: var(--gris-fonce);
 
-    --hauteur-header:64px;
-    --hauteur-fenetre:calc(100vh - (var(--hauteur-header) + 2 * var(--gap)))
+    --couleur-footer: var(--gris-clair);
+
+    --largeur-contenu: 1200px;
+
+    --radius: .45rem;
+
+
+    --hauteur-header: 64px;
+    --hauteur-fenetre: calc(100vh - (var(--hauteur-header) + 2 * var(--gap)))
 }
 
 
 body.admin-bar {
-    --hauteur-fenetre:calc(100vh - (var(--hauteur-header) + 2 * var(--gap)) - 32px)
+    --hauteur-fenetre: calc(100vh - (var(--hauteur-header) + 2 * var(--gap)) - 32px)
 }

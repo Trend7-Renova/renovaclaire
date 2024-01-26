@@ -3,19 +3,15 @@
       <img src="{{ theme.uri }}/images/logo-small.png">
    </a>
    <div>
-      <a class="bouton" href="/contact">
-         Demander un devis
+      <a class="bouton" href="{{menu.cible_du_cta}}">
+         {{menu.cta}}
       </a>
    </div>
 
    <nav>
-      <a href="/renovation-energetique/">
-         Rénovation énergétique
-      </a>
-
-      <a class="navbar-item" href="/extension/">
-         Projets d'extension
-      </a>
+      {% for item in menu_principal.items %}
+         <a class="{{item.classes|join(' ')}}" href="{{ item.link }}" {{ item.is_target_blank ? 'target="_blank"' }}>{{ item.title}}</a>
+      {% endfor %}
    </nav>
 
 </header>

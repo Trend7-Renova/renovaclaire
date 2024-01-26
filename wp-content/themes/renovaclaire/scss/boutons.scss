@@ -1,17 +1,46 @@
 .bouton {
     display: inline-flex;
-    padding:1rem 1.5rem;
-    border-radius:.5rem;
-    background-color: var(--couleur-principale);
-    color:white;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    color: white;
     text-decoration: none;
     font-family: "Raleway-Bold", Sans-serif;
     letter-spacing: 0.05rem;
     align-items: center;
     justify-content: center;
     transition: all .3s ease;
-    &:hover {
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    &:before {
+        opacity: 0;
+        z-index: -1;
+        content: '';
+        transition: all .5s ease-in-out;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 100%;
         background-color: var(--couleur-alt);
+    }
+
+    &:after {
+        content: '';
+        z-index: -2;
+        position: absolute;
+        inset: 0;
+        background-color: var(--couleur-principale);
+    }
+
+    &:hover {
+        &:before {
+            opacity: 1;
+            width: 100%;
+            background-color: var(--couleur-alt);
+        }
+
         color: white;
     }
 }

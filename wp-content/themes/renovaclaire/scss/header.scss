@@ -3,8 +3,6 @@
     flex-wrap: wrap;
 
     gap: var(--gap);
-    background: white;
-    padding-inline: var(--gap);
 
     >.logo {
         flex: 1;
@@ -38,8 +36,14 @@
         gap: var(--gap);
     }
 
+    @media screen and (max-width: 500px) {
+        .logo {
+            width: 100%;
+        }
+    }
 
     @media screen and (min-width: 1024px) {
+        padding-inline: var(--gap);
         flex-wrap: nowrap;
         height: var(--hauteur-header);
 

@@ -37,9 +37,10 @@
                 Nos prestations
             </h3>
             <ul>
-                <li><a href="#">Rénovation Énergétique</a></li>
-                <li><a href="#">Extensions de maisons</a></li>
-                <li><a href="#">Rénovation globale</a></li>
+                {% for item in menu_principal.items %}
+                <li><a class="{{item.classes|join(' ')}}" href="{{ item.link }}" {{ item.is_target_blank
+                        ? 'target="_blank"' }}>{{ item.title}}</a></li>
+                {% endfor %}
             </ul>
         </div>
         <div>
@@ -47,9 +48,10 @@
                 Liens utiles
             </h3>
             <ul>
-                <li><a href="#">Tester votre éligibilité</a></li>
-                <li><a href="#">Nous contacter</a></li>
-                <li><a href="#">Qui sommes nous ?</a></li>
+                {% for item in liens_utiles.items %}
+                <li><a class="{{item.classes|join(' ')}}" href="{{ item.link }}" {{ item.is_target_blank
+                        ? 'target="_blank"' }}>{{ item.title}}</a></li>
+                {% endfor %}
             </ul>
         </div>
         <div>

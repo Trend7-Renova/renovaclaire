@@ -43,10 +43,9 @@ class StarterSite extends Site
      */
     public function add_to_context($context)
     {
-        $context['foo'] = 'bar';
-        $context['stuff'] = 'I am a value set in your functions.php file';
-        $context['notes'] = 'These values are available everytime you call Timber::context();';
-        $context['menu'] = Timber::get_menu();
+        // $context['foo'] = 'bar';
+        // $context['stuff'] = 'I am a value set in your functions.php file';
+        // $context['notes'] = 'These values are available everytime you call Timber::context();';
         $context['site'] = $this;
         return $context;
     }
@@ -109,10 +108,6 @@ class StarterSite extends Site
 		 * Register Menus
 		 */
         add_action('after_setup_theme', function () {
-			echo 'ok!!';
-            register_nav_menus([
-                'menu-principal' => 'Menu principal'
-            ]);
         });
     }
 

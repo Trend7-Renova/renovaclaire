@@ -8,6 +8,7 @@ h6 {
     margin: 0;
     line-height: 1;
     font-family: "Raleway-Bold", Sans-serif;
+    color: var(--gris-fonce-alt);
 }
 
 .grand-titre {
@@ -18,4 +19,21 @@ h6 {
     }
     font-weight: 800;
     line-height: 1em;
+}
+
+.moyen-titre {
+    color: var(--gris-fonce);
+    font-size: 35px;
+    @media screen and (min-width: 800px) {
+        font-size: 50px;
+    }
+    font-weight: 800;
+    line-height: 1em;
+}
+
+.surtitre {
+    font-weight: bold;
+    font-family: sans-serif;
+    color: var(--couleur-alt);
+    text-transform: uppercase;
 }

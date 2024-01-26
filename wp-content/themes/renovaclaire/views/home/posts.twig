@@ -1,0 +1,25 @@
+<div class="posts">
+    <header>
+        <h3 class="moyen-titre">Dernières actus</h3>
+        <p>Les derniers articles postés sur le blog de Rénova Claire</p>
+    </header>
+    <div>
+        {% for post in posts %}
+        <article>
+            {% if post.thumbnail %}
+            <a href="{{ post.link }}">
+                <figure>
+                    <img src="{{ post.thumbnail.src }}" alt="{{ post.title }}">
+                </figure>
+            </a>
+            {% endif %}
+            <header>
+                <a href="{{ post.link }}">
+                    <h4>{{post.title}}</h4>
+                </a>
+                <p>{{post.excerpt({words:20, read_more:'Lire la suite'})}}</p>
+            </header>
+        </article>
+        {% endfor %}
+    </div>
+</div>

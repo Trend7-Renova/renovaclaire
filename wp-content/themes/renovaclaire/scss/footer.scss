@@ -1,9 +1,14 @@
 #footer {
+    background-color: var(--couleur-footer);
+    padding: var(--gap);
+
     >div {
-        max-width: 1200px;
+        max-width: var(--largeur-contenu);
         margin: 0 auto;
         display: flex;
+        flex-wrap: wrap;
         gap: var(--large-gap);
+        flex-direction: column;
 
         >div {
             display: flex;
@@ -11,7 +16,7 @@
         }
 
         >div:first-child {
-            max-width: 300px;
+            width: 100%;
             gap: var(--half-gap);
         }
 
@@ -35,6 +40,16 @@
                     width: 24px;
                     ;
                 }
+            }
+        }
+
+        @media screen and (min-width: 1024px) {
+            flex-direction: row;
+
+            padding: var(--large-gap);
+            >div:first-child {
+                max-width: 300px;
+                gap: var(--half-gap);
             }
         }
     }
