@@ -11,7 +11,7 @@ h6 {
 }
 
 .grand-titre {
-    color: #514899;
+    color: var(--rouge);
     font-size: 45px;
     @media screen and (min-width: 800px) {
         font-size: 62px;
