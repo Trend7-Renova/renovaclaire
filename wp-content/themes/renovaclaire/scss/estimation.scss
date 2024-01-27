@@ -1,0 +1,48 @@
+#estimation {
+    [data-etape]:not([data-active]) {
+        display: none;
+    }
+
+    &:not([data-etape]) {
+        [data-action="recommencer"] {
+            display: none;
+        }
+
+        .bouton .voir,
+        .bouton .continuer {
+            display: none;
+        }
+    }
+
+    &[data-etape] {
+        .bouton .commencer {
+            display: none;
+        }
+    }
+
+    &:not([data-etape="4"]) {
+        .bouton .voir {
+            display: none;
+        }
+    }
+
+    &[data-etape="4"] {
+        .bouton .continuer {
+            display: none;
+        }
+    }
+    &[data-etape="5"], &[data-etape="6"] {
+        .bouton:has(.continuer) {
+            display: none;
+        }
+    }
+
+    .reponse {
+        display: flex;
+        flex-direction: column;
+        gap: var(--half-gap);
+        h3 {
+            color: var(--orange);
+        }
+    }
+}

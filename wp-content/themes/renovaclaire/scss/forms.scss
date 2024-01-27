@@ -1,20 +1,40 @@
 form {
-    >fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+
+    fieldset {
+        width: 100%;
         border: 0;
         display: flex;
         flex-direction: column;
-        gap: var(--gap);
+        gap: var(--half-gap);
+        padding: 0;
 
-        >div:has(input) {
-            display: flex;
-            flex-direction: column;
-            gap: var(--small-gap);
-        }
+        >div {
 
-        input {
-            padding: var(--small-gap);
-            border: 1px solid #333;
-            border-radius: var(--radius);
+            &:has(input),
+            &:has(select) {
+                display: flex;
+                flex-direction: column;
+                gap: var(--small-gap);
+            }
+
+            select {
+                width: 100%;
+            }
+
+            input {
+                width: calc(100% - 2 * var(--small-gap));
+            }
+
+            select,
+            input {
+                background-color: white;
+                padding: var(--small-gap);
+                border: 1px solid #333;
+                border-radius: var(--radius);
+            }
         }
     }
 }
