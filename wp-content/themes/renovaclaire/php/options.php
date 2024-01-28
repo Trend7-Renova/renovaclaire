@@ -29,6 +29,8 @@ add_filter('timber/context', function ($context) {
     $context['avis'] = get_field('avis', 'option');
     $context['home'] = get_field('home', 'option');
     $context['menu'] = get_field('menu', 'option');
+    $context['contact'] = get_field('contact', 'option');
+
     return $context;
 });
 

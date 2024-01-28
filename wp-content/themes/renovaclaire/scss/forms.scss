@@ -14,12 +14,14 @@ form {
         >div {
 
             &:has(input),
+            &:has(textarea),
             &:has(select) {
                 display: flex;
                 flex-direction: column;
                 gap: var(--small-gap);
             }
 
+            textarea,
             select {
                 width: 100%;
             }
@@ -28,7 +30,22 @@ form {
                 width: calc(100% - 2 * var(--small-gap) - 2px);
             }
 
+            &:has(input[type=checkbox]) {
+                >label {
+                    display: flex;
+                    align-items: center;
+                    gap: var(--small-gap);
+                }
+            }
+
+            input[type=checkbox] {
+                width: 16px;
+                height: 16px;
+                border: 2px solid var(--gris-fonce);
+            }
+
             select,
+            textarea,
             input {
                 background-color: white;
                 padding: var(--small-gap);

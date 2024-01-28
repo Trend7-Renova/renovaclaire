@@ -1,0 +1,61 @@
+{% extends "base.twig" %}
+{% block content %}
+<section class="section">
+  {% if post.title %}
+  <h2 class="grand-titre">
+    {{ post.title }}
+  </h2>
+  {% endif %}
+  <p class="chapo">
+    {{ post.description }}
+  </p>
+  <div>
+    {{ post.content }}
+  </div>
+
+  <form id="contact">
+    <fieldset>
+
+      <div>
+        <label for="nom">Votre nom</label>
+        <div><input data-autosave type="text" id="nom" required value=""></div>
+      </div>
+      <div>
+        <label for="email">Votre adresse e-mail</label>
+        <div><input data-autosave type="email" id="email" required value=""></div>
+      </div>
+      <div>
+        <label for="telephone">Votre numéro de téléphone</label>
+        <div><input data-autosave type="text" id="telephone" value=""></div>
+      </div>
+      <div>
+        <label for="objet">Objet de votre prise de contact</label>
+        <div><select data-autosave id="objet" required>
+            <option disbaled selected hidden>Vous nous contactez pour ...</option>
+            <option value="devis" {{get.objet == 'devis' ? 'selected' : ''}}>Demander un devis gratuit</option>
+            <option value="question">Poser une question sur un autre sujet</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="message">Votre message</label>
+        <div><textarea data-autosave id="message" rows="10"></textarea></div>
+      </div>
+
+    </fieldset>
+
+
+    <fieldset>
+      <div>
+        <label for="optin"><input type="checkbox" required id="optin">J'autorise la compagnie Rénova Claire à me contacter au sujet de mon projet de rénovation</label>
+      </div>
+      <div class="boutons">
+        <button type="submit" class="bouton">Envoyer</button>
+        <a href="/contact" class="bouton alt">Annuler</a>
+      </div>
+    </fieldset>
+  </form>
+</section>
+
+{% endblock %}
