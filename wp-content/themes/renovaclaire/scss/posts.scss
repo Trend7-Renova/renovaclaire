@@ -24,7 +24,7 @@
 
             figure {
                 border-radius: var(--radius);
-                aspect-ratio: 1;
+                aspect-ratio: 16/9;
             }
 
             display: flex;
@@ -45,8 +45,10 @@
 
     @media screen and (min-width: 1024px) {
         >div {
-            flex-direction: row;
-
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-gap: var(--gap);
+    
             >article {
                 &:after {
                     display: none;
