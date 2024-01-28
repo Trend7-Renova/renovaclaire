@@ -1,6 +1,6 @@
 {
     "key": "group_65a930ad835f8",
-    "title": "Pages",
+    "title": "Pages et Posts",
     "fields": [
         {
             "key": "field_65a930ad4daa3",
@@ -30,6 +30,13 @@
                 "operator": "==",
                 "value": "page"
             }
+        ],
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "post"
+            }
         ]
     ],
     "menu_order": 0,
@@ -41,5 +48,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1706256094
+    "modified": 1706453972
 }

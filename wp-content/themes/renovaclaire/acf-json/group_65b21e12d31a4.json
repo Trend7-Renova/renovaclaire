@@ -165,7 +165,7 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "return_format": "url",
+                            "return_format": "array",
                             "library": "all",
                             "min_width": "",
                             "min_height": "",
@@ -285,7 +285,7 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "return_format": "url",
+                            "return_format": "array",
                             "library": "all",
                             "min_width": "",
                             "min_height": "",
@@ -972,6 +972,27 @@
                     "prepend": "",
                     "append": "",
                     "parent_repeater": "field_65b4a04e1cae0"
+                },
+                {
+                    "key": "field_65b648968f453",
+                    "label": "Description",
+                    "name": "description",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_65b4a04e1cae0"
                 }
             ]
         },
@@ -1106,5 +1127,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1706341674
+    "modified": 1706452601
 }

@@ -1,15 +1,19 @@
 #header {
     display: flex;
     flex-wrap: wrap;
+    padding-inline: var(--small-gap);
 
     gap: var(--gap);
 
     >.logo {
         flex: 1;
+        display: flex;
+        justify-content: center;
 
         img {
             object-fit: contain;
             height: 100%;
+            min-width: 200px;
         }
     }
 
@@ -18,9 +22,11 @@
 
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: var(--gap);
 
         a {
+            text-align: center;
             color: var(--couleur-texte);
             text-decoration: none;
 
@@ -33,18 +39,23 @@
     >div {
         display: flex;
         align-items: center;
+        justify-content: center;
+        width: 100%;
         gap: var(--gap);
     }
 
-    @media screen and (max-width: 500px) {
-        .logo {
-            width: 100%;
-        }
-    }
+    @media screen and (max-width: 500px) {}
 
-    @media screen and (min-width: 1024px) {
-        padding-inline: var(--gap);
+    @media screen and (min-width: 700px) {
         flex-wrap: nowrap;
+
+        >.logo {
+            justify-content: start;
+        }
+
+
+
+        padding-inline: var(--gap);
         height: var(--hauteur-header);
 
 
@@ -55,6 +66,8 @@
 
         >div {
             order: 3;
+            justify-content: end;
+            width: initial;
         }
 
     }

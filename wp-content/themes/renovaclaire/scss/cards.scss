@@ -11,8 +11,27 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-gap: var(--small-gap);
+        margin-inline: var(--small-gap);
+    }
+
+    &.line>div {
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+        max-width: 60vw;
 
         >article {
+            flex: 1;
+
+            >figure {
+                height: 20vh;
+            }
+        }
+    }
+
+    >div {
+        >article {
+            overflow: hidden;
             padding: var(--small-gap);
             box-shadow: var(--ombre);
             display: flex;
@@ -22,7 +41,13 @@
             background-size: cover;
             border-radius: var(--radius);
 
-            >figure {
+            >figure:has(img) {
+                margin: calc(var(--gap) * -1);
+                margin-bottom: 0;
+                aspect-ratio: 16/9;
+            }
+
+            >figure:has(svg) {
                 width: 48px;
                 height: 48px;
                 border-radius: 50%;
@@ -70,8 +95,14 @@
     }
 
     @media screen and (min-width: 800px) {
+        &.line>div {
+            flex-direction: row;
+            max-width: var(--largeur-contenu);
+            padding-inline: var(--gap);
+        }
+
         >div {
-            content:'';
+            content: '';
             grid-gap: var(--gap);
             grid-template-columns: 1fr 1fr 1fr;
 
@@ -79,7 +110,7 @@
                 padding: var(--gap);
                 gap: var(--gap);
 
-                >figure {
+                >figure:has(svg) {
                     width: 64px;
                     height: 64px;
 
@@ -90,11 +121,18 @@
 
     @media screen and (min-width: 1200px) {
         margin-inline: var(--large-gap);
+        padding: 0;
 
         >div {
 
             grid-template-columns: 1fr 1fr 1fr 1fr;
 
         }
+        &[data-colonnes="3"] >div {
+
+            grid-template-columns: 1fr 1fr 1fr;
+
+        }
+
     }
 }

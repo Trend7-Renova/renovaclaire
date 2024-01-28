@@ -6,36 +6,65 @@ App.modules.estimation = (() => {
         console.log(etape.dataset.etape)
         const step = etape.dataset.etape;
         if (step == 1) {
-            Data.rfr = Number(Form.querySelector('#rfr').value)
-            Data.personnes = Number(Form.querySelector('#personnes').value)
-
-            Data.categorie = calculCategorie(Data.personnes, Data.rfr)
-            Data.nomCategorie = nomCategorie(Data.categorie)
-            setEtape(2)
+            Data.personnes = Number(Form.querySelector('#personnes').value);
+            setRfr(Data.personnes);
+            setEtape(2);
         }
         if (step == 2) {
-            Data.nomClasseEnergetique = nomClasseEnergetique(Data.classe)
-            setEtape(4)
+            Data.rfr = Number(Form.querySelector('#rfr').value)
+            Data.categorie = calculCategorie(Data.personnes, Data.rfr)
+            Data.nomCategorie = nomCategorie(Data.categorie)
+            setEtape(3)
         }
         if (step == 3) {
-            Data.annee = Number(Form.querySelector('#annee').value)
-            Data.classe = classeparAnnee(Data.annee)
+            Data.classe = Form.querySelector('#classe').value
+            App.modules.jauge.setClasse(Data.classe);
             Data.nomClasseEnergetique = nomClasseEnergetique(Data.classe)
-            setEtape(4)
+            Data.messageClasseEnergetique = ''
+            setEtape(5)
         }
         if (step == 4) {
+            Data.annee = Number(Form.querySelector('#annee').value)
+            Data.classe = classeparAnnee(Data.annee)
+            App.modules.jauge.setClasse(Data.classe);
+            Data.nomClasseEnergetique = nomClasseEnergetique(Data.classe)
+            Data.messageClasseEnergetique = `Estimation de la classe énergétique effectuée à partir de l'année de construction. Cette information est purement théorique et ne peut remplacer un diagnostic.`
+            setEtape(5)
+        }
+        if (step == 5) {
             if (Data.classe == 'A' || Data.classe == 'B') {
-                setEtape(5)
-            } else {
-                Data.montantAides = calculAides(Data.categorie, Data.classe)
                 setEtape(6)
+            } else {
+                App.modules.jauge.animer(Data.classe);
+                Data.montantAides = calculAides(Data.categorie, Data.classe)
+                setEtape(7)
 
             }
         }
         console.log(Data)
 
     }
-
+    function setRfr(personnes) {
+        const valeurs = calculCategorie(personnes)
+        const options = ['<option disabled selected hidden>Choisir une tranche de revenus</option>'];
+        let valeurPrec;
+        valeurs.forEach((valeur, index) => {
+            let lib, v;
+            if (index == 0) {
+                lib = 'Moins de ' + formatToEuro(valeur);
+                v = valeur - 1;
+            } else if (index == valeurs.length - 1) {
+                lib = 'Plus de ' + formatToEuro(valeur);
+                v = valeur + 1;
+            } else {
+                lib = 'Entre ' + formatToEuro(valeurPrec) + ' et ' + formatToEuro(valeur);
+                v = valeur - 1;
+            }
+            options.push(`<option value="${v}">${lib}</option>`)
+            valeurPrec = valeur;
+        })
+        Form.querySelector('#rfr').innerHTML = options.join('');
+    }
     function calculAides(categorie, classe) {
         console.log({ categorie, classe })
         for (const ligne of estimation.aides) {
@@ -52,7 +81,7 @@ App.modules.estimation = (() => {
     }
     function nomCategorie(acronyme) {
         for (const categorie of estimation.categories) {
-            if (acronyme.toUpperCase() == categorie.acronyme) {
+            if (acronyme && acronyme.toUpperCase() == categorie.acronyme) {
                 return categorie.nom + ' (' + categorie.acronyme + ')';
             }
         }
@@ -126,11 +155,11 @@ App.modules.estimation = (() => {
     function nomClasseEnergetique(lettre) {
         for (const classe of estimation.classes_energetiques) {
             if (classe.lettre == lettre) {
-                return classe.lettre + ': ' + classe.nom
+                return classe.lettre + ': ' + classe.description + '<br><small>' + classe.nom + '</small>';
             }
         }
     }
-    function calculCategorie(personnes, rfr) {
+    function calculCategorie(personnes, rfr = false) {
 
         for (let i = 1; i <= personnes; i++) {
             let last = estimation.donnees[estimation.donnees.length - 1];
@@ -149,7 +178,18 @@ App.modules.estimation = (() => {
 
             }
         }
-
+        if (!rfr) {
+            out = [];
+            for (const ligne of estimation.donnees) {
+                if (ligne.nombre_de_personnes == personnes) {
+                    for (const [categorie, valeur] of Object.entries(ligne)) {
+                        if (categorie == 'nombre_de_personnes') continue;
+                        out.push(valeur)
+                    }
+                }
+            };
+            return out;
+        }
         for (const ligne of estimation.donnees) {
             if (!ligne) continue;
             if (ligne.nombre_de_personnes == personnes) {
@@ -179,31 +219,37 @@ App.modules.estimation = (() => {
             const annee = e.target.value;
             console.log(annee)
             if (annee.length == 4) {
-                setEtape(3, true);
+                setEtape(4, true);
                 Form.requestSubmit()
             }
         }));
 
+        Form.querySelector('#personnes').addEventListener('input', e => {
+            setRfr(e.target.value)
+        })
+        Form.querySelector('#rfr').addEventListener('input', e => {
+            Form.requestSubmit()
+        })
+
         Form.querySelector('#classe').addEventListener('input', e => {
-            fermerEtape(3)
+            fermerEtape(4)
             Form.querySelector('#annee').value = '';
             if (e.target.value == 'nsp') {
-                setEtape(3, true);
+                setEtape(4, true);
             } else {
                 Data.classe = e.target.value;
+                App.modules.jauge.setClasse(Data.classe);
                 gererEtapes()
             }
         })
         Form.querySelector('[data-action="recommencer"]').addEventListener('click', e => {
-            charger(() => {
-                fermerEtape(2)
-                Data = {}
-                Form.querySelector('#classe').selectedIndex = 0
-                Form.querySelector('#annee').value = ''
-                Form.querySelector('#rfr').value = ''
-                Form.querySelector('#personnes').value = 2
-                delete Form.dataset.etape;
-            }, Form)
+            fermerEtape(2)
+            Data = {}
+            Form.querySelector('#classe').selectedIndex = 0
+            Form.querySelector('#annee').value = ''
+            Form.querySelector('#rfr').value = ''
+            Form.querySelector('#personnes').value = 2
+            delete Form.dataset.etape;
         })
     }
     return {

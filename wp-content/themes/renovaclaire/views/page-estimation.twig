@@ -3,100 +3,108 @@
 <script>
   const estimation = {{ estimation | json_encode }}
 </script>
-<div class="container">
-  <section class="section">
-    {% if post.title %}
-    <h2 class="grand-titre">
-      {{ post.title }}
-    </h2>
-    {% endif %}
-    <p class="subtitle">
-      {{ post.description }}
-    </p>
-    <div>
-      {{ post.content }}
-    </div>
+<section class="section">
+  {% if post.title %}
+  <h2 class="grand-titre">
+    {{ post.title }}
+  </h2>
+  {% endif %}
+  <p class="subtitle">
+    {{ post.description }}
+  </p>
+  <div>
+    {{ post.content }}
+  </div>
 
-    <hr>
-    <form id="estimation">
-      <fieldset data-etape="1" data-active="true">
+  <hr>
+  <form id="estimation">
+    <fieldset data-etape="1" data-active="true">
 
-        <div>
-          <label for="rfr">Quel est votre revenu fiscal de référence</label>
-          <div><input type="text" id="rfr" name="data[rfr]" placeholder="Montant en euros" required value="">
-          </div>
-        </div>
-        <div>
-          <label for="personnes">Combien de personnes composent votre foyer ?</label>
-          <div><input type="number" id="personnes" name="data[personnes]" required value="2"></div>
-        </div>
-
+      <div>
+        <label for="personnes">Combien de personnes composent votre foyer ?</label>
+        <div><input type="number" id="personnes" name="data[personnes]" required value="2"></div>
+      </div>
       </fieldset>
 
       <fieldset data-etape="2">
+
+      <div>
+        <label for="rfr">Quel est votre revenu fiscal de référence</label>
+        <div><select id="rfr" name="data[rfr]" data-required></select>
+        </div>
+      </div>
+
+    </fieldset>
+
+    <fieldset data-etape="3">
+      <div>
+        <label for="categorie">Votre catégorie de ménage est la suivante</label>
         <div>
-          <label for="categorie">Votre catégorie de ménage est la suivante</label>
-          <div>
-            <h3 data-parse="${Data.nomCategorie}"></h3>
+          <strong data-parse="${Data.nomCategorie}"></strong>
+        </div>
+      </div>
+      <div>
+        <label for="rfr">Quelle est la classe énergétique de votre maison</label>
+        <div>
+          <select id="classe" name="data[classe]" data-required>
+            <option disabled selected hidden>Choisir une classe énergétique</option>
+            {% for classe in estimation.classes_energetiques %}
+            <option>{{classe.lettre}}</option>
+            {% endfor %}
+            <option value="nsp">Je ne sais pas</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset data-etape="4">
+      <div>
+        <label for="personnes">Quelle est l'année de construction de votre maison</label>
+        <div><input type="text" id="annee" name="data[annee]" value="" data-required></div>
+      </div>
+
+    </fieldset>
+    <fieldset data-etape="5">
+      <div>
+        <label for="categorie">La classe énergétique de votre maison est</label>
+        <div>
+          <strong data-parse="${Data.nomClasseEnergetique}"></strong>
+          <div class="jauge">
+            <div><span></span></div>
           </div>
-        </div>
-        <div>
-          <label for="rfr">Quelle est la classe énergétique de votre maison</label>
-          <div>
-            <select id="classe" name="data[classe]" data-required>
-              <option></option>
-              {% for classe in estimation.classes_energetiques %}
-              <option>{{classe.lettre}}</option>
-              {% endfor %}
-              <option value="nsp">Je ne sais pas</option>
-            </select>
-          </div>
-        </div>
-      </fieldset>
+          <small data-parse="${Data.messageClasseEnergetique}"></small>
 
-      <fieldset data-etape="3">
-        <div>
-          <label for="personnes">Quelle est l'année de construction de votre maison</label>
-          <div><input type="text" id="annee" name="data[annee]" value="" data-required></div>
         </div>
+      </div>
+    </fieldset>
 
-      </fieldset>
-      <fieldset data-etape="4">
-        <div>
-          <label for="categorie">La classe énergétique de votre maison est</label>
-          <div>
-            <h3 data-parse="${Data.nomClasseEnergetique}"></h3>
-          </div>
-        </div>
-      </fieldset>
+    <fieldset data-etape="6">
+      <div class="reponse">
+        <strong>Nous pouvons vous faire profiter d’une solution personnalisée, sans aide de l’Etat, mais qui
+          pourront vous permettre de réaliser des économies</strong>
+        <p><a href="/contact" class="bouton">Demandez une étude personnalisée</a></p>
+      </div>
+    </fieldset>
 
-      <fieldset data-etape="5">
-        <div class="reponse">
-          <h3>Nous pouvons vous faire profiter d’une solution personnalisée, sans aide de l’Etat, mais qui
-            pourront vous permettre de réaliser des économies</h3>
-          <p><a href="/contact" class="bouton">Demandez une étude personnalisée</a></p>
-        </div>
-      </fieldset>
+    <fieldset data-etape="7">
+      <div class="reponse">
+        <div>Vous pouvez bénéficier d'une aide de l'etat de <strong data-parse="${Data.montantAides}"></strong> pour votre
+          projet de rénovation.</div>
+        <p><a href="/contact" class="bouton">Demandez une étude personnalisée</a></p>
+      </div>
+    </fieldset>
 
-      <fieldset data-etape="6">
-        <div class="reponse">
-          <h3>Vous pouvez bénéficier d'une aide de l'etat de <span data-parse="${Data.montantAides}"></span> pour votre projet de rénovation.</h3>
-          <p><a href="/contact" class="bouton">Demandez une étude personnalisée</a></p>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <div class="boutons">
-          <button type="submit" class="bouton">
-            <span class="commencer">Commencer</span>
-            <span class="continuer">Continuer</span>
-            <span class="voir">Voir le résultat</span>
-          </button>
-          <button type="button" data-action="recommencer" class="bouton alt">Recommencer</button>
-        </div>
-      </fieldset>
-    </form>
-  </section>
-</div>
+    <fieldset>
+      <div class="boutons">
+        <button type="submit" class="bouton">
+          <span class="commencer">Commencer</span>
+          <span class="continuer">Continuer</span>
+          <span class="voir">Voir le résultat</span>
+        </button>
+        <button type="button" data-action="recommencer" class="bouton alt">Recommencer</button>
+      </div>
+    </fieldset>
+  </form>
+</section>
 
 {% endblock %}

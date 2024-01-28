@@ -81,5 +81,6 @@
 
 .boutons {
     display: flex;
-    gap:var(--half-gap)
+    gap:var(--half-gap);
+    flex-wrap: wrap;
 }

@@ -1,0 +1,12 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--half-gap);
+    >* {
+        margin: 0;
+    }
+}
+    .chapo {
+        font-family: "Raleway-Bold", Sans-serif;
+        font-size: larger
+    }

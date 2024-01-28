@@ -7,14 +7,13 @@
     </h1>
     <div class="chapo">{{ post.description }}</div>
 
-    {% if post.meta('solutions') %}
 </section>
 
-<div class="cards {{post.meta('solutions')|length < 4 ? 'line' : ''}}" data-colonnes="{{post.meta('solutions')|length == 4 ? 4 : 3}}">
+<div class="cards line">
     <div>
         {% for solution in post.meta('solutions') %}
         <article>
-            <figure><img src="{{solution.photo.sizes.large}}"></figure>
+            <figure><img src="{{solution.photo}}"></figure>
             <h4>{{solution.nom}}</h4>
             <div>{{solution.description}}</div>
         </article>
@@ -22,20 +21,10 @@
     </div>
 </div>
 <section class="section">
-    {% endif %}
     <div class="content">
         {{post.content}}
     </div>
-    {% if block('pageContent')|trim %}
-</section>
-{% block pageContent %}{% endblock %}
-<section class="section">
-    {% endif %}
-    {% if post.meta('cta') %}
+
     <div align="center"><a href="{{post.meta('cta') | cta}}" class="bouton">{{post.meta('cta').texte}}</a></div>
-    {% endif %}
-    {% if post.meta('cta2') %}
-    <div align="center"><a href="{{post.meta('cta2') | cta}}" class="bouton alt">{{post.meta('cta2').texte}}</a></div>
-    {% endif %}
 </section>
 {% endblock %}

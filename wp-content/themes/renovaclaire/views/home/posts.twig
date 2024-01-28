@@ -1,15 +1,25 @@
+{% if titre is not defined %}
+{% set titre = "Dernières actus" %}
+{% endif %}
+{% if description is not defined %}
+{% set description = "Les derniers articles postés sur le blog de Rénova Claire" %}
+{% endif %}
 <div class="posts">
+    {%if small is empty %}
     <header>
-        <h3 class="moyen-titre">Dernières actus</h3>
-        <p>Les derniers articles postés sur le blog de Rénova Claire</p>
+        <h3 class="moyen-titre">{{titre}}</h3>
+        {% if description %}
+        <p>{{description}}</p>
+        {% endif %}
     </header>
+    {% endif %}
     <div>
         {% for post in posts %}
         <article>
             {% if post.thumbnail %}
             <a href="{{ post.link }}">
                 <figure>
-                    <img src="{{ post.thumbnail.src }}" alt="{{ post.title }}">
+                    <img src="{{ post.thumbnail.src('large') }}" alt="{{ post.title }}">
                 </figure>
             </a>
             {% endif %}
