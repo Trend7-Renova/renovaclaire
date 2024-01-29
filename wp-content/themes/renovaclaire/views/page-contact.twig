@@ -21,6 +21,10 @@
         <div><input data-autosave type="text" id="nom" required value=""></div>
       </div>
       <div>
+        <label for="nom">Votre prénom</label>
+        <div><input data-autosave type="text" id="prenom" value=""></div>
+      </div>
+      <div>
         <label for="email">Votre adresse e-mail</label>
         <div><input data-autosave type="email" id="email" required value=""></div>
       </div>
@@ -33,6 +37,7 @@
         <div><select data-autosave id="objet" required>
             <option disbaled selected hidden>Vous nous contactez pour ...</option>
             <option value="devis" {{get.objet == 'devis' ? 'selected' : ''}}>Demander un devis gratuit</option>
+            <option value="etude" {{get.objet == 'etude' ? 'selected' : ''}}>Demander une étude personnalisée</option>
             <option value="question">Poser une question sur un autre sujet</option>
           </select>
         </div>

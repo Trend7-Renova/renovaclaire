@@ -1,44 +1,43 @@
 App.modules.estimation = (() => {
-    let Form, Data = {}, Bonus;
+    let Form, Data = {}, Bonus, Personnes, Rfr, Classe, Annee;
 
     function gererEtapes() {
         const etape = etapeActive();
         console.log(etape.dataset.etape)
         const step = etape.dataset.etape;
         if (step == 1) {
-            Data.personnes = Number(Form.querySelector('#personnes').value);
+            Data.personnes = Number(Personnes.value);
             setRfr(Data.personnes);
             setEtape(2);
         }
         if (step == 2) {
-            Data.rfr = Number(Form.querySelector('#rfr').value)
+            Data.rfr = Number(Rfr.value)
             Data.categorie = calculCategorie(Data.personnes, Data.rfr)
             Data.nomCategorie = nomCategorie(Data.categorie)
             setEtape(3)
         }
         if (step == 3) {
-            Data.classe = Form.querySelector('#classe').value
+            Data.classe = Classe.value
             App.modules.jauge.setClasse(Data.classe);
             Data.nomClasseEnergetique = nomClasseEnergetique(Data.classe)
             Data.messageClasseEnergetique = ''
             setEtape(5)
         }
         if (step == 4) {
-            Data.annee = Number(Form.querySelector('#annee').value)
+            Data.annee = Number(Annee.value)
             Data.classe = classeparAnnee(Data.annee)
             App.modules.jauge.setClasse(Data.classe);
             Data.nomClasseEnergetique = nomClasseEnergetique(Data.classe)
             Data.messageClasseEnergetique = `Estimation de la classe énergétique effectuée à partir de l'année de construction. Cette information est purement théorique et ne peut remplacer un diagnostic.`
             setEtape(5)
         }
-        if (step == 5) {
+        if (step == 3 || step == 4) {
             if (Data.classe == 'A' || Data.classe == 'B') {
                 setEtape(6)
             } else {
-                App.modules.jauge.animer(Data.classe);
+                // App.modules.jauge.animer(Data.classe);
                 Data.montantAides = calculAides(Data.categorie, Data.classe)
                 setEtape(7)
-
             }
         }
         console.log(Data)
@@ -46,8 +45,8 @@ App.modules.estimation = (() => {
     }
     function setRfr(personnes) {
         const valeurs = calculCategorie(personnes)
-        const options = ['<option disabled selected hidden>Choisir une tranche de revenus</option>'];
         let valeurPrec;
+        const boutons = [];
         valeurs.forEach((valeur, index) => {
             let lib, v;
             if (index == 0) {
@@ -60,10 +59,10 @@ App.modules.estimation = (() => {
                 lib = 'Entre ' + formatToEuro(valeurPrec) + ' et ' + formatToEuro(valeur);
                 v = valeur - 1;
             }
-            options.push(`<option value="${v}">${lib}</option>`)
+            boutons.push(`<button class="bouton alt" type="button" data-rfr="${v}">${lib}</bouton>`)
             valeurPrec = valeur;
         })
-        Form.querySelector('#rfr').innerHTML = options.join('');
+        Form.querySelector('#boutons-rfr').innerHTML = boutons.join('');
     }
     function calculAides(categorie, classe) {
         console.log({ categorie, classe })
@@ -91,11 +90,11 @@ App.modules.estimation = (() => {
         let etape = Form.querySelector(`[data-etape="${nb}"]`);
         do {
             if (etape.dataset.active) {
-                const required = etape.querySelectorAll('[required]')
-                required.forEach(item => {
-                    item.removeAttribute('required');
-                    item.dataset.required = true;
-                })
+                // const required = etape.querySelectorAll('[required]')
+                // required.forEach(item => {
+                //     item.removeAttribute('required');
+                //     item.dataset.required = true;
+                // })
 
                 delete etape.dataset.active
             }
@@ -104,15 +103,15 @@ App.modules.estimation = (() => {
         } while (etape);
     }
 
-    function setEtape(nb, now = false) {
+    function setEtape(nb, later = false) {
         charger(() => {
             fermerEtape(nb);
             const etape = Form.querySelector(`[data-etape="${nb}"]`);
-            const required = etape.querySelectorAll('[data-required]')
-            required.forEach(item => {
-                item.setAttribute('required', true);
-                delete item.dataset.required;
-            })
+            // const required = etape.querySelectorAll('[data-required]')
+            // required.forEach(item => {
+            //     item.setAttribute('required', true);
+            //     delete item.dataset.required;
+            // })
             const items = etape.querySelectorAll('[data-parse]')
             items.forEach(item => {
                 let code = 'item.innerHTML = `' + item.dataset.parse + '`';
@@ -120,37 +119,52 @@ App.modules.estimation = (() => {
             })
             etape.dataset.active = true;
             Form.dataset.etape = etape.dataset.etape
-            scrollToBottomOfElement(Form)
-        }, Form, now)
+            // scrollToBottomOfElement(Form)
+            scrollToMiddle(lastStep())
+        }, null, !later)
     }
-
+    function lastStep() {
+        const etapes = Form.querySelectorAll('[data-etape][data-active]');
+        if (etapes.length > 0) {
+            return etapes[etapes.length - 1];
+        }
+    }
     function etapeActive() {
 
         const etapes = Form.querySelectorAll('[data-etape][data-active]');
         return etapes[etapes.length - 1];
     }
     function classeparAnnee(annee) {
-        if (annee >= 2020) {
-            return 'B';
-        }
 
-        if (annee >= 2012) {
-            return 'C';
+        for (const item of estimation.classes_par_annees) {
+            console.log(item)
+            if (annee >= item.annee) {
+                return item.classe
+            } else if (!item.annee) {
+                return item.classe;
+            }
         }
-
-        if (annee >= 2005) {
-            return 'D';
-        }
-
-        if (annee >= 1990) {
-            return 'E';
-        }
-
-        if (annee >= 1974) {
-            return 'F';
-        }
-
-        return 'G'
+        /*        if (annee >= 2020) {
+                    return 'B';
+                }
+        
+                if (annee >= 2012) {
+                    return 'C';
+                }
+        
+                if (annee >= 2005) {
+                    return 'D';
+                }
+        
+                if (annee >= 1990) {
+                    return 'E';
+                }
+        
+                if (annee >= 1974) {
+                    return 'F';
+                }
+        
+                return 'G'*/
     }
     function nomClasseEnergetique(lettre) {
         for (const classe of estimation.classes_energetiques) {
@@ -210,45 +224,97 @@ App.modules.estimation = (() => {
 
         Form.addEventListener('submit', (e) => {
             e.preventDefault();
-            if (Form.ariaBusy == 'true') return;
-            Form.ariaBusy = 'true';
             gererEtapes()
         });
 
-        ['input', 'keyup'].forEach(eventName => Form.querySelector('#annee').addEventListener(eventName, e => {
+        ['input', 'keyup'].forEach(eventName => Annee.addEventListener(eventName, e => {
             const annee = e.target.value;
             console.log(annee)
             if (annee.length == 4) {
-                setEtape(4, true);
+                setEtape(4);
                 Form.requestSubmit()
             }
         }));
 
-        Form.querySelector('#personnes').addEventListener('input', e => {
-            setRfr(e.target.value)
-        })
-        Form.querySelector('#rfr').addEventListener('input', e => {
+        Form.querySelector('#boutons-rfr').addEventListener('click', e => {
+            const bouton = e.target.closest('[data-rfr]');
+            if (!bouton) return;
+            const prec = Form.querySelector('[data-rfr][data-selected]');
+            if (prec) {
+                fermerEtape(3);
+                delete prec.dataset.selected;
+            }
+            const rfr = bouton.dataset.rfr;
+            bouton.dataset.selected = true
+            Rfr.value = rfr;
             Form.requestSubmit()
         })
 
-        Form.querySelector('#classe').addEventListener('input', e => {
-            fermerEtape(4)
-            Form.querySelector('#annee').value = '';
-            if (e.target.value == 'nsp') {
-                setEtape(4, true);
-            } else {
-                Data.classe = e.target.value;
-                App.modules.jauge.setClasse(Data.classe);
-                gererEtapes()
+        Form.querySelectorAll('[data-personnes]').forEach(bouton => bouton.addEventListener('click', e => {
+            const personnes = e.target.dataset.personnes;
+            const prec = Form.querySelector('[data-personnes][data-selected]');
+            if (prec) {
+                fermerEtape(2);
+                delete prec.dataset.selected;
             }
+            e.target.dataset.selected = true
+            Personnes.value = personnes;
+            Form.requestSubmit()
+        }))
+
+        Form.querySelectorAll('[data-classe]').forEach(bouton => bouton.addEventListener('click', e => {
+            const classe = e.target.dataset.classe;
+            const prec = Form.querySelector('[data-classe][data-selected]');
+            if (prec) {
+                fermerEtape(4);
+                delete prec.dataset.selected;
+            }
+            e.target.dataset.selected = true
+            Classe.value = classe;
+            if (classe == 'nsp') {
+                setEtape(4);
+            } else {
+                Form.requestSubmit()
+
+            }
+        }))
+
+
+        Form.querySelectorAll('[data-annee]').forEach(bouton => bouton.addEventListener('click', e => {
+            const annee = e.target.dataset.annee;
+            const prec = Form.querySelector('[data-annee][data-selected]');
+            if (prec) {
+                fermerEtape(5);
+                delete prec.dataset.selected;
+            }
+            e.target.dataset.selected = true
+            Annee.value = annee;
+            Form.requestSubmit()
+        }))
+
+        Personnes.addEventListener('input', e => {
+            setRfr(e.target.value)
         })
+
+        // Classe.addEventListener('input', e => {
+        //     fermerEtape(4)
+        //     Annee.value = '';
+        //     if (e.target.value == 'nsp') {
+        //         setEtape(4);
+        //     } else {
+        //         Data.classe = e.target.value;
+        //         App.modules.jauge.setClasse(Data.classe);
+        //         gererEtapes()
+        //     }
+        // })
         Form.querySelector('[data-action="recommencer"]').addEventListener('click', e => {
             fermerEtape(2)
+            Form.querySelectorAll('.bouton[data-selected]').forEach(bouton => delete bouton.dataset.selected)
             Data = {}
-            Form.querySelector('#classe').selectedIndex = 0
-            Form.querySelector('#annee').value = ''
-            Form.querySelector('#rfr').value = ''
-            Form.querySelector('#personnes').value = 2
+            Classe.value = ''
+            Annee.value = ''
+            Rfr.value = ''
+            Personnes.value = ''
             delete Form.dataset.etape;
         })
     }
@@ -257,7 +323,10 @@ App.modules.estimation = (() => {
         ready() {
             Form = document.querySelector('#estimation');
             if (!Form) return;
-
+            Personnes = Form.querySelector('#personnes');
+            Rfr = Form.querySelector('#rfr');
+            Classe = Form.querySelector('#classe');
+            Annee = Form.querySelector('#annee');
             Bonus = estimation.donnees[estimation.donnees.length - 1];
             if (Bonus.nombre_de_personnes == '*') {
                 estimation.donnees.pop();

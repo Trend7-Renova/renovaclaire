@@ -4,7 +4,10 @@ a {
     text-decoration: none;
     transition: all .3s ease;
 
-    &:hover {
-        color: var(--couleur-alt);
+    @media screen and (min-width: 1024px) {
+
+        &:hover {
+            color: var(--couleur-alt);
+        }
     }
 }

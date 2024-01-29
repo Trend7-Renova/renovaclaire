@@ -1,56 +1,146 @@
+@media screen and (max-width: 1024px) {
+
+    body.menu-mobile-ouvert #header>nav {
+        transform: translateX(0);
+    }
+}
+
 #header {
     display: flex;
-    flex-wrap: wrap;
-    padding-inline: var(--small-gap);
-
+    flex-wrap: nowrap;
+    margin-inline: var(--micro-gap);
     gap: var(--gap);
+
+    >.burger {
+        display: none;
+    }
 
     >.logo {
         flex: 1;
         display: flex;
-        justify-content: center;
+        justify-content: start;
 
         img {
             object-fit: contain;
-            height: 100%;
-            min-width: 200px;
+            height: var(--hauteur-header);
+        }
+    }
+
+    @media screen and (max-width: 1024px) {
+        >.burger {
+            display: block;
+
+            svg {
+                height: 32px;
+                aspect-ratio: 1;
+            }
+        }
+
+        >nav {
+            font-size: larger;
+            transition: transform .5s ease-in-out;
+            transform: translateX(-110vh);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: calc(100vh - 2 * var(--gap));
+            width: calc(90vw - 2 * var(--gap));
+            z-index: 999999;
+            box-shadow: var(--ombre);
+            padding: var(--gap);
+            background-color: white;
+            flex-direction: column;
+            align-items: start;
+            justify-content: start;
+
+            &:before {
+                position: absolute;
+                top: var(--half-gap);
+                right: var(--half-gap);
+                content: '✖';
+                font-size: 2rem;
+                cursor: pointer;
+            }
+        }
+
+        >div {
+            font-size: smaller;
+        }
+
+        .bouton {
+            white-space: nowrap;
         }
     }
 
     >nav {
-        width: 100%;
-
         display: flex;
-        align-items: center;
-        justify-content: center;
         gap: var(--gap);
 
-        a {
+        >* {
+            display: flex;
+            align-items: center;
+            gap: var(--micro-gap);
             text-align: center;
             color: var(--couleur-texte);
-            text-decoration: none;
 
-            &:hover {
-                color: var(--couleur-alt);
+            >figure {
+                width: 20px;
+                height: 20px;
+
+                svg {
+                    fill: var(--couleur-principale);
+                    width: 20px;
+                    height: 20px;
+                }
             }
+
+            &:has(svg) {
+                white-space: nowrap;
+                color: var(--couleur-principale);
+
+                >span {
+                    display: flex;
+                    flex-direction: column;
+
+                    >small {
+                        font-style: italic;
+                    }
+                }
+            }
+
+            a {
+                text-decoration: none;
+
+                &:hover {
+                    color: var(--couleur-alt);
+
+                    svg {
+                        fill: var(--couleur-alt);
+                    }
+                }
+            }
+        }
+
+    }
+
+    >div {}
+
+
+    @media screen and (min-width: 800px) {
+        >nav {
+            font-size: smaller;
         }
     }
 
-    >div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        gap: var(--gap);
-    }
 
-    @media screen and (max-width: 500px) {}
-
-    @media screen and (min-width: 700px) {
-        flex-wrap: nowrap;
+    @media screen and (min-width: 1024px) {
+        padding-inline: var(--small-gap);
 
         >.logo {
+            flex: 0 0 200px;
             justify-content: start;
+
+            img {}
         }
 
 
@@ -60,11 +150,26 @@
 
 
         >nav {
-            width: auto;
+
+            >h3 {
+                display: none;
+            }
+
+            flex: 1;
             order: 2;
+            // width: 100%;
+            width: auto;
+            align-items: center;
+            justify-content: end;
+            flex-direction: row;
         }
 
         >div {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: var(--gap);
+
             order: 3;
             justify-content: end;
             width: initial;

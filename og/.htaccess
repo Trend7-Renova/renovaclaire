@@ -1,0 +1,6 @@
+RewriteEngine on
+
+RewriteBase /og/
+
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteRule ([0-9]+)\.jpg index.php?pid=$1 [L,QSA]

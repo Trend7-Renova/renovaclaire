@@ -16,6 +16,13 @@ function scrollToBottomOfElement(element) {
     }
 }
 
+function scrollToMiddle(element) {
+    element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+    });
+}
+
 
 /**
  * Executes a given code block after a random delay, with an option to execute immediately.
@@ -30,11 +37,14 @@ function charger(code, load, now = false) {
     }
 
     const delay = 0.5 + Math.random() * 1.3;
-
-    load.ariaBusy = 'true';
+    if (load) {
+        load.ariaBusy = 'true';
+    }
     setTimeout(() => {
         code();
-        load.ariaBusy = 'false';
+        if (load) {
+            load.ariaBusy = 'false';
+        }
     }, delay * 1000);
 }
 

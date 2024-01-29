@@ -27,6 +27,8 @@
                 <a href="{{ post.link }}">
                     <h4>{{post.title}}</h4>
                 </a>
+                <time
+                datetime="{{ post.date|date('Y-m-d H:i:s') }}">{{ post.date }}</time>                
                 <p>{{post.excerpt({words:20, read_more:'Lire la suite'})}}</p>
             </header>
         </article>

@@ -2,3 +2,4 @@ uploads
 wp-config.php
 wp-content/themes/renovaclaire/node_modules
 wp-content/themes/renovaclaire/dist
+og/gen

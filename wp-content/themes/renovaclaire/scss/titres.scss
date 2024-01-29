@@ -12,21 +12,25 @@ h6 {
 }
 
 .grand-titre {
-    color: var(--rouge);
-    font-size: 45px;
+    // color: var(--rouge);
+    font-size: 35px;
+
     @media screen and (min-width: 800px) {
         font-size: 62px;
     }
+
     font-weight: 800;
     line-height: 1em;
 }
 
 .moyen-titre {
     color: var(--gris-fonce);
-    font-size: 35px;
+    font-size: 25px;
+
     @media screen and (min-width: 800px) {
         font-size: 50px;
     }
+
     font-weight: 800;
     line-height: 1em;
 }
@@ -37,3 +41,5 @@ h6 {
     color: var(--couleur-alt);
     text-transform: uppercase;
 }
+
+

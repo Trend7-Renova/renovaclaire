@@ -198,7 +198,7 @@
                 {
                     "key": "field_65b37480ef6f6",
                     "label": "Bloc avantages",
-                    "name": "genie",
+                    "name": "avantages",
                     "aria-label": "",
                     "type": "group",
                     "instructions": "",
@@ -252,6 +252,26 @@
                             "append": ""
                         },
                         {
+                            "key": "field_65b768445b07e",
+                            "label": "Intro",
+                            "name": "intro",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
+                        },
+                        {
                             "key": "field_65b374b5ef6fa",
                             "label": "Texte",
                             "name": "texte",
@@ -273,10 +293,10 @@
                         },
                         {
                             "key": "field_65b37495ef6f7",
-                            "label": "Photo",
-                            "name": "photo",
+                            "label": "Photos",
+                            "name": "photos",
                             "aria-label": "",
-                            "type": "image",
+                            "type": "repeater",
                             "instructions": "",
                             "required": 0,
                             "conditional_logic": 0,
@@ -285,16 +305,41 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "return_format": "array",
-                            "library": "all",
-                            "min_width": "",
-                            "min_height": "",
-                            "min_size": "",
-                            "max_width": "",
-                            "max_height": "",
-                            "max_size": "",
-                            "mime_types": "",
-                            "preview_size": "medium"
+                            "layout": "table",
+                            "pagination": 0,
+                            "min": 0,
+                            "max": 0,
+                            "collapsed": "",
+                            "button_label": "Ajouter un élément",
+                            "rows_per_page": 20,
+                            "sub_fields": [
+                                {
+                                    "key": "field_65b766b5e04b6",
+                                    "label": "Photo",
+                                    "name": "photo",
+                                    "aria-label": "",
+                                    "type": "image",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array",
+                                    "library": "all",
+                                    "min_width": "",
+                                    "min_height": "",
+                                    "min_size": "",
+                                    "max_width": "",
+                                    "max_height": "",
+                                    "max_size": "",
+                                    "mime_types": "",
+                                    "preview_size": "thumbnail",
+                                    "parent_repeater": "field_65b37495ef6f7"
+                                }
+                            ]
                         },
                         {
                             "key": "field_65b3fe39dfc01",
@@ -849,8 +894,28 @@
             "sub_fields": [
                 {
                     "key": "field_65b36cd3c9316",
-                    "label": "CTA",
+                    "label": "CTA à droite du menu",
                     "name": "cta",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_65b7a6e208754",
+                    "label": "Version coutre du CTA",
+                    "name": "cta_mobile",
                     "aria-label": "",
                     "type": "text",
                     "instructions": "",
@@ -1192,6 +1257,72 @@
             ]
         },
         {
+            "key": "field_65b7c57cec60e",
+            "label": "Classes par années",
+            "name": "classes_par_annees",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Ajouter un élément",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_65b7c58fec60f",
+                    "label": "Classe",
+                    "name": "classe",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_65b7c57cec60e"
+                },
+                {
+                    "key": "field_65b7c599ec610",
+                    "label": "Année (à partir de, incluse)",
+                    "name": "annee",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_65b7c57cec60e"
+                }
+            ]
+        },
+        {
             "key": "field_65b4b4c052780",
             "label": "Aides",
             "name": "aides",
@@ -1357,6 +1488,91 @@
                     "append": ""
                 }
             ]
+        },
+        {
+            "key": "field_65b76d55a2550",
+            "label": "Identité du site",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_65b76d62a2551",
+            "label": "Site",
+            "name": "site",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_65b76d6fa2552",
+                    "label": "Image affichée par défaut sur les réseaux sociaux",
+                    "name": "default_image",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": "",
+                    "preview_size": "medium"
+                },
+                {
+                    "key": "field_65b772e1a75b4",
+                    "label": "Filigrane affiché sur l'image des réseaux sociaux",
+                    "name": "filigrane",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": "",
+                    "preview_size": "medium"
+                }
+            ]
         }
     ],
     "location": [
@@ -1377,5 +1593,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1706477828
+    "modified": 1706542517
 }

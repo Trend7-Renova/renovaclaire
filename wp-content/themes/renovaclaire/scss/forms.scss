@@ -12,6 +12,12 @@ form {
         padding: 0;
 
         >div {
+            display: inline-flex;
+            flex-direction: column;
+            gap:var(--micro-gap);
+            label {
+                font-family: 'Raleway-Bold', sans-serif;
+            }
 
             &:has(input),
             &:has(textarea),
@@ -21,11 +27,11 @@ form {
                 gap: var(--small-gap);
             }
 
-            textarea,
             select {
                 width: 100%;
             }
 
+            textarea,
             input {
                 width: calc(100% - 2 * var(--small-gap) - 2px);
             }

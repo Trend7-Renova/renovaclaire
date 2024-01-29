@@ -7,6 +7,7 @@
     --gris-fonce: #2E2C39;
     --gris-fonce-alt: #3F3F3F;
     --gap: 2rem;
+    --micro-gap: 0.5rem;
     --small-gap: 0.8rem;
     --half-gap: 1rem;
     --large-gap: 5rem;
@@ -20,13 +21,14 @@
     --ombre : 0px 14px 24px 0px rgba(0, 0, 0, 0.15);
     --couleur-footer: var(--gris-clair);
 
+    --largeur-site: 1600px;
     --largeur-contenu: 1200px;
     --largeur-page: 800px;
 
     --radius: .45rem;
 
 
-    --hauteur-header: 64px;
+    --hauteur-header: 48px;
     --hauteur-fenetre: calc(100vh - (var(--hauteur-header) + 2 * var(--gap)))
 }
 

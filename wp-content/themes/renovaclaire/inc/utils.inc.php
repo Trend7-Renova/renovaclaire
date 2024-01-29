@@ -1,22 +1,24 @@
 <?php
 
-function abs_path_to_url( $path = '' ) {
+function abs_path_to_url($path = '')
+{
     $url = str_replace(
-        wp_normalize_path( untrailingslashit( ABSPATH ) ),
+        wp_normalize_path(untrailingslashit(ABSPATH)),
         site_url(),
-        wp_normalize_path( $path )
+        wp_normalize_path($path)
     );
-    return esc_url_raw( $url );
+    return esc_url_raw($url);
 }
 
 /**
  * Retrieve the contents of a file, with caching using WordPress transients.
- * 
+ *
  * @param string $filename The name of the file to retrieve the contents from.
  * @param int $expiration The time until expiration in seconds. Default is 3600 seconds (1 hour).
  * @return string|false The content of the file, or false on failure.
  */
-function cache_file_get_contents($filename, $expiration = 3600) {
+function cache_file_get_contents($filename, $expiration = 3600)
+{
     // Generate a unique key for the transient based on the filename.
     $transient_key = 'file_contents_' . md5($filename);
 
@@ -37,4 +39,11 @@ function cache_file_get_contents($filename, $expiration = 3600) {
     }
 
     return $content;
+}
+
+function urlToPathContent($url)
+{
+    if(!$url) return;
+    if(!strstr($url, 'wp-content')) return;
+    return ABSPATH . 'wp-content/' . explode('/wp-content/', $url)[1];
 }
