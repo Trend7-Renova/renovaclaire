@@ -54,7 +54,7 @@
         }
 
         @media screen and (min-width: 1024px) {
-            max-width: var(--largeur-site);
+            max-width: var(--largeur-contenu);
             margin-inline: auto;
             margin-block: var(--large-gap);
             flex-direction: row;

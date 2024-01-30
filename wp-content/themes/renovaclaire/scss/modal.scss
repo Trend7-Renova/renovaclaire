@@ -1,0 +1,95 @@
+dialog {
+    &[open] {
+        border: 0;
+        padding: var(--small-gap);
+        box-shadow: var(--ombre);
+
+        border-radius: var(--radius);
+
+
+        &:not(.modal) {
+            max-width: 60vh;
+            max-height: 80vh;
+            overflow: visible;
+            font-size: smaller;
+            scale:0.95;
+            &:before {
+                background-color: black;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                transform: translate(-30%, 30%);
+                position: absolute;
+                top: 0;
+                right: 0;
+                content: '✖';
+                color: white;
+                font-size: 1rem;
+                cursor: pointer;
+            }
+        }
+
+
+        &,
+        &>div:first-child {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap);
+            justify-content: center;
+        }
+
+        &>div:first-child {
+            gap: var(--small-gap);
+        }
+
+        &::backdrop {
+            background: rgb(0 0 0 / 0.4);
+        }
+
+        @media screen and (min-width: 1024px) {
+            padding: var(--gap);
+
+
+            &:not(.modal) {
+
+                &:before {
+                    transform: translate(30%, -30%);
+                }
+            }
+        }
+    }
+}
+
+dialog.modal {
+
+    p {}
+
+    border: 0;
+    padding: var(--gap);
+    box-shadow: var(--ombre);
+
+    &.alert {
+        max-width: 300px;
+        width: 100%;
+    }
+}
+
+
+dialog {
+    &[open] {
+        animation: fadein .2s ease-in forwards;
+    }
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

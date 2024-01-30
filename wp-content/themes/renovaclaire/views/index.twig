@@ -9,9 +9,11 @@
 
     {% include 'home/services.twig' %}
     
+    {% include 'home/video.twig' %}
+    
     {% include 'home/partenaires.twig' %}
 
-    {% include 'home/posts.twig' with {posts : posts_last }%}
+    {% include 'home/posts.twig' with {posts : posts_last_3 }%}
 
 
 

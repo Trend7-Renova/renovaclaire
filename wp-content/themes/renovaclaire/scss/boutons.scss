@@ -5,11 +5,12 @@ button[data-action] {
 }
 
 .bouton {
+    --hauteur-bouton: 48px;
     cursor: pointer;
     border: 0;
     display: inline-flex;
     padding-inline: var(--gap);
-    min-height: 48px;
+    min-height: var(--hauteur-bouton);
     border-radius: var(--radius);
     color: white;
     text-decoration: none;
@@ -47,7 +48,7 @@ button[data-action] {
     }
 
     &:not(:has(svg)) {
-        padding-block: var(--micro-gap);
+        // padding-block: var(--micro-gap);
     }
 
     &:has(svg) {
@@ -68,7 +69,7 @@ button[data-action] {
         gap:0;
 
         >svg {
-            min-height: 48px;
+            min-height: var(--hauteur-bouton);
             height: 100%;
             transition: all .2s ease-in-out;
             border-radius: var(--radius);
@@ -119,8 +120,10 @@ button[data-action] {
     color: var(--couleur-principale);
 
 }
+
 .bouton[data-selected] {
     color: white;
+
     &:after {
         background-color: var(--gris-fonce);
     }
@@ -140,5 +143,5 @@ form[aria-busy="true"] .bouton:not(.alt) {
     gap: var(--half-gap);
     flex-wrap: wrap;
     flex-direction: row;
-    justify-content: center;
+    justify-content: start;
 }

@@ -8,6 +8,7 @@ last_mod_file="./dist/last_css"
 mkdir -p $dist_dir
 
 output_file="./dist/style.scss"
+output_file_css="./dist/style.css"
 
 # Get the latest modification time in the scss_dir
 latest_mod=$(find $scss_dir -type f -name '*.scss' -exec stat -c '%Y' {} \; | sort -n | tail -1)
@@ -44,6 +45,7 @@ file_name="style-$hash.min.css"
 final_file="./dist/$file_name"
 rev_file="./dist/rev-css.json"
 sass $output_file:$final_file
+sass $output_file:$output_file_css
 echo "{\"style.css\":\"$file_name\"}" > $rev_file 
 
 

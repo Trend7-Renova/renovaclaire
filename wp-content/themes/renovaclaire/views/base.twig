@@ -7,8 +7,8 @@
 <body class="{{ body_class }}" data-template="base.twig">
     {{ function('wp_body_open') }}
 
+    {% include 'header.twig' %}
     <div class="container">
-        {% include 'header.twig' %}
 
         {% block content %}{% endblock %}
 

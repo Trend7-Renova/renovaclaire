@@ -23,7 +23,10 @@ function scrollToMiddle(element) {
     });
 }
 
-
+// Function to check if a variable is callable
+function isCallable(variable) {
+    return typeof variable === 'function';
+}
 /**
  * Executes a given code block after a random delay, with an option to execute immediately.
  * The function sets a form's `ariaBusy` state to true during the delay, and resets it to false after execution.
@@ -53,10 +56,14 @@ function charger(code, load, now = false) {
  * @param {string | number} number - The number to be formatted.
  * @return {string} The formatted currency string in Euros.
  */
-function formatToEuro(number) {
+function formatToEuro(number, decimal = true) {
     const formatter = new Intl.NumberFormat('fr-FR', {
         style: 'currency',
         currency: 'EUR'
     });
-    return formatter.format(number);
+    let ret = formatter.format(number);
+    if (!decimal) {
+        ret = ret.replaceAll(',00', '');
+    }
+    return ret;
 }

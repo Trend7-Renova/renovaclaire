@@ -1,6 +1,10 @@
 App.modules.contact = (() => {
     let Form, Fields, AutoSaveFields, valeurs = {}
 
+    function erreur() {
+        const email = document.querySelector('a[href*="mailto:"]').outerHTML;
+        Modal.alert('Erreur', `Impossible d'envoyer le message pour l'instant.\nNous vous invitions à essayer à nouveau dans quelques minutes, ou à nous contacter directement par mail à ${email}.`)
+    }
     function activerAutosave() {
         chargerAutosave();
         AutoSaveFields.forEach(Field => {
@@ -34,14 +38,12 @@ App.modules.contact = (() => {
                 }).then(response => response.json()).then(data => {
                     localStorage.setItem('valeurs', '');
                     if (data) {
-
-                        alert(`Merci. Votre message a été envoyé.`);
-                        document.location.reload();
+                        Modal.alert('Message envoyé', 'Nous répondrons à votre message le plus rapidement possible.\nMerci !', { go: '/contact?ok' })
                     } else {
-                        alert(`Impossible d'envoyer le message`);
+                        erreur()
                     }
                 }).catch(() => {
-                    alert(`Impossible d'envoyer le message`);
+                    erreur()
                 })
 
 

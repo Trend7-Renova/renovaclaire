@@ -9,7 +9,8 @@
     display: flex;
     flex-wrap: nowrap;
     margin-inline: var(--micro-gap);
-    gap: var(--gap);
+    gap: var(--micro-gap);
+    margin-top: var(--micro-gap);
 
     >.burger {
         display: none;
@@ -23,6 +24,7 @@
         img {
             object-fit: contain;
             height: var(--hauteur-header);
+            min-width: 150px;
         }
     }
 
@@ -112,13 +114,17 @@
                 text-decoration: none;
 
                 &:hover {
-                    color: var(--couleur-alt);
+                    color: var(--couleur-principale);
 
                     svg {
-                        fill: var(--couleur-alt);
+                        fill: var(--couleur-principale);
                     }
                 }
             }
+        }
+
+        >a:hover {
+            color: var(--couleur-principale);
         }
 
     }
@@ -127,17 +133,22 @@
 
 
     @media screen and (min-width: 800px) {
-        >nav {
+        margin-inline: var(--micro-gap);
+        gap: var(--gap);
+    }
+
+    @media screen and (min-width: 1000px) and (max-width: 1550px) {
+        .bouton {
+            padding-inline: var(--half-gap);
             font-size: smaller;
         }
     }
 
 
     @media screen and (min-width: 1024px) {
-        padding-inline: var(--small-gap);
 
         >.logo {
-            flex: 0 0 200px;
+            flex: initial;
             justify-content: start;
 
             img {}
@@ -145,11 +156,10 @@
 
 
 
-        padding-inline: var(--gap);
         height: var(--hauteur-header);
 
-
         >nav {
+            font-size: 0.8rem;
 
             >h3 {
                 display: none;
@@ -175,5 +185,16 @@
             width: initial;
         }
 
+    }
+
+    @media screen and (min-width: 1550px) {
+
+        padding-inline: 0;
+        margin-inline: auto;
+        max-width: var(--largeur-site);
+
+        >nav {
+            font-size: 1rem;
+        }
     }
 }

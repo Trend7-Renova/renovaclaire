@@ -50,13 +50,13 @@ App.modules.estimation = (() => {
         valeurs.forEach((valeur, index) => {
             let lib, v;
             if (index == 0) {
-                lib = 'Moins de ' + formatToEuro(valeur);
+                lib = 'Moins de ' + formatToEuro(valeur, false);
                 v = valeur - 1;
             } else if (index == valeurs.length - 1) {
-                lib = 'Plus de ' + formatToEuro(valeur);
+                lib = 'Plus de ' + formatToEuro(valeur, false);
                 v = valeur + 1;
             } else {
-                lib = 'Entre ' + formatToEuro(valeurPrec) + ' et ' + formatToEuro(valeur);
+                lib = 'Entre ' + formatToEuro(valeurPrec, false) + ' et ' + formatToEuro(valeur, false);
                 v = valeur - 1;
             }
             boutons.push(`<button class="bouton alt" type="button" data-rfr="${v}">${lib}</bouton>`)
@@ -307,16 +307,16 @@ App.modules.estimation = (() => {
         //         gererEtapes()
         //     }
         // })
-        Form.querySelector('[data-action="recommencer"]').addEventListener('click', e => {
-            fermerEtape(2)
-            Form.querySelectorAll('.bouton[data-selected]').forEach(bouton => delete bouton.dataset.selected)
-            Data = {}
-            Classe.value = ''
-            Annee.value = ''
-            Rfr.value = ''
-            Personnes.value = ''
-            delete Form.dataset.etape;
-        })
+        /*        Form.querySelector('[data-action="recommencer"]').addEventListener('click', e => {
+                    fermerEtape(2)
+                    Form.querySelectorAll('.bouton[data-selected]').forEach(bouton => delete bouton.dataset.selected)
+                    Data = {}
+                    Classe.value = ''
+                    Annee.value = ''
+                    Rfr.value = ''
+                    Personnes.value = ''
+                    delete Form.dataset.etape;
+                })*/
     }
     return {
         calculAides,

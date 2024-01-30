@@ -34,13 +34,12 @@
 
     @media screen and (min-width: 1024px) {
         margin-inline: auto;
-        margin-block: var(--large-gap);
+        margin-block: var(--gap);
 
         flex-direction: row;
 
         >ul {
             a {
-                margin: var(--small-gap);
 
             }
         }

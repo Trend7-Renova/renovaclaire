@@ -16,7 +16,7 @@
 	<div class="content">
 		{{post.content}}
 	</div>
-	{% include 'home/posts.twig' with {posts : posts_last, titre : 'Nos autres articles de blog', description : '' }%}
+	{% include 'home/posts.twig' with {posts : posts_last_4, titre : 'Nos autres articles de blog', description : '' , exclude:post.id}%}
 </section>
 
 {% endblock %}

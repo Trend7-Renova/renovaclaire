@@ -1,0 +1,23 @@
+<div class="video">
+    <dialog>
+        <div>
+            <video preload="none" controls="controls">
+                <source src="{{home.video.video.mp4}}" type="video/mp4">
+                <source src="{{home.video.video.webm}}" type="video/webm">
+            </video>
+        </div>
+    </dialog>
+    <article>
+        <figure>
+            <img src="{{home.video.photo.sizes.large}}">
+        </figure>
+        <header>
+            <button data-action="play">{{svg('play')}}</button>
+            <span class="surtitre">{{home.video.surtitre}}</span>
+            <h2 class="moyen-titre">{{home.video.titre}}</h2>
+            <div>
+                {{home.video.texte}}
+            </div>
+        </header>
+    </article>
+</div>

@@ -11,12 +11,36 @@ form {
         gap: var(--half-gap);
         padding: 0;
 
+        >.fields {
+            display: flex;
+            flex-direction: row;
+            gap: var(--gap);
+            >div {
+                flex: 1;
+            }
+        }
+
+        >.fields>div,
         >div {
             display: inline-flex;
             flex-direction: column;
-            gap:var(--micro-gap);
+            gap: var(--half-gap);
+
             label {
-                font-family: 'Raleway-Bold', sans-serif;
+
+                font-family: 'Raleway-Bold',
+                    sans-serif;
+
+                button {
+                    display: inline-block;
+                    vertical-align: middle;
+
+                    svg {
+                        width: 16px;
+                        height: 16px;
+                        fill: var(--gris-fonce)
+                    }
+                }
             }
 
             &:has(input),

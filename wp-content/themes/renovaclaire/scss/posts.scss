@@ -14,31 +14,33 @@
         flex-direction: column;
         margin: 0 auto;
 
-        >article {
-            &:after {
-                display: block;
-                content: '';
-                border: 1px dotted var(--couleur-ter);
-            }
-            flex: 1;
+    }
 
-            figure {
-                border-radius: var(--radius);
-                aspect-ratio: 16/9;
-            }
+    article {
+        &:after {
+            display: block;
+            content: '';
+            border: 1px dotted var(--couleur-ter);
+        }
 
+        flex: 1;
+
+        figure {
+            border-radius: var(--radius);
+            aspect-ratio: 16/9;
+        }
+
+        display: flex;
+        flex-direction: column;
+        gap:var(--gap);
+
+        header {
             display: flex;
             flex-direction: column;
-            gap:var(--gap);
+            gap: var(--half-gap);
 
-            header {
-                display: flex;
-                flex-direction: column;
-                gap: var(--half-gap);
-
-                p {
-                    font-size: smaller;
-                }
+            p {
+                font-size: smaller;
             }
         }
     }
@@ -48,18 +50,51 @@
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             grid-gap: var(--gap);
-    
-            >article {
-                &:after {
-                    display: none;
-                }
-                transform: scale(1);
-                transition: all .2s ease-in-out;
+        }
 
-                &:hover {
-                    transform: scale(1.03);
+        article {
+            &:after {
+                display: none;
+            }
+
+            transform: scale(1);
+            transition: all .2s ease-in-out;
+        }
+
+        &:not(.archive) article {
+            &:hover {
+                transform: scale(1.03);
+            }
+        }
+    }
+
+    &.archive {
+        >div {
+            max-width: var(--largeur-page);
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap);
+
+            article {
+                figure {
+                    box-shadow: var(--ombre);
+                }
+
+                h4 {
+                    font-size: 2rem;
+                }
+
+                &:not(:last-child) {
+                    padding-bottom: var(--gap);
+                    border-bottom: 1px dotted var(--gris-fonce);
                 }
             }
         }
     }
+
+}
+
+.post-type-post figure {
+    border-radius: var(--radius);
+    box-shadow: var(--ombre);
 }

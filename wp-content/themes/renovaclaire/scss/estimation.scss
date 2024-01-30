@@ -1,4 +1,9 @@
 #estimation {
+
+    #boutons-rfr {
+        flex-direction: column;
+        align-items: start;
+    }
     [data-etape]:not([data-active]) {
         display: none;
     }
