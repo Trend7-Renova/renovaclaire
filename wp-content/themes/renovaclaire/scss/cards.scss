@@ -9,7 +9,7 @@
 
     >div {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         grid-gap: var(--small-gap);
         margin-inline: var(--small-gap);
     }
@@ -108,9 +108,9 @@
             grid-template-columns: 1fr 1fr 1fr;
 
             >article {
-                padding: var(--gap);
-                gap: var(--gap);
-
+                padding: var(--half-gap);
+                gap: var(--half-gap);
+                font-size: 1.1rem;
                 >figure:has(svg) {
                     width: 64px;
                     height: 64px;

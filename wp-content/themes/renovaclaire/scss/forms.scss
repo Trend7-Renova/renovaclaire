@@ -25,7 +25,16 @@ form {
             display: inline-flex;
             flex-direction: column;
             gap: var(--half-gap);
-
+            &:has(>label):has([required]) 
+                label:after {
+                    vertical-align: top;
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                    color:var(--rouge);
+                    content:'*';
+                    display:inline;
+                
+            }
             label {
 
                 font-family: 'Raleway-Bold',
