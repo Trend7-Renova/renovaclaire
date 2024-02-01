@@ -18,30 +18,34 @@ App.modules.estimation = (() => {
         }
         if (step == 3) {
             Data.classe = Classe.value
-            App.modules.jauge.setClasse(Data.classe);
+            // App.modules.jauge.setClasse(Data.classe);
             Data.nomClasseEnergetique = nomClasseEnergetique(Data.classe)
             Data.messageClasseEnergetique = ''
-            setEtape(5)
+            afficherResultats()
         }
         if (step == 4) {
             Data.annee = Number(Annee.value)
             Data.classe = classeparAnnee(Data.annee)
-            App.modules.jauge.setClasse(Data.classe);
+            // App.modules.jauge.setClasse(Data.classe);
             Data.nomClasseEnergetique = nomClasseEnergetique(Data.classe)
             Data.messageClasseEnergetique = `Estimation de la classe énergétique effectuée à partir de l'année de construction. Cette information est purement théorique et ne peut remplacer un diagnostic.`
-            setEtape(5)
-        }
-        if (step == 3 || step == 4) {
-            if (Data.classe == 'A' || Data.classe == 'B') {
-                setEtape(6)
-            } else {
-                // App.modules.jauge.animer(Data.classe);
-                Data.montantAides = calculAides(Data.categorie, Data.classe)
-                setEtape(7)
-            }
+
+            afficherResultats()
         }
         console.log(Data)
 
+    }
+
+    function afficherResultats() {
+        Data.montantAides = calculAides(Data.categorie, Data.classe)
+
+        const resultat = Form.querySelector('.resultat');
+
+        resultat.dataset.classe = Data.classe;
+        resultat.dataset.aides = Data.montantAides ? true : false;
+        parseAll(resultat);
+        resultat.classList.remove('hidden')
+        scrollToMiddle(resultat)
     }
     function setRfr(personnes) {
         const valeurs = calculCategorie(personnes)
@@ -71,7 +75,7 @@ App.modules.estimation = (() => {
                 for (const item of ligne.montants) {
                     console.log(item)
                     if (item.classe_energetique == classe) {
-                        return formatToEuro(item.montant)
+                        return formatToEuro(item.montant, false)
                     }
                 }
 
@@ -88,6 +92,7 @@ App.modules.estimation = (() => {
 
     function fermerEtape(nb) {
         let etape = Form.querySelector(`[data-etape="${nb}"]`);
+        if (!etape) return;
         do {
             if (etape.dataset.active) {
                 // const required = etape.querySelectorAll('[required]')
@@ -112,16 +117,19 @@ App.modules.estimation = (() => {
             //     item.setAttribute('required', true);
             //     delete item.dataset.required;
             // })
-            const items = etape.querySelectorAll('[data-parse]')
-            items.forEach(item => {
-                let code = 'item.innerHTML = `' + item.dataset.parse + '`';
-                eval(code);
-            })
+            parseAll(etape)
             etape.dataset.active = true;
             Form.dataset.etape = etape.dataset.etape
             // scrollToBottomOfElement(Form)
             scrollToMiddle(lastStep())
         }, null, !later)
+    }
+    function parseAll(obj) {
+        const items = obj.querySelectorAll('[data-parse]')
+        items.forEach(item => {
+            let code = 'item.innerHTML = `' + item.dataset.parse + '`';
+            eval(code);
+        })
     }
     function lastStep() {
         const etapes = Form.querySelectorAll('[data-etape][data-active]');

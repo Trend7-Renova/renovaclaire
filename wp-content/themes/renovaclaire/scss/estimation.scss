@@ -4,6 +4,7 @@
         flex-direction: column;
         align-items: start;
     }
+
     #boutons-annees {
         align-items: start;
         flex-direction: column-reverse;
@@ -64,5 +65,123 @@
 
             color: var(--orange);
         }
+    }
+
+
+    .resultat {
+        display: flex;
+        flex-direction: column;
+        gap: var(--half-gap);
+
+        &[data-aides="true"] {
+            .if-not-aides {
+                display: none !important;
+            }
+        }
+
+        &:not([data-aides="true"]) {
+            .if-aides {
+                display: none !important;
+            }
+        }
+
+        &[data-classe="A"],
+        &[data-classe="B"] {
+            .if-not-bonne-classe {
+                display: none !important;
+            }
+        }
+
+        &:not([data-classe="A"]):not([data-classe="B"]) {
+            .if-bonne-classe {
+                display: none !important;
+            }
+        }
+
+        >div {
+            border: 1px solid var(--couleur-principale);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            gap: var(--half-gap);
+            padding: var(--gap);
+
+            .montant {
+                display: flex;
+                gap: inherit;
+                flex-direction: column;
+
+                span {
+                    font-variant-numeric: lining-nums;
+                    font-size: 3rem;
+                    font-family: 'Raleway-Bold';
+                    color: var(--couleur-principale);
+                    white-space: nowrap;
+                }
+
+                p>strong {
+                    font-variant-numeric: lining-nums;
+                }
+            }
+
+            .changer-de-classe {
+                display: flex;
+                flex-direction: column;
+                gap: var(--small-gap);
+                background-color: var(--vert-clair);
+                padding: var(--half-gap);
+                margin-inline: calc(var(--micro-gap) * -1);
+                border-radius: var(--radius);
+
+                >figure {
+
+                    img {
+                        object-fit: contain;
+                    }
+                }
+
+                >div {
+                    flex: 1;
+                    display: flex;
+                    gap: inherit;
+                    flex-direction: column;
+                    font-size: 0.85rem;
+
+                    >ul {
+                        font-size: smaller;
+                        display: flex;
+                        gap: inherit;
+
+                        li:before {
+                            content: '✓';
+                            display: inline;
+                            color: green;
+                            margin-right: .25rem;
+                        }
+                    }
+                }
+            }
+
+            .boutons {
+                justify-content: end;
+            }
+
+
+            @media screen and (min-width: 600px) {
+                .montant {
+                    flex-direction: row;
+                }
+
+                .changer-de-classe {
+                    flex-direction: row;
+
+                    >figure {
+                        max-width: 300px;
+                    }
+                }
+            }
+
+        }
+
     }
 }

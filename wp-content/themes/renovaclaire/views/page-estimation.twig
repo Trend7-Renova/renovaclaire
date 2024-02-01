@@ -82,14 +82,14 @@
 
         <label for="rfr">Classe énergétique de votre maison <button type="button"
             data-action="aide">{{svg('question')}}</button>
-          </label>
-            <div class="boutons">
-              {% for classe in estimation.classes_energetiques %}
-              <button class="bouton alt" type="button" data-classe="{{classe.lettre}}">{{classe.lettre}}</button>
-              {% endfor %}
-              <button class="bouton alt" type="button" data-classe="nsp">Je ne sais pas</button>
-              </select>
-            </div>
+        </label>
+        <div class="boutons">
+          {% for classe in estimation.classes_energetiques %}
+          <button class="bouton alt" type="button" data-classe="{{classe.lettre}}">{{classe.lettre}}</button>
+          {% endfor %}
+          <button class="bouton alt" type="button" data-classe="nsp">Je ne sais pas</button>
+          </select>
+        </div>
       </div>
     </fieldset>
 
@@ -115,56 +115,63 @@
       </div>
 
     </fieldset>
-    <fieldset data-etape="5">
+    <div class="resultat hidden">
+      <h3>Découvrez vos résultats !</h3>
       <div>
-        <label for="categorie">La classe énergétique de votre maison est</label>
-        <div>
-          <strong data-parse="${Data.nomClasseEnergetique}"></strong>
-          <div class="jauge">
-            <div><span></span></div>
+        <div class="montant if-not-aides">
+          <p>Nous pouvons vous faire <strong>profiter d’une solution personnalisée</strong>, sans aide de l’Etat, mais qui pourra vous permettre de <strong>réaliser des économies</strong></p>
+        </div>
+        <div class="montant if-aides">
+          <span data-parse="${Data.montantAides}"></span>
+          <p>Vous pouvez bénéficier de différentes aides à la rénovation pour un montant allant jusque <strong
+              data-parse="${Data.montantAides}"></strong></p>
+        </div>
+        <div class="changer-de-classe if-bonne-classe">
+          <figure>
+            <img src="{{ theme.uri }}/images/classes.png">
+          </figure>
+          <div class="avec-aides">
+            <h4>Votre logement est déjà bien classé !</h4>
+            <p>
+              Selon les informations fournies votre logement est théoriquement en classe <strong
+                data-parse="${Data.classe.toUpperCase()}"></strong>.<br>
+                Des travaux de rénovation peuvent permettre
+              d’augmenter le confort de votre bien et de réaliser des économies d’énergie.
+            </p>
           </div>
-          <small data-parse="${Data.messageClasseEnergetique}"></small>
-
+        </div>
+        <div class="changer-de-classe if-not-bonne-classe">
+          <figure>
+            <img src="{{ theme.uri }}/images/classes.png">
+          </figure>
+          <div class="avec-aides">
+            <h4>Vous pouvez changer de classe !</h4>
+            <p>
+              Selon les informations fournies votre logement est théoriquement en classe <strong
+                data-parse="${Data.classe.toUpperCase()}"></strong>.<br>
+              Des travaux de rénovation peuvent vous permettre d’atteindre la classe <strong>A ou B</strong>.
+            </p>
+            <ul>
+              <li>Jusque 80% d’économies d’énergie</li>
+              <li>La valeur de votre bien accrue de 28%</li>
+            </ul>
+          </div>
+        </div>
+        <div class="recap if-aides">Nos experts peuvent <strong>réaliser votre dossier de demande</strong> et
+          <strong>vous faire
+            profiter de ces aides</strong>. Vous serez accompagné tout au long de votre projet par un <strong>contact
+            unique</strong>.
+        </div>
+        <div class="recap if-not-aides">Vous serez accompagné tout au long de votre projet par un <strong>contact
+            unique</strong>.
+        </div>
+        <div class="boutons">
+          <a href="/contact" class="bouton"><span>Contactez-nous</span>
+            {{svg('fleche')}}
+          </a>
         </div>
       </div>
-      <div>
-        <label for="categorie">Votre catégorie de ménage est la suivante</label>
-        <div>
-          <strong data-parse="${Data.nomCategorie}"></strong>
-        </div>
-      </div>
-
-    </fieldset>
-
-    <fieldset data-etape="6">
-      <div class="reponse">
-        <strong>Nous pouvons vous faire profiter d’une solution personnalisée, sans aide de l’Etat, mais qui
-          pourra vous permettre de réaliser des économies</strong>
-        <p><a href="/contact?objet=etude" class="bouton"><span>Demandez une étude
-              personnalisée</span>{{svg('fleche')}}</a></p>
-      </div>
-    </fieldset>
-
-    <fieldset data-etape="7">
-      <div class="reponse">
-        <div>Vous pouvez bénéficier d'une aide de l'etat de <strong data-parse="${Data.montantAides}"></strong> pour
-          votre
-          projet de rénovation.</div>
-        <p><a href="/contact?objet=etude" class="bouton"><span>Demandez une étude
-              personnalisée</span>{{svg('fleche')}}</a></p>
-      </div>
-    </fieldset>
-
-    <fieldset>
-      <div class="boutons">
-        <!-- <button type="submit" class="bouton">
-          <span class="commencer">Commencer</span>
-          <span class="continuer">Continuer</span>
-          <span class="voir">Voir le résultat</span>
-        </button> -->
-        <!-- <button type="button" data-action="recommencer" class="bouton alt">Recommencer</button> -->
-      </div>
-    </fieldset>
+    </div>
   </form>
 </section>
 
