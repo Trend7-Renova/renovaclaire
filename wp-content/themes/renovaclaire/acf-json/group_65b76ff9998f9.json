@@ -28,6 +28,33 @@
             "preview_size": "medium"
         },
         {
+            "key": "field_65bbae457f593",
+            "label": "Flouter cette photo et y superposer le logo RénovaClaire",
+            "name": "og_flouter",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_65b76ff7322c3",
+                        "operator": "!=empty"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
             "key": "field_65b77019322c4",
             "label": "Titre à afficher sur les reseaux sociaux",
             "name": "og_titre",
@@ -93,5 +120,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1706520877
+    "modified": 1706798947
 }

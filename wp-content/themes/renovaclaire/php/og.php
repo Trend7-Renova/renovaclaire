@@ -3,13 +3,19 @@
 add_filter('timber/twig', function ($twig) {
     // Adding a custom filter
     $twig->addFilter(new \Twig\TwigFilter('og_image', function ($post) {
-
+        if(is_home()) return;
         $image = get_field('og_image', $post->ID);
+        $flouter = get_field('og_flouter', $post->ID);
 
         if (!$image) {
             $image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'large');
         }
-        if ($image['sizes']['large'] ?? $image[0] ?? false) {
+        $image = $image['sizes']['large'] ?? $image[0] ?? false;
+        if ($image) {
+            if (!$flouter) {
+                return $image;
+            }
+
             return site_url('/og/' . $post->ID . '.jpg');
         }
     }));

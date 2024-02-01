@@ -1,6 +1,4 @@
 .partenaires {
-    display: flex;
-    flex-direction: column;
     gap: var(--half-gap);
     max-width: var(--largeur-contenu);
     margin: 0 auto;
@@ -9,10 +7,14 @@
     >header {
         display: flex;
         flex-direction: column;
-        gap: var(--gap);
+    }
+
+    >header {
+        gap: var(--small-gap);
     }
 
     >ul {
+        flex: 1;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-gap: var(--gap);
@@ -38,10 +40,14 @@
 
         flex-direction: row;
 
-        >ul {
-            a {
+        >header {
+            width: 30vw;
+            min-width: 300px;
 
-            }
+        }
+
+        >ul {
+            a {}
         }
     }
 }

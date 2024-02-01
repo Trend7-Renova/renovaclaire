@@ -97,7 +97,7 @@
       <input type="hidden" id="annee" name="data[annee]" value="">
       <div>
         <label for="personnes">Année de construction de votre maison</label>
-        <div class="boutons">
+        <div class="boutons" id="boutons-annees">
           {% for item in estimation.classes_par_annees %}
           {% if prec %}
           {% if item.annee %}

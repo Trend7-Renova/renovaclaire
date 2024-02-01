@@ -4,6 +4,11 @@
         flex-direction: column;
         align-items: start;
     }
+    #boutons-annees {
+        align-items: start;
+        flex-direction: column-reverse;
+    }
+
     [data-etape]:not([data-active]) {
         display: none;
     }
@@ -36,7 +41,9 @@
             display: none;
         }
     }
-    &[data-etape="6"], &[data-etape="7"] {
+
+    &[data-etape="6"],
+    &[data-etape="7"] {
         .bouton:has(.continuer) {
             display: none;
         }
@@ -46,12 +53,15 @@
         display: flex;
         flex-direction: column;
         gap: var(--half-gap);
+
         >div {
             font-family: "Raleway-Regular", Sans-serif;
             font-size: larger;
+
             strong {
                 font-family: "Raleway-Bold", Sans-serif;
             }
+
             color: var(--orange);
         }
     }

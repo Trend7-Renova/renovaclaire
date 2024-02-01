@@ -1,10 +1,15 @@
 <div class="video">
-    <dialog>
+    <dialog class="video-modal">
         <div>
+            {% if home.video.type == 'url' %}
             <video preload="none" controls="controls">
                 <source src="{{home.video.video.mp4}}" type="video/mp4">
                 <source src="{{home.video.video.webm}}" type="video/webm">
             </video>
+            {% endif %}
+            {% if home.video.type == 'embed' %}
+                {{home.video.embed}}
+            {% endif %}
         </div>
     </dialog>
     <article>

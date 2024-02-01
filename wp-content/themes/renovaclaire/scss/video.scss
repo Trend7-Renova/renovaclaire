@@ -6,6 +6,10 @@
         border-radius: var(--radius);
         padding: 0;
 
+        // &:before {
+        //     position: fixed !important;
+        // }
+
         // overflow: visible;
         // &:before {
         //     background-color: black;
@@ -28,21 +32,40 @@
         >div {
             overflow: hidden;
 
+            &:has(iframe) {
+                // position: absolute;
+                // left: 50%;
+                // top: 50%;
+                // transform: translate(-50%, -50%);
+                width: 80vw;
+                aspect-ratio: 1;
+
+                iframe {
+                    width: 100% !important;
+                    height: 100% !important;
+                }
+            }
+
             video {
                 width: 80vw;
                 display: block;
-
-
             }
         }
     }
 
+    cursor: pointer;
     display: flex;
     justify-content: center;
     min-height: calc(var(--hauteur-fenetre) * 0.4);
     max-width: var(--largeur-contenu);
     margin-inline: auto;
     background: no-repeat center;
+
+    &:hover {
+        svg {
+            scale: 1.1;
+        }
+    }
 
     position: relative;
 
@@ -59,6 +82,7 @@
         >figure {
             width: 100%;
             aspect-ratio: 16/9;
+
             >img {
                 filter: blur(5px);
                 scale: 1.2;
@@ -70,14 +94,14 @@
             z-index: 1;
             display: flex;
             flex-direction: column;
-            gap: var(--gap);
+            gap: var(--small-gap);
             background-color: white;
 
             button[data-action="play"] {
                 position: absolute;
-                left: 0;
-                top: 50%;
-                transform: translate(-50%, -50%);
+                left: 50%;
+                top: 0;
+                transform: translate(-50%, calc(-50% - var(--gap)));
                 width: 64px;
                 height: 64px;
 
@@ -85,11 +109,6 @@
                     fill: var(--couleur-principale);
                 }
 
-                &:hover {
-                    svg {
-                        scale: 1.1;
-                    }
-                }
             }
 
             >div {
@@ -139,6 +158,13 @@
                 margin-left: 30vh;
                 margin-block: 15vh;
                 padding: var(--large-gap);
+                gap: var(--gap);
+
+                button[data-action="play"] {
+                    left: 0;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                }
             }
         }
     }

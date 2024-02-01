@@ -4,6 +4,11 @@
 
 <section class="section post-type-{{ post.post_type }}" id="post-{{ post.ID }}">
 
+	<ul class="cdf">
+		<li><a href="/">{{svg('home')}}</a></li>
+		<li><a href="/blog">Le Blog</a></li>
+		<li><a href="{{ post.link }}">{{ post.title }}</a></li>
+	</ul>
 	<h1 class="grand-titre"> {{ post.title }}</h1>
 	<div class="chapo">{{ post.description }}</div>
 	<figure>
@@ -16,7 +21,11 @@
 	<div class="content">
 		{{post.content}}
 	</div>
-	{% include 'home/posts.twig' with {posts : posts_last_4, titre : 'Nos autres articles de blog', description : '' , exclude:post.id}%}
+	<div>
+		<a href="/blog" class="bouton">Retour aux articles du blog</a>
+	</div>
+	{% include 'home/posts.twig' with {posts : posts_last_4, titre : 'Nos autres articles', description : '' ,
+	exclude:post.id}%}
 </section>
 
 {% endblock %}

@@ -7,13 +7,17 @@ dialog {
         border-radius: var(--radius);
 
 
-        &:not(.modal) {
+        &:not([class]) {
             max-width: 60vh;
             max-height: 80vh;
+        }
+        &:not(.modal) {
             overflow: visible;
             font-size: smaller;
-            scale:0.95;
+            scale: 0.95;
+
             &:before {
+                z-index: 9;
                 background-color: black;
                 width: 32px;
                 height: 32px;
