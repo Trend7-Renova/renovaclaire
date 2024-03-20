@@ -14,7 +14,8 @@
     <link rel="pingback" href="{{ site.pingback_url }}" />
     <link rel="profile" href="http://gmpg.org/xfn/11">
     {{function('wp_head')}}
-    <link rel="stylesheet" href="{{ site.theme.link }}/node_modules/normalize.css/normalize.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{{ site.theme.link }}/node_modules/normalize.css/normalize.css" type="text/css"
+        media="screen" />
     <!-- <link rel="stylesheet" href="{{ site.theme.link }}/dist/style.css?{{css_version}}" type="text/css" media="screen" /> -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,3 +33,18 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
     {% include 'partial/og.twig' %}
+
+    <!-- Brevo Conversations {literal} -->
+    <script>
+        (function (d, w, c) {
+            w.BrevoConversationsID = '65b522eb4f39475bb836e567';
+            w[c] = w[c] || function () {
+                (w[c].q = w[c].q || []).push(arguments);
+            };
+            var s = d.createElement('script');
+            s.async = true;
+            s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
+            if (d.head) d.head.appendChild(s);
+        })(document, window, 'BrevoConversations');
+    </script>
+    <!-- /Brevo Conversations {/literal} -->
