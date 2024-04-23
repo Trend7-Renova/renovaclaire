@@ -82,7 +82,7 @@
         >figure {
             width: 100%;
             aspect-ratio: 16/9;
-
+            border-radius: var(--radius);
             >img {
                 filter: blur(5px);
                 scale: 1.2;

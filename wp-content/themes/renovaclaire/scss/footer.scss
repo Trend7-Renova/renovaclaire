@@ -3,6 +3,23 @@
     padding: var(--gap);
     font-size: smaller;
 
+    >nav {
+        margin-top: var(--gap);
+        display: flex;
+        justify-content: center;
+
+        >ul {
+            display: flex;
+            justify-content: center;
+            gap: var(--half-gap);
+
+            li:not(:first-child) {
+                border-left: 1px solid;
+                padding-left: var(--half-gap);
+            }
+        }
+    }
+
     >div {
         max-width: var(--largeur-contenu);
         margin: 0 auto;

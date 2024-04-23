@@ -38,6 +38,8 @@
                 // }
                 height: 100%;
                 object-fit: cover;
+                border-radius: var(--radius);
+
             }
         }
     }
@@ -57,7 +59,7 @@
                 order: 2;
 
                 img {
-                    margin-inline: var(--half-gap);
+                    // margin-inline: var(--half-gap);
                 }
             }
         }

@@ -7,6 +7,7 @@ register_nav_menus([
 
 add_filter('timber/context', function ($context) {
 
+    $context['liens_de_bas_de_page'] = Timber::get_menu('liens-de-bas-de-page');
     $context['menu_principal'] = Timber::get_menu('menu-principal');
     $context['liens_utiles'] = Timber::get_menu('liens-utiles');
 

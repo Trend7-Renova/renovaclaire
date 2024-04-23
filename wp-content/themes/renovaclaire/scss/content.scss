@@ -2,11 +2,54 @@
     display: flex;
     flex-direction: column;
     gap: var(--half-gap);
+
     >* {
         margin: 0;
     }
-}
-    .chapo {
-        font-family: "Raleway-Bold", Sans-serif;
-        font-size: larger
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: var(--half-gap);
+
+        li {
+            margin-left: var(--gap);
+
+            &:before {
+                content: '●';
+                display: inline-block;
+                margin-right: .5em;
+            }
+        }
     }
+
+    table {
+        width: 100%;
+        /* Adjust table width to fit its container */
+        border-collapse: collapse;
+        /* Collapses the border lines into a single line */
+
+        td,
+        th {
+            border: 1px solid #ccc;
+            /* Adds a light gray border around each cell */
+            padding: 8px;
+            /* Adds space around the text within each cell */
+            text-align: left;
+            /* Aligns text to the left */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+            /* Adds a light gray background to every other row */
+        }
+    }
+
+
+
+}
+
+.chapo {
+    font-family: "Raleway-Bold", Sans-serif;
+    font-size: larger
+}

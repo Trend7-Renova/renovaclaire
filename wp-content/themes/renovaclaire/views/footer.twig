@@ -20,7 +20,7 @@
         </div>
         <div>
             <h3>
-                Nos prestations
+                {{menu_principal.title}}
             </h3>
             <ul>
                 {% for item in menu_principal.items %}
@@ -31,7 +31,7 @@
         </div>
         <div>
             <h3>
-                Liens utiles
+                {{liens_utiles.title}}
             </h3>
             <ul>
                 {% for item in liens_utiles.items %}
@@ -58,4 +58,13 @@
             </div>
         </div>
     </div>
+    <nav>
+        <ul>
+            {% for item in liens_de_bas_de_page.items %}
+            <li><a class="{{item.classes|join(' ')}}" href="{{ item.link }}" {{ item.is_target_blank ? 'target="_blank"'
+                    }}>{{
+                    item.title}}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
 </footer>
