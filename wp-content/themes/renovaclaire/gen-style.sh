@@ -1,14 +1,16 @@
 #!/bin/bash
 
+base_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+
 # Define the directories and output files
-scss_dir="./scss"
-dist_dir="./dist"
-last_mod_file="./dist/last_css"
+scss_dir="$base_dir/scss"
+dist_dir="$base_dir/dist"
+last_mod_file="$base_dir/dist/last_css"
 
 mkdir -p $dist_dir
 
-output_file="./dist/style.scss"
-output_file_css="./dist/style.css"
+output_file="$base_dir/dist/style.scss"
+output_file_css="$base_dir/dist/style.css"
 
 # Get the latest modification time in the scss_dir
 latest_mod=$(find $scss_dir -type f -name '*.scss' -exec stat -c '%Y' {} \; | sort -n | tail -1)
@@ -40,10 +42,10 @@ echo "Compile the SCSS to CSS"
 
 hash=$(sha256sum "$output_file" | cut -c 1-10)
 
-rm ./dist/style*.css* -f
+rm $base_dir/dist/style*.css* -f
 file_name="style-$hash.min.css"
-final_file="./dist/$file_name"
-rev_file="./dist/rev-css.json"
+final_file="$base_dir/dist/$file_name"
+rev_file="$base_dir/dist/rev-css.json"
 sass $output_file:$final_file
 sass $output_file:$output_file_css
 echo "{\"style.css\":\"$file_name\"}" > $rev_file 

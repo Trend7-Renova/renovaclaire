@@ -2,12 +2,13 @@
     background-color: var(--couleur-footer);
     padding: var(--gap);
     font-size: smaller;
+
     >div {
         max-width: var(--largeur-contenu);
         margin: 0 auto;
         display: flex;
         flex-wrap: wrap;
-        gap: var(--large-gap);
+        gap: var(--gap);
         flex-direction: column;
 
         >div {
@@ -47,9 +48,14 @@
             flex-direction: row;
 
             padding: var(--large-gap);
+
             >div:first-child {
-                max-width: 300px;
+                max-width: 250px;
                 gap: var(--half-gap);
+            }
+
+            >div:last-child {
+                max-width: 300px;
             }
         }
     }

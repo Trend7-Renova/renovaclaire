@@ -143,13 +143,14 @@
                                 "id": ""
                             },
                             "post_type": [
-                                "page"
+                                "page",
+                                "post"
                             ],
                             "post_status": "",
                             "taxonomy": "",
                             "allow_archives": 1,
                             "multiple": 0,
-                            "allow_null": 0
+                            "allow_null": 1
                         },
                         {
                             "key": "field_65b3642cb911b",
@@ -735,12 +736,15 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "post_type": "",
+                            "post_type": [
+                                "page",
+                                "post"
+                            ],
                             "post_status": "",
                             "taxonomy": "",
                             "allow_archives": 1,
                             "multiple": 0,
-                            "allow_null": 0,
+                            "allow_null": 1,
                             "parent_repeater": "field_65b3c7d098226"
                         }
                     ]
@@ -761,6 +765,26 @@
                     },
                     "placement": "top",
                     "endpoint": 0
+                },
+                {
+                    "key": "field_6627a887c4ff8",
+                    "label": "Présentation du bloc certifications",
+                    "name": "certifications_presentation",
+                    "aria-label": "",
+                    "type": "wysiwyg",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "tabs": "all",
+                    "toolbar": "full",
+                    "media_upload": 1,
+                    "delay": 0
                 },
                 {
                     "key": "field_65b6af460c304",
@@ -1823,5 +1847,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1706796778
+    "modified": 1713875135
 }
