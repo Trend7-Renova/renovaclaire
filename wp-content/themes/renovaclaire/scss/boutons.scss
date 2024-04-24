@@ -9,7 +9,10 @@ button[data-action] {
     cursor: pointer;
     border: 0;
     display: inline-flex;
-    padding-inline: var(--gap);
+    padding-inline: var(--half-gap);
+    @media screen and (min-width: 800px) {
+        padding-inline: var(--gap);
+    }
     min-height: var(--hauteur-bouton);
     border-radius: var(--radius);
     color: white;

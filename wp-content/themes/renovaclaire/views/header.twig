@@ -18,7 +18,6 @@
       <figure class="seulement-sur-mobile">
          <img src="{{ theme.uri }}/images/logo-small.png">
       </figure>
-      <h3>Menu</h3>
       {% for item in menu_principal.items %}
       <a class="{{item.classes|join(' ')}} {{item.mobile_only ? 'seulement-sur-mobile' : ''}}" href="{{ item.link }}" {{
          item.is_target_blank ? 'target="_blank"' }}>{{

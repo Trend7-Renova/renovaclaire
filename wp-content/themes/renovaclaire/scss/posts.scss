@@ -17,7 +17,7 @@
     }
 
     article {
-        &:after {
+        &:not(:last-child):after {
             display: block;
             content: '';
             border: 1px dotted var(--couleur-ter);

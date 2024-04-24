@@ -1,4 +1,4 @@
-:root {
+body {
     --vert-clair:#d2f8d1;
     --vert: #77a85f;
     --beige: #cebfa8;
@@ -29,11 +29,9 @@
 
     --radius: .45rem;
 
-
     --hauteur-header: 48px;
     --hauteur-fenetre: calc(100vh - (var(--hauteur-header) + 2 * var(--gap)))
 }
-
 
 body.admin-bar {
     --hauteur-fenetre: calc(100vh - (var(--hauteur-header) + 2 * var(--gap)) - 32px)
