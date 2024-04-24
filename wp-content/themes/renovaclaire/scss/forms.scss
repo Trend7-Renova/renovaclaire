@@ -28,7 +28,6 @@ form {
             &:has(>label):has([required]) 
                 label:after {
                     vertical-align: top;
-                    font-size: 1.5rem;
                     font-weight: bold;
                     color:var(--rouge);
                     content:'*';

@@ -57,14 +57,14 @@
 
     <fieldset>
       <div>
-        <label for="optin"><input type="checkbox" required id="optin">J'autorise la compagnie Rénova Claire à me
-          contacter au sujet de mon projet de rénovation</label>
+        <label for="optin"><input type="checkbox" required id="optin">{{post.meta.mention_optin}}</label>
       </div>
       <div class="boutons">
         <button type="submit" class="bouton">Envoyer</button>
         <a href="/contact" class="bouton alt">Annuler</a>
       </div>
     </fieldset>
+    <div>{{post.meta.texte_sous_le_formulaire}}</div>
   </form>
 </section>
 

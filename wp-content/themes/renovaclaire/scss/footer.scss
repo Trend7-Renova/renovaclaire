@@ -13,9 +13,15 @@
             justify-content: center;
             gap: var(--half-gap);
 
-            li:not(:first-child) {
-                border-left: 1px solid;
-                padding-left: var(--half-gap);
+            li {
+                &:not(:first-child) {
+                    border-left: 1px solid;
+                    padding-left: var(--half-gap);
+                }
+
+                a {
+                    font-weight: 100;
+                }
             }
         }
     }
