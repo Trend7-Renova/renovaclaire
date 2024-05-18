@@ -13,8 +13,9 @@
     
     {% include 'home/partenaires.twig' %}
 
-    {% include 'home/posts.twig' with {posts : posts_last_3 }%}
-
+    {% if posts_last_3 | length > 0%}
+       {% include 'home/posts.twig' with {posts : posts_last_3 }%}
+    {% endif %}
 
 
 {% endblock %}

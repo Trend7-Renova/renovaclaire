@@ -1,3 +1,8 @@
+[data-articles="false"] {
+    li:has(a[href*="/blog/"]) {
+        display: none !important;
+    }    
+}
 .posts {
     >header {
         text-align: center;

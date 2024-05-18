@@ -37,6 +37,9 @@
     <meta name="theme-color" content="#ffffff">
     {% include 'partial/og.twig' %}
 
+    {% if contact.activer_brevo %}
+
+
     <!-- Brevo Conversations {literal} -->
     <script>
         (function (d, w, c) {
@@ -51,3 +54,4 @@
         })(document, window, 'BrevoConversations');
     </script>
     <!-- /Brevo Conversations {/literal} -->
+    {% endif %}

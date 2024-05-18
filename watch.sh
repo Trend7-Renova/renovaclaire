@@ -2,4 +2,4 @@
 
 
 
-npm run --prefix /home/sopress/renovaclaire/wp-content/themes/renovaclaire watch 
+npm run --prefix /home/renova/renovaclaire/wp-content/themes/renovaclaire watch 
