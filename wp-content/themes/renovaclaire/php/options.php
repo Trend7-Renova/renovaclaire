@@ -37,7 +37,7 @@ add_filter('timber/context', function ($context) {
     return $context;
 });
 
-add_action('admin_menu', function () {
-    remove_menu_page('options'); // Remove the original menu
-    add_menu_page('Options', 'Options', 'manage_options', 'options', '', '', 1); // Add new menu at the top
-});
+// add_action('admin_menu', function () {
+//     remove_menu_page('options'); // Remove the original menu
+//     add_menu_page('Options', 'Options', 'manage_options', 'options', '', '', 1); // Add new menu at the top
+// });

@@ -16,13 +16,16 @@ add_action('rest_api_init', function () {
             }
             $message = '<br><b>Nom</b><br>';
             $message .= $nom;
-            $message = '<br><b>Email</b><br>';
+            $message .= '<br><b>Code postal du projet</b><br>';
+            $message .= $data['code_postal'];
+            $message .= '<br><b>Email</b><br>';
             $message .= $data['email'];
-            $message = '<br><b>Téléphone</b><br>';
+            $message .= '<br><b>Téléphone</b><br>';
             $message .= $data['telephone'];
             $message .= '<br><br>';
-            $message .= '<div style="border:1px solid black;padding:1rem;margin:1rem">'.nl2br($data['message']).'</div>';
+            $message .= '<div style="border:1px solid black;padding:1rem;margin:1rem">' . nl2br($data['message']) . '</div>';
             $mail['to'] = get_field('contact', 'option')['destinataire'];
+            // $mail['to'] = 'gilles@trend7.fr';
             $mail['subject'] = $sujet . ' venant de ' . $nom;
             $mail['replyTo'] = $data['email'];
             $mail['replyToName'] = $nom;
@@ -42,7 +45,6 @@ add_action('rest_api_init', function () {
             } else {
                 return new WP_REST_Response(false, 500);
             }
-
         }
     ));
 });
