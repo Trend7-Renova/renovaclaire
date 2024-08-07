@@ -68,3 +68,12 @@
         </ul>
     </nav>
 </footer>
+{% if annonce.afficher_annonce %}
+<div id="annonce" style="--couleur-fond-annonce:{{annonce.couleur_fond_annonce}};--couleur-texte-annonce:{{annonce.couleur_texte_annonce}};">
+    <div>
+
+        <strong>{{annonce.titre_annonce}}</strong>
+        {{annonce.texte_annonce}}
+    </div>
+</div>
+{% endif %}
