@@ -1,0 +1,50 @@
+*** GTM Kit ***
+
+2024-12-03 - version 2.2.2
+* Dev: Tested up to WooCommerce 9.4.
+* Dev: Tested up to PHP 8.4.
+
+2024-10-29 - version 2.2.1
+* Fix: If the cart and checkout endpoints were set to the same page in order to skip the cart the 'checkout' and 'purchase' events would not fire.
+* Dev: Tested up to WordPress 6.7.
+
+2024-10-16 - version 2.2.0
+* Add: Added notifications and warnings for missing GTM container, debug log usage, auto-update and event inspector usage. These improvements aim to ensure smooth production operations.
+
+2024-10-01 - version 2.1.0
+* Add: Added support for the Bricks theme builder.
+* Fix: In some cases other plugins or a theme could block GTM Kit from firing JS event like the one that fires the add_to_cart GTM event.
+
+2024-09-23 - version 2.0.1
+* Fix: * Fix an edge case that could cause a fatal error in admin_body_class().
+
+2024-09-11 - version 2.0.0
+* Remove: Starting with GTM Kit version 2.0, the add_to_wishlist event is no longer supported in the free version of GTM Kit. To continue tracking the add_to_wishlist event, you must purchase the GTM Kit Add-On plugin.
+* Add: A notifications handler has been added to communicate issues and notifications that require the user’s attention.
+* Add: Added a warning when other Google Tag Manager plugins that may cause a conflict are active.
+* Add: WooCommerce users are advised to install a supported SEO plugin to take advantage of a default category in data layer items.
+* Changed: Require WordPress 6.3.
+* Changed: Require WooCommerce 8.3.
+* Changed: Require PHP 7.4.
+* Dev: Increased PHPStan analysis level to 6, enhancing static code analysis and catching potential issues earlier in the development process.
+
+
+2024-08-22 - version 1.23.3
+* Fix: Prevent fatal errors caused by invalid filter input from third-party plugins.
+* Fix: In WordPress versions prior to 6.6, the options pages fail to load due to a missing dependency.
+
+2024-08-13 - version 1.23.2
+* Dev: Require WooCommerce 8.2.
+* Dev: Tested up to WooCommerce 9.2.
+
+2024-07-15 - version 1.23.1
+* Update: The 'Getting Started' section the setup wizard has been updated with new content.
+* Fix: The settings were not saved correctly in multisite installations.
+* Fix: An upgrade function was causing problems for multisite installations leading lost configuration.
+* Dev: The load priority of the script 'gtmkit-js-before' has been lowered from 1 to 5 to allow user to register scripts before.
+
+2024-07-04 - version 1.23
+* Add: Added an option to exclude selected user roles from tracking.
+* Add: Improve the flexibility of GTM Kit integrations.
+* Dev: Tested up to WooCommerce 9.1.
+* Dev: Tested up to WordPress 6.6.
