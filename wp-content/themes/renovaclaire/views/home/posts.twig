@@ -17,7 +17,7 @@
         {% endif %}
     </header>
     {% endif %}
-    <div>
+    <div {% if posts|length < 3%}style="grid-template-columns:1fr 1fr"{% endif %}>
         {% for post in posts %}
             {% if exclude != post.id %}
             <article>

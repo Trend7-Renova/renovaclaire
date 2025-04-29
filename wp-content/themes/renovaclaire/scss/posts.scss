@@ -59,7 +59,7 @@
 
         article {
             &:after {
-                display: none;
+                display: none !important;
             }
 
             transform: scale(1);

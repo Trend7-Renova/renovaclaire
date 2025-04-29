@@ -7,6 +7,22 @@
         margin: 0;
     }
 
+    ol {
+        display: flex;
+        flex-direction: column;
+        gap: var(--half-gap);
+
+        li {
+            br {
+                margin-bottom: var(--micro-gap);
+            }
+
+            &::marker {
+                font-family: "arial black";
+            }
+        }
+    }
+
     ul {
         display: flex;
         flex-direction: column;
