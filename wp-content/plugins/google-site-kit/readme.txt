@@ -2,9 +2,9 @@
 
 Contributors:      google
 Requires at least: 5.2
-Tested up to:      6.5
+Tested up to:      6.8
 Requires PHP:      7.4
-Stable tag:        1.128.0
+Stable tag:        1.154.0
 License:           Apache License 2.0
 License URI:       https://www.apache.org/licenses/LICENSE-2.0
 Tags:              google, search-console, analytics, adsense, pagespeed-insights
@@ -36,6 +36,7 @@ Site Kit shows key metrics and insights from different Google products:
 * **Tag Manager:** Use Site Kit to easily set up Tag Manager- no code editing required. Then, manage your tags in Tag Manager.
 
 == Installation ==
+
 **Note**: Make sure that your website is live. If your website isn't live yet, Site Kit can't show you any data.
 However, if you have a staging environment in addition to your production site, Site Kit can display data from your production site in the staging environment. Learn how to use [Site Kit with a staging environment](https://sitekit.withgoogle.com/documentation/using-site-kit/staging/).
 
@@ -45,7 +46,6 @@ However, if you have a staging environment in addition to your production site, 
 2. Search for **Site Kit by Google**.
 3. Install and activate the Site Kit by Google plugin.
 4. Connect Site Kit to your Google account. If there are multiple WordPress admins, keep in mind that each admin must connect their own Google account in order to access the plugin.
-
 
 = Manual installation =
 
@@ -109,35 +109,23 @@ Please create a new topic on our [WordPress.org support forum](https://wordpress
 
 == Changelog ==
 
-= 1.128.0 =
+= 1.154.0 =
 
 **Enhanced**
 
-* Update permissions required for the conversion tracking setting saving. See [#8738](https://github.com/google/site-kit-wp/issues/8738).
-* Improve style specificity in the Authorize Application screen. See [#8673](https://github.com/google/site-kit-wp/issues/8673).
-* Add PAX notification banner when PAX setup is completed successfully. See [#8661](https://github.com/google/site-kit-wp/issues/8661).
-* Add the Ads module setup CTA banner. See [#8660](https://github.com/google/site-kit-wp/issues/8660).
-* Enhance Key Metrics selection panel by introducing and reusing generic selection panel components. See [#8652](https://github.com/google/site-kit-wp/issues/8652).
-* Include Switzerland in Consent Mode regions from July 31st, 2024, to match the corresponding changes to the EU user consent policy. See [#8643](https://github.com/google/site-kit-wp/issues/8643).
-* Update conversion tracking events to include source of event tracking as Site Kit. See [#8641](https://github.com/google/site-kit-wp/issues/8641).
-* Improve Ad Blocker warning messages for Ads and AdSense modules. See [#8634](https://github.com/google/site-kit-wp/issues/8634).
-* Add conversion tracking toggle component. See [#8616](https://github.com/google/site-kit-wp/issues/8616).
-* Implement the new conversion tracking partial datastore. See [#8615](https://github.com/google/site-kit-wp/issues/8615).
-* Implement partner service for new campaign creation completed signal. See [#8560](https://github.com/google/site-kit-wp/issues/8560).
-* Add the “New” badge to the Audience Widget Area. See [#8169](https://github.com/google/site-kit-wp/issues/8169).
-* Add a new API/infrastructure for managing “expirable items". See [#8168](https://github.com/google/site-kit-wp/issues/8168).
-* Display information about partial data availability in Audience widget area when complete data for the selected date range is not available. See [#8142](https://github.com/google/site-kit-wp/issues/8142).
-* Add the audiences widget area to the Site Kit dashboard. See [#8138](https://github.com/google/site-kit-wp/issues/8138).
-* Implement dismissal behaviour for the audience groups setup banner. See [#8133](https://github.com/google/site-kit-wp/issues/8133).
-* Introduce creation of audience groups from Audience Setup Banner. See [#8131](https://github.com/google/site-kit-wp/issues/8131).
-* Update Ad Blocker warning message in Ads and AdSense modules. See [#7251](https://github.com/google/site-kit-wp/issues/7251).
+* Add the `purchase` event tracking for the WooCommerce conversion tracking provider on block themes. See [#10747](https://github.com/google/site-kit-wp/issues/10747).
+* Add all WooCommerce conversion events to track when WooCommerce Analytics Addon is available. See [#10691](https://github.com/google/site-kit-wp/issues/10691).
+* Update WooCommerce events tracking to include additional information. See [#10672](https://github.com/google/site-kit-wp/issues/10672).
+* Update success subtle notifications to use the new `<Notice type="success">` component. See [#10432](https://github.com/google/site-kit-wp/issues/10432).
+* Refactor the usage of all “info type notice” components to use the new `<Notice type='info'>` component. See [#10430](https://github.com/google/site-kit-wp/issues/10430).
+* Refactor components used for warnings throughout the plugin. See [#10428](https://github.com/google/site-kit-wp/issues/10428).
+* Reset the dismissal state for the Reader Revenue Manager product ID notifications when the connected publication is changed, ensuring they can be shown again. See [#10311](https://github.com/google/site-kit-wp/issues/10311).
+* Fix tooltip issues on mobile/tablet viewports when user clicked outside of the tooltip area. See [#10101](https://github.com/google/site-kit-wp/issues/10101).
+* Add the accepted language information to the remove notifications requests. See [#8813](https://github.com/google/site-kit-wp/issues/8813).
 
 **Fixed**
 
-* Ensure conversion ID is output when Ads module is connected by PAX. See [#8732](https://github.com/google/site-kit-wp/issues/8732).
-* Update reports that use the `adSourceName` dimension to use the correct dimension filter. See [#8658](https://github.com/google/site-kit-wp/issues/8658).
-* Avoid line wrapping and show ellipses for long post titles in the "Top content by pageviews" section of an Audience tile. See [#8626](https://github.com/google/site-kit-wp/issues/8626).
-* Update the AdSense overview widget to use the correct date range. See [#8478](https://github.com/google/site-kit-wp/issues/8478).
-* Update the Tag Manager module to display permission errors to users. See [#5556](https://github.com/google/site-kit-wp/issues/5556).
+* Fix error preventing the Reader Revenue Manager block editor plugin and Sign in With Google blocks from loading in the block editor. See [#10822](https://github.com/google/site-kit-wp/issues/10822).
+* Fix incorrect step navigation in feature tours. See [#10590](https://github.com/google/site-kit-wp/issues/10590).
 
 [See changelog for all versions](https://raw.githubusercontent.com/google/site-kit-wp/main/changelog.txt).

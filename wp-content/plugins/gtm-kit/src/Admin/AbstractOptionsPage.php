@@ -150,9 +150,9 @@ abstract class AbstractOptionsPage {
 	/**
 	 * Enqueue admin page scripts and styles.
 	 *
-	 * @param string $hook Current hook.
+	 * @param mixed $hook Current hook.
 	 */
-	abstract public function enqueue_page_assets( string $hook ): void;
+	abstract public function enqueue_page_assets( $hook ): void;
 
 	/**
 	 * Localize script.
@@ -197,7 +197,7 @@ abstract class AbstractOptionsPage {
 		<style>
 			#gtmkit-settings-loader {
 				visibility: hidden;
-				animation: loadGTMKitSettingsNoJSView 0s 2s forwards;
+				animation: loadGTMKitSettingsNoJSView 0s 5s forwards;
 			}
 
 			@keyframes loadGTMKitSettingsNoJSView {

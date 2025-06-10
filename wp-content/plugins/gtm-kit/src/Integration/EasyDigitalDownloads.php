@@ -320,11 +320,6 @@ final class EasyDigitalDownloads extends AbstractEcommerce {
 
 		edd_add_order_meta( $order_id, 'gtmkit_order_tracked', 1 );
 
-		if ( $this->options->get( 'general', 'debug_log' ) ) {
-			error_log( 'GTM Kit: purchase event datalayer' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
-			error_log( (string) print_r( $data_layer, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
-		}
-
 		return apply_filters( 'gtmkit_datalayer_content_order_received', $data_layer );
 	}
 
@@ -423,10 +418,8 @@ final class EasyDigitalDownloads extends AbstractEcommerce {
 			return $data_layer;
 		}
 
-		$customer     = new \EDD_Customer( $order->customer_id );
-		$payment_meta = edd_get_payment_meta( edd_get_purchase_id_by_key( $order->payment_key ) );
-		$address      = $payment_meta['user_info']['address'];
-
+		$customer                                  = new \EDD_Customer( $order->customer_id );
+		$address                                   = $order->get_address();
 		$data_layer['ecommerce']['customer']['id'] = $order->customer_id;
 
 		$data_layer['ecommerce']['customer']['order_count'] = $customer->purchase_count;
@@ -434,12 +427,13 @@ final class EasyDigitalDownloads extends AbstractEcommerce {
 
 		$data_layer['ecommerce']['customer']['name'] = $customer->name;
 
-		$data_layer['ecommerce']['customer']['billing_address_1']  = $address['line1'];
-		$data_layer['ecommerce']['customer']['billing_address_2']  = $address['line2'];
-		$data_layer['ecommerce']['customer']['billing_city']       = $address['city'];
-		$data_layer['ecommerce']['customer']['billing_postcode']   = $address['zip'];
-		$data_layer['ecommerce']['customer']['billing_country']    = $address['country'];
-		$data_layer['ecommerce']['customer']['billing_state']      = $address['state'];
+		$data_layer['ecommerce']['customer']['billing_address_1'] = $address->address;
+		$data_layer['ecommerce']['customer']['billing_address_2'] = $address->address2;
+		$data_layer['ecommerce']['customer']['billing_city']      = $address->city;
+
+		$data_layer['ecommerce']['customer']['billing_postcode']   = $address->postal_code;
+		$data_layer['ecommerce']['customer']['billing_country']    = $address->country;
+		$data_layer['ecommerce']['customer']['billing_state']      = $address->state ?? '';
 		$data_layer['ecommerce']['customer']['billing_email']      = $customer->email;
 		$data_layer['ecommerce']['customer']['billing_email_hash'] = ( $customer->email ) ? hash( 'sha256', $customer->email ) : '';
 

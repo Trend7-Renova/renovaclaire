@@ -54,6 +54,17 @@ abstract class Conversion_Events_Provider {
 	}
 
 	/**
+	 * Gets the conversion event names that are tracked by this provider.
+	 *
+	 * @since 1.154.0
+	 *
+	 * @return string Comma separated list of event names.
+	 */
+	public function get_debug_data() {
+		return implode( ', ', $this->get_event_names() );
+	}
+
+	/**
 	 * Gets the event names.
 	 *
 	 * @since 1.125.0
@@ -63,11 +74,21 @@ abstract class Conversion_Events_Provider {
 	abstract public function get_event_names();
 
 	/**
+	 * Registers any actions/hooks for this provider.
+	 *
+	 * @since 1.129.0
+	 */
+	public function register_hooks() {
+		// No-op by default, but left here so subclasses can implement
+		// their own `add_action`/hook calls.
+	}
+
+	/**
 	 * Registers the script for the provider.
 	 *
 	 * @since 1.125.0
 	 *
-	 * @return Script Script instance.
+	 * @return Script|null Script instance, or null if no script is registered.
 	 */
 	abstract public function register_script();
 }

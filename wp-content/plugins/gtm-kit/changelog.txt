@@ -1,5 +1,37 @@
 *** GTM Kit ***
 
+2025-04-30 - version 2.4.4
+* Add: Introduced the gtmkit_options_set action and the gtmkit_process_options filter.
+* Fix: The $hook type hint in enqueue_page_assets was removed to avoid conflicts with plugins passing non-standard data types.
+* Dev: Fixed deprecation in Easy Digital Downloads.
+
+2025-04-15 - version 2.4.3
+* Fix: Fix conflict with GTM Kit Woo in admin settings.
+
+2025-04-09 - version 2.4.2
+* Fix: Fix fatal error in admin when used together with MC4WP: Mailchimp for WordPress.
+* Dev: Tested up to WordPress 6.8.
+* Dev: Tested up to WooCommerce 9.8.
+
+2025-04-02 - version 2.4.1
+* Fix: Permission were not checked correct on the admin API.
+
+2025-04-03 - version 2.4.0
+* remove: The Event Inspector has been removed and is only available the premium version.
+
+2025-04-02 - version 2.3.2
+* Fix: Permission were not checked correct on the admin API.
+
+2025-03-12 - version 2.3.1
+* Fix: Fix a rare case of divisionByZero in calculation of discount.
+* Dev: Tested up to WooCommerce 9.7.
+
+2025-01-28 - version 2.3.0
+* Fix: Fix an edge case fatal error in admin if $hook for some reason is missing,
+* Changed: Require WordPress 6.4.
+* Changed: Require WooCommerce 8.4.
+* Dev: Tested up to WooCommerce 9.6.
+
 2024-12-03 - version 2.2.2
 * Dev: Tested up to WooCommerce 9.4.
 * Dev: Tested up to PHP 8.4.

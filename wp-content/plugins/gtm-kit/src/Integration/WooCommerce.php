@@ -52,6 +52,7 @@ final class WooCommerce extends AbstractEcommerce {
 	public function __construct( Options $options, Util $util ) {
 		$this->store_currency = get_woocommerce_currency();
 
+		// @phpstan-ignore-next-line
 		$this->extend = StoreApi::container()->get( ExtendSchema::class );
 
 		// Call parent constructor.
@@ -813,7 +814,11 @@ final class WooCommerce extends AbstractEcommerce {
 						$discount = $discount + $item['subtotal_tax'] - $item['total_tax'];
 					}
 
-					$discount = $discount / $item['quantity'];
+					if ( isset( $item['quantity'] ) && $item['quantity'] > 0 ) {
+						$discount = $discount / $item['quantity'];
+					} else {
+						$discount = 0;
+					}
 				}
 			}
 		}
@@ -1027,28 +1032,11 @@ final class WooCommerce extends AbstractEcommerce {
 			'remove_from_cart'
 		);
 
-		if ( class_exists( 'WP_HTML_Tag_Processor' ) ) {
-			$link_html = new \WP_HTML_Tag_Processor( $woocommerce_cart_item_remove_link );
-			$link_html->next_tag();
-			$link_html->set_attribute( 'data-gtmkit_product_data', esc_attr( wp_json_encode( $item_data ) ) );
-			$woocommerce_cart_item_remove_link = $link_html->get_updated_html();
-		} else {
-			$find_href                  = ' href="';
-			$replace_width_product_data = sprintf( ' data-gtmkit_product_data="%s" href="', esc_attr( wp_json_encode( $item_data ) ) );
+		$link_html = new \WP_HTML_Tag_Processor( $woocommerce_cart_item_remove_link );
+		$link_html->next_tag();
+		$link_html->set_attribute( 'data-gtmkit_product_data', esc_attr( wp_json_encode( $item_data ) ) );
 
-			$substring_pos = strpos( $woocommerce_cart_item_remove_link, $find_href );
-
-			if ( $substring_pos !== false ) {
-				$woocommerce_cart_item_remove_link = substr_replace(
-					$woocommerce_cart_item_remove_link,
-					$replace_width_product_data,
-					$substring_pos,
-					strlen( $find_href )
-				);
-			}
-		}
-
-		return $woocommerce_cart_item_remove_link;
+		return $link_html->get_updated_html();
 	}
 
 	/**
@@ -1134,11 +1122,15 @@ final class WooCommerce extends AbstractEcommerce {
 	/**
 	 * Has WooCommerce blocks
 	 *
-	 * @param int $post_id The post ID.
+	 * @param int|null $post_id The post ID.
 	 *
 	 * @return array<int, mixed>
 	 */
-	public function has_woocommerce_blocks( int $post_id ): array {
+	public function has_woocommerce_blocks( ?int $post_id ): array {
+		if ( null === $post_id ) {
+			return [];
+		}
+
 		$post_content = get_the_content( null, false, $post_id );
 
 		$woocommerce_blocks = [];
