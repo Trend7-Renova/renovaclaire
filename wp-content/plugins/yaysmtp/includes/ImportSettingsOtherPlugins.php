@@ -23,6 +23,7 @@ class ImportSettingsOtherPlugins {
 	private function doHooks() {
 		add_action( 'wp_ajax_yaysmtp_close_popup_import_smtp_settings', array( $this, 'closePopupImportSmtpSettings' ) );
 		add_action( 'wp_ajax_yaysmtp_import_smtp_settings', array( $this, 'importSmtpSettings' ) );
+		add_action( 'wp_ajax_yaysmtp_import_smtp_email_logs', array( $this, 'importSmtpEmailLogs' ) );
 		add_action( 'wp_ajax_yaysmtp_export_email_log', array( $this, 'exportEmailLog' ) );
 		// add_action( 'admin_menu', array( $this, 'adminMenuSettings' ) );
 		add_action( 'admin_notices', array( $this, 'popupImportSmtpSettings' ) );
@@ -113,6 +114,37 @@ class ImportSettingsOtherPlugins {
 				wp_send_json_success(
 					array(
 						'mess' => __( 'Import SMTP Settings successful.', 'yay-smtp' ),
+					)
+				);
+			}
+			wp_send_json_error( array( 'mess' => __( 'Please choose a SMTP plugin to import', 'yay-smtp' ) ) );
+
+		} catch ( \Exception $e ) {
+			wp_send_json_error( array( 'mess' => $e->getMessage() ) );
+		}
+	}
+
+	public function importSmtpEmailLogs() {
+		try {
+			Utils::checkNonce();
+			if ( ! empty( $_REQUEST['plugin_name'] ) ) {
+				$pluginName = Utils::saniVal( $_REQUEST['plugin_name'] ); //phpcs:ignore
+
+				if ( 'easywpsmtp' == $pluginName ) {
+					$this->importEmailLogsOfEasyWpSmtp('easywpsmtp');
+				} elseif ( 'wpmailsmtp' == $pluginName ) {
+					$this->importEmailLogsOfWpMailSmtp('wpmailsmtp');
+				} elseif ( 'wpsmtp' == $pluginName ) {
+					$this->importEmailLogsOfWpSmtp('wpsmtp');
+				} elseif ( 'mailbank' == $pluginName ) {
+					$this->importEmailLogsOfMailBank('mailbank');
+				} elseif ( 'postsmtp' == $pluginName ) {
+					$this->importEmailLogsOfPostSmtp('postsmtp');
+				}
+
+				wp_send_json_success(
+					array(
+						'mess' => __( 'Import email logs successful.', 'yay-smtp' ),
 					)
 				);
 			}
@@ -267,40 +299,164 @@ class ImportSettingsOtherPlugins {
 
 	// Easy Wp Mail
 	public function importSettingsOfEasyWpSmtp() {
-		$esyWpSmtpSettings = get_option( 'swpsmtp_options', array() );
-		if ( ! empty( $esyWpSmtpSettings ) ) {
-			Utils::setYaySmtpSetting( 'currentMailer', 'smtp' );
-			if ( ! empty( $esyWpSmtpSettings['from_email_field'] ) ) {
-				Utils::setYaySmtpSetting( 'fromEmail', $esyWpSmtpSettings['from_email_field'] );
-			}
-			if ( ! empty( $esyWpSmtpSettings['from_name_field'] ) ) {
-				Utils::setYaySmtpSetting( 'fromName', $esyWpSmtpSettings['from_name_field'] );
-			}
-			if ( isset( $esyWpSmtpSettings['force_from_name_replace'] ) ) {
-				$forceFromNameReplace = $esyWpSmtpSettings['force_from_name_replace'];
-				if ( $forceFromNameReplace ) {
-					Utils::setYaySmtpSetting( 'forceFromName', '1' );
-				} else {
-					Utils::setYaySmtpSetting( 'forceFromName', '0' );
-				}
-			}
+		$settingAlls = get_option( 'easy_wp_smtp', array() );
+	
+		if ( ! empty( $settingAlls ) ) {
+			
+			// General Settings
+			if ( ! empty( $settingAlls['mail'] ) ) {
+				$generalSetts = $settingAlls['mail'];
 
-			$smtpSettings = $esyWpSmtpSettings['smtp_settings'];
-			if ( ! empty( $smtpSettings ) ) {
-				if ( ! empty( $smtpSettings['host'] ) ) {
-					Utils::setYaySmtpSetting( 'host', $smtpSettings['host'], 'smtp' );
+				if ( ! empty( $generalSetts['mailer'] ) ) {
+					if ( 'outlook' == $generalSetts['mailer'] ) {
+						Utils::setYaySmtpSetting( 'currentMailer', 'outlookms' );
+					} elseif ( 'mail' == $generalSetts['mailer'] ) {
+						Utils::setYaySmtpSetting( 'currentMailer', 'mail' );
+					} elseif ( 'smtpcom' == $generalSetts['mailer'] ) {
+						Utils::setYaySmtpSetting( 'currentMailer', 'smtpcom' );
+					} elseif ( 'sendinblue' == $generalSetts['mailer'] ) {
+						Utils::setYaySmtpSetting( 'currentMailer', 'sendinblue' );
+					} elseif ( 'mailgun' == $generalSetts['mailer'] ) {
+						Utils::setYaySmtpSetting( 'currentMailer', 'mailgun' );
+					} elseif ( 'sendgrid' == $generalSetts['mailer'] ) {
+						Utils::setYaySmtpSetting( 'currentMailer', 'sendgrid' );
+					} elseif ( 'amazonses' == $generalSetts['mailer'] ) {
+						Utils::setYaySmtpSetting( 'currentMailer', 'amazonses' );
+					} elseif ( 'gmail' == $generalSetts['mailer'] ) {
+						Utils::setYaySmtpSetting( 'currentMailer', 'gmail' );
+					} elseif ( 'smtp' == $generalSetts['mailer'] ) {
+						Utils::setYaySmtpSetting( 'currentMailer', 'smtp' );
+					}
 				}
-				if ( ! empty( $smtpSettings['type_encryption'] ) ) {
-					Utils::setYaySmtpSetting( 'encryption', $smtpSettings['type_encryption'], 'smtp' );
+				if ( ! empty( $generalSetts['from_email'] ) ) {
+					Utils::setYaySmtpSetting( 'fromEmail', $generalSetts['from_email'] );
 				}
-				if ( ! empty( $smtpSettings['port'] ) ) {
-					Utils::setYaySmtpSetting( 'port', $smtpSettings['port'], 'smtp' );
+				if ( ! empty( $generalSetts['from_name'] ) ) {
+					Utils::setYaySmtpSetting( 'fromName', $generalSetts['from_name'] );
 				}
-				if ( ! empty( $smtpSettings['autentication'] ) ) {
-					Utils::setYaySmtpSetting( 'auth', $smtpSettings['autentication'], 'smtp' );
+
+				if ( isset( $generalSetts['from_email_force'] ) ) {
+					$forceFromEmail = $generalSetts['from_email_force'];
+					if ( $forceFromEmail ) {
+						Utils::setYaySmtpSetting( 'forceFromEmail', '1' );
+					} else {
+						Utils::setYaySmtpSetting( 'forceFromEmail', '0' );
+					}
 				}
-				if ( ! empty( $smtpSettings['username'] ) ) {
-					Utils::setYaySmtpSetting( 'user', $smtpSettings['username'], 'smtp' );
+				if ( isset( $generalSetts['from_name_force'] ) ) {
+					$forceFromName = $generalSetts['from_name_force'];
+					if ( $forceFromName ) {
+						Utils::setYaySmtpSetting( 'forceFromName', '1' );
+					} else {
+						Utils::setYaySmtpSetting( 'forceFromName', '0' );
+					}
+				}
+			}
+			// Other SMTP Settings
+			if ( ! empty( $settingAlls['smtp'] ) ) {
+				$smtpSetts = $settingAlls['smtp'];
+
+				if ( ! empty( $smtpSetts['host'] ) ) {
+					Utils::setYaySmtpSetting( 'host', $smtpSetts['host'], 'smtp' );
+				}
+				if ( ! empty( $smtpSetts['encryption'] ) ) {
+					if ( 'ssl' == $smtpSetts['encryption'] ) {
+						Utils::setYaySmtpSetting( 'encryption', 'ssl', 'smtp' );
+					} elseif ( 'tls' == $smtpSetts['encryption'] ) {
+						Utils::setYaySmtpSetting( 'encryption', 'tls', 'smtp' );
+					} else {
+						Utils::setYaySmtpSetting( 'encryption', '', 'smtp' );
+					}
+				}
+				if ( ! empty( $smtpSetts['port'] ) ) {
+					Utils::setYaySmtpSetting( 'port', $smtpSetts['port'], 'smtp' );
+				}
+				if ( isset( $smtpSetts['auth'] ) ) {
+					if ( $smtpSetts['auth'] ) {
+						Utils::setYaySmtpSetting( 'auth', 'yes', 'smtp' );
+					} else {
+						Utils::setYaySmtpSetting( 'auth', 'no', 'smtp' );
+					}
+				}
+				if ( ! empty( $smtpSetts['user'] ) ) {
+					Utils::setYaySmtpSetting( 'user', $smtpSetts['user'], 'smtp' );
+				}
+			}
+			// Sendgrid Settings
+			if ( ! empty( $settingAlls['sendgrid'] ) ) {
+				$sendgridSetts = $settingAlls['sendgrid'];
+
+				if ( ! empty( $sendgridSetts['api_key'] ) ) {
+					Utils::setYaySmtpSetting( 'api_key', $sendgridSetts['api_key'], 'sendgrid' );
+				}
+			}
+			// SMTPCom Settings
+			if ( ! empty( $settingAlls['smtpcom'] ) ) {
+				$smtpcomSetts = $settingAlls['smtpcom'];
+
+				if ( ! empty( $smtpcomSetts['api_key'] ) ) {
+					Utils::setYaySmtpSetting( 'api_key', $smtpcomSetts['api_key'], 'smtpcom' );
+				}
+				if ( ! empty( $smtpcomSetts['channel'] ) ) {
+					Utils::setYaySmtpSetting( 'sender', $smtpcomSetts['channel'], 'smtpcom' );
+				}
+			}
+			// Sendinblue Settings
+			if ( ! empty( $settingAlls['sendinblue'] ) ) {
+				$sendinblueSetts = $settingAlls['sendinblue'];
+
+				if ( ! empty( $sendinblueSetts['api_key'] ) ) {
+					Utils::setYaySmtpSetting( 'api_key', $sendinblueSetts['api_key'], 'sendinblue' );
+				}
+			}
+			// Mailgun Settings
+			if ( ! empty( $settingAlls['mailgun'] ) ) {
+				$mailgunSetts = $settingAlls['mailgun'];
+
+				if ( ! empty( $mailgunSetts['api_key'] ) ) {
+					Utils::setYaySmtpSetting( 'api_key', $mailgunSetts['api_key'], 'mailgun' );
+				}
+				if ( ! empty( $mailgunSetts['domain'] ) ) {
+					Utils::setYaySmtpSetting( 'domain', $mailgunSetts['domain'], 'mailgun' );
+				}
+				if ( ! empty( $mailgunSetts['region'] ) ) {
+					Utils::setYaySmtpSetting( 'region', $mailgunSetts['region'], 'mailgun' );
+				}
+			}
+			// Amazon Settings
+			if ( ! empty( $settingAlls['amazonses'] ) ) {
+				$amazonsesSetts = $settingAlls['amazonses'];
+
+				if ( ! empty( $amazonsesSetts['client_id'] ) ) {
+					Utils::setYaySmtpSetting( 'access_key_id', $amazonsesSetts['client_id'], 'amazonses' );
+				}
+				if ( ! empty( $amazonsesSetts['client_secret'] ) ) {
+					Utils::setYaySmtpSetting( 'secret_access_key', $amazonsesSetts['client_secret'], 'amazonses' );
+				}
+				if ( ! empty( $amazonsesSetts['region'] ) ) {
+					Utils::setYaySmtpSetting( 'region', $amazonsesSetts['region'], 'amazonses' );
+				}
+			}
+			// Gmail Settings
+			if ( ! empty( $settingAlls['gmail'] ) ) {
+				$gmailSetts = $settingAlls['gmail'];
+
+				if ( ! empty( $gmailSetts['client_id'] ) ) {
+					Utils::setYaySmtpSetting( 'client_id', $gmailSetts['client_id'], 'gmail' );
+				}
+				if ( ! empty( $gmailSetts['client_secret'] ) ) {
+					Utils::setYaySmtpSetting( 'client_secret', $gmailSetts['client_secret'], 'gmail' );
+				}
+			}
+			// Outlook Settings
+			if ( ! empty( $settingAlls['outlook'] ) ) {
+				$outlookSetts = $settingAlls['outlook'];
+
+				if ( ! empty( $outlookSetts['client_id'] ) ) {
+					Utils::setYaySmtpSetting( 'client_id', $outlookSetts['client_id'], 'outlookms' );
+				}
+				if ( ! empty( $outlookSetts['client_secret'] ) ) {
+					Utils::setYaySmtpSetting( 'client_secret', $outlookSetts['client_secret'], 'outlookms' );
 				}
 			}
 		}
@@ -811,6 +967,294 @@ class ImportSettingsOtherPlugins {
 			} else {
 				Utils::setYaySmtpSetting( 'region', 'US', 'mailgun' );
 			}
+		}
+	}
+
+	// Import email logs - Wp Mail SMTP
+	public function importEmailLogsOfWpMailSmtp($plugin='') {
+		global $wpdb;
+		$tableLogExist = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'wpmailsmtp_emails_log"');
+		if( ! empty( $tableLogExist ) ) {
+			$mailerList  = Utils::getAllMailer();
+			$sqlRepare   = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}wpmailsmtp_emails_log" );
+			$resultQuery = $wpdb->get_results( $sqlRepare );
+
+			if( !empty($resultQuery) ) {
+				foreach ( $resultQuery as $result ) {
+					$migrateLogId = intval($result->id);
+					$emailFrom = Utils::getPeopleOfWpMailSmtp('from', $result->people);
+					$emailTo   = Utils::getPeopleOfWpMailSmtp('to', $result->people);
+					
+					$mailer = $result->mailer;
+					if ( 'outlook' == $mailer ) {
+						$mailer = 'outlookms';
+					} elseif ( 'mail' == $mailer ) {
+						$mailer = 'mail';
+					} elseif ( 'smtpcom' == $mailer ) {
+						$mailer = 'smtpcom';
+					} elseif ( 'sendinblue' == $mailer ) {
+						$mailer = 'sendinblue';
+					} elseif ( 'mailgun' == $mailer ) {
+						$mailer = 'mailgun';
+					} elseif ( 'sendgrid' == $mailer ) {
+						$mailer = 'sendgrid';
+					} elseif ( 'amazonses' == $mailer ) {
+						$mailer = 'amazonses';
+					} elseif ( 'gmail' == $mailer ) {
+						$mailer = 'gmail';
+					} elseif ( 'zoho' == $mailer ) {
+						$mailer = 'zoho';
+					} elseif ( 'smtp' == $mailer ) {
+						$mailer = 'smtp';
+					}
+	
+					// Insert to yaysmtp_email_logs table
+					$content = [
+						'subject'      => wp_kses_post( $result->subject ),
+						'email_from'   => $emailFrom,
+						'email_to'     => maybe_serialize($emailTo), 
+						'mailer'       => !empty($mailerList[$mailer]) ? $mailerList[$mailer] : $mailer,
+						'date_time'    => $result->date_sent,
+						'status'       => intval($result->status) !== 0 ? 1 : 0, // 0: false, 1: true,
+						'content_type' => !empty($result->content_html) ? 'text/html' : 'text/plain',
+						'body_content' => !empty($result->content_html) ? maybe_serialize($result->content_html) : maybe_serialize($result->content_plain),
+						'reason_error' => $result->error_text,
+						'root_name'    => $result->initiator_name
+					];
+					$wpdb->insert( $wpdb->prefix . 'yaysmtp_email_logs', $content );
+					$log_id = $wpdb->insert_id;
+					
+					$tableEmailTrackingEventsExist = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'wpmailsmtp_email_tracking_events"');
+					if( $log_id && !empty( $tableEmailTrackingEventsExist ) ) {
+						// Insert to yaysmtp_event_email_clicked_link table
+						$sqlRepareC = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}wpmailsmtp_email_tracking_events WHERE email_log_id = %d AND event_type=%s", $migrateLogId, 'click-link');
+						$resultQueryC = $wpdb->get_row( $sqlRepareC );
+						if( !empty( $resultQueryC )){
+							$dataEmailClickedLink = [
+								'log_id'    => intval( $log_id ),
+								'url'       => '',
+								'count'     => 1,
+								'date_time' => $resultQueryC->date_created
+							];
+							$wpdb->insert( $wpdb->prefix . 'yaysmtp_event_email_clicked_link', $dataEmailClickedLink, [ '%d', '%s', '%d', '%s' ] );
+						}
+	
+						// Insert to wp_yaysmtp_event_email_opened table
+						$sqlRepareO = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}wpmailsmtp_email_tracking_events WHERE email_log_id = %d AND event_type=%s", $migrateLogId, 'open-email');
+						$resultQueryO = $wpdb->get_row( $sqlRepareO );
+						if( !empty( $resultQueryO )){
+							$dataEmailOpened = [
+								'log_id' 	=> intval( $log_id ),
+								'count'     => 1,
+								'date_time' => $resultQueryO->date_created
+							];
+					
+							$wpdb->insert( $wpdb->prefix . 'yaysmtp_event_email_opened', $dataEmailOpened, array( '%d', '%d', '%s' ) );
+						}
+					}
+				}
+
+				Utils::setImporttedLogPlugin($plugin);
+			}
+			
+		}
+	}
+
+	// Import email logs - WP SMTP
+	public function importEmailLogsOfWpSmtp($plugin='') { 
+		global $wpdb;
+		$tableLogExist = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'wpsmtp_logs"');
+		if( ! empty( $tableLogExist ) ) {
+			$mailerList = Utils::getAllMailer();
+			$sqlRepare   = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}wpsmtp_logs" );
+			$resultQuery = $wpdb->get_results( $sqlRepare );
+
+			if( !empty($resultQuery) ) {
+				foreach ( $resultQuery as $result ) {
+					$emailTo = is_array( maybe_unserialize($result->to) ) ? maybe_unserialize($result->to) : [maybe_unserialize($result->to)];
+					// Insert to yaysmtp_email_logs table
+					$content = [
+						'subject'      => wp_kses_post( $result->subject ),
+						'email_from'   => '',
+						'email_to'     => maybe_serialize($emailTo), 
+						'mailer'       => $mailerList['smtp'],
+						'date_time'    => $result->timestamp,
+						'status'       => !empty($result->error) ? 0 : 1, // 0: false, 1: true,
+						'content_type' => 'text/html',
+						'body_content' => !empty($result->message) ? maybe_serialize($result->message) : '',
+						'reason_error' => !empty($result->error) ? $result->error : '',
+						'root_name'    => ''
+					];
+					$wpdb->insert( $wpdb->prefix . 'yaysmtp_email_logs', $content );
+				}
+
+				Utils::setImporttedLogPlugin($plugin);
+			}
+			
+		}
+	}
+
+	// Import email logs - WP SMTP
+	public function importEmailLogsOfPostSmtp($plugin='') { 
+		global $wpdb;
+		$tableLogExist = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'post_smtp_logs"');
+		if( ! empty( $tableLogExist ) ) {
+			$mailerList = Utils::getAllMailer();
+			$sqlRepare   = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}post_smtp_logs" );
+			$resultQuery = $wpdb->get_results( $sqlRepare );
+
+			if( !empty($resultQuery) ) {
+				foreach ( $resultQuery as $result ) {
+					$emailTo = is_array( maybe_unserialize($result->original_to) ) ? maybe_unserialize($result->original_to) : [maybe_unserialize($result->original_to)];
+					
+					$mailer = !empty($result->transport_uri) ? $result->transport_uri : '';
+					
+					// Insert to yaysmtp_email_logs table
+					$contentType = str_contains($result->original_headers, 'text/html') ? 'text/html' : 'text/plain';
+
+					$content = [
+						'subject'      => wp_kses_post($result->original_subject),
+						'email_from'   => Utils::getEmailFromString($result->from_header),
+						'email_to'     => maybe_serialize($emailTo), 
+						'mailer'       => !empty($mailerList[$mailer]) ? $mailerList[$mailer] : $mailer,
+						'date_time'    => gmdate('Y-m-d H:i:s', $result->time),
+						'status'       => intval($result->success) !== 0 ? 1 : 0, // 0: false, 1: true,
+						'content_type' => $contentType,
+						'body_content' => !empty($result->original_message) ? maybe_serialize($result->original_message) : '',
+						'reason_error' => intval($result->success) === 1 ? "" : $result->success,
+						'root_name'    => ''
+					];
+					$wpdb->insert( $wpdb->prefix . 'yaysmtp_email_logs', $content );
+				}
+
+				Utils::setImporttedLogPlugin($plugin);
+			}
+			
+		}
+	}
+
+	// Import email logs - Mail Bank
+	public function importEmailLogsOfMailBank($plugin='') { 
+		global $wpdb;
+
+		$tableLogExist = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'mail_bank_logs"');
+		if( ! empty( $tableLogExist ) ) {
+			$mailerList = Utils::getAllMailer();
+			$sqlRepare   = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mail_bank_logs" );
+			$resultQuery = $wpdb->get_results( $sqlRepare );
+
+			if( !empty($resultQuery) ) {
+				foreach ( $resultQuery as $result ) {
+					$emailTo = Utils::getEmailFromString($result->email_to, false);
+					$mailer  = 'smtp';
+
+					// Insert to yaysmtp_email_logs table
+					$content = [
+						'subject'      => wp_kses_post($result->subject),
+						'email_from'   => $result->sender_email,
+						'email_to'     => maybe_serialize($emailTo), 
+						'mailer'       => $mailerList[$mailer],
+						'date_time'    => gmdate('Y-m-d H:i:s', $result->timestamp),
+						'status'       => $result->status === 'Sent' ? 1 : 0, // 0: false, 1: true,
+						'content_type' => 'text/html',
+						'body_content' => !empty($result->content) ? maybe_serialize($result->content) : '',
+						'reason_error' => '',
+						'root_name'    => ''
+					];
+					$wpdb->insert( $wpdb->prefix . 'yaysmtp_email_logs', $content );
+				}
+
+				Utils::setImporttedLogPlugin($plugin);
+			}
+			
+		}
+	}
+
+	// Import email logs - Easy WP SMTP
+	public function importEmailLogsOfEasyWpSmtp($plugin='') {
+		global $wpdb;
+		$tableLogExist = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'easywpsmtp_emails_log"');
+		if( ! empty( $tableLogExist ) ) {
+			$mailerList  = Utils::getAllMailer();
+			$sqlRepare   = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}easywpsmtp_emails_log" );
+			$resultQuery = $wpdb->get_results( $sqlRepare );
+
+			if( !empty($resultQuery) ) {
+				foreach ( $resultQuery as $result ) {
+					$migrateLogId = intval($result->id);
+					$emailFrom = Utils::getPeopleOfWpMailSmtp('from', $result->people);
+					$emailTo   = Utils::getPeopleOfWpMailSmtp('to', $result->people);
+					
+					$mailer = $result->mailer;
+					if ( 'outlook' == $mailer ) {
+						$mailer = 'outlookms';
+					} elseif ( 'mail' == $mailer ) {
+						$mailer = 'mail';
+					} elseif ( 'smtpcom' == $mailer ) {
+						$mailer = 'smtpcom';
+					} elseif ( 'sendinblue' == $mailer ) {
+						$mailer = 'sendinblue';
+					} elseif ( 'mailgun' == $mailer ) {
+						$mailer = 'mailgun';
+					} elseif ( 'sendgrid' == $mailer ) {
+						$mailer = 'sendgrid';
+					} elseif ( 'amazonses' == $mailer ) {
+						$mailer = 'amazonses';
+					} elseif ( 'gmail' == $mailer ) {
+						$mailer = 'gmail';
+					} elseif ( 'smtp' == $mailer ) {
+						$mailer = 'smtp';
+					}
+	
+					// Insert to yaysmtp_email_logs table
+					$content = [
+						'subject'      => wp_kses_post( $result->subject ),
+						'email_from'   => $emailFrom,
+						'email_to'     => maybe_serialize($emailTo), 
+						'mailer'       => !empty($mailerList[$mailer]) ? $mailerList[$mailer] : $mailer,
+						'date_time'    => $result->date_sent,
+						'status'       => intval($result->status) !== 0 ? 1 : 0, // 0: false, 1: true,
+						'content_type' => !empty($result->content_html) ? 'text/html' : 'text/plain',
+						'body_content' => !empty($result->content_html) ? maybe_serialize($result->content_html) : maybe_serialize($result->content_plain),
+						'reason_error' => $result->error_text,
+						'root_name'    => $result->initiator_name
+					];
+					$wpdb->insert( $wpdb->prefix . 'yaysmtp_email_logs', $content );
+					$log_id = $wpdb->insert_id;
+					
+					$tableEmailTrackingEventsExist = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'easywpsmtp_email_tracking_events"');
+					if( $log_id && !empty( $tableEmailTrackingEventsExist ) ) {
+						// Insert to yaysmtp_event_email_clicked_link table
+						$sqlRepareC = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}easywpsmtp_email_tracking_events WHERE email_log_id = %d AND event_type=%s", $migrateLogId, 'click-link');
+						$resultQueryC = $wpdb->get_row( $sqlRepareC );
+						if( !empty( $resultQueryC )){
+							$dataEmailClickedLink = [
+								'log_id'    => intval( $log_id ),
+								'url'       => '',
+								'count'     => 1,
+								'date_time' => $resultQueryC->date_created
+							];
+							$wpdb->insert( $wpdb->prefix . 'yaysmtp_event_email_clicked_link', $dataEmailClickedLink, [ '%d', '%s', '%d', '%s' ] );
+						}
+	
+						// Insert to wp_yaysmtp_event_email_opened table
+						$sqlRepareO = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}easywpsmtp_email_tracking_events WHERE email_log_id = %d AND event_type=%s", $migrateLogId, 'open-email');
+						$resultQueryO = $wpdb->get_row( $sqlRepareO );
+						if( !empty( $resultQueryO )){
+							$dataEmailOpened = [
+								'log_id' 	=> intval( $log_id ),
+								'count'     => 1,
+								'date_time' => $resultQueryO->date_created
+							];
+					
+							$wpdb->insert( $wpdb->prefix . 'yaysmtp_event_email_opened', $dataEmailOpened, array( '%d', '%d', '%s' ) );
+						}
+					}
+				}
+
+				Utils::setImporttedLogPlugin($plugin);
+			}
+			
 		}
 	}
 }

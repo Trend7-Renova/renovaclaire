@@ -60,7 +60,17 @@ class PhpMailerExtends extends \PHPMailer\PHPMailer\PHPMailer {
 						$updateData['date_time'] = current_time( 'mysql', true );
 						$updateData['status']    = 1;
 						Utils::updateEmailLog( $updateData );
-					} 
+					} else if ( false === $result && ! empty( $logId )) {
+						$error_mess = 'This error may be caused by: Incorrect From email, SMTP Host, Post, Username or Password.';
+						if ( ! empty( $this->ErrorInfo ) ) {
+							$error_mess = $this->ErrorInfo;
+						}
+						$extra_info               = Utils::getExtraInfo( $logId );
+						$extra_info['error_mess'] = $error_mess;
+						$updateData['extra_info'] = wp_json_encode($extra_info);
+						$updateData['id']         = $logId;
+						Utils::updateEmailLog( $updateData );
+					}
 	
 					return $result;
 				} catch ( \Exception $exc ) {
@@ -88,7 +98,17 @@ class PhpMailerExtends extends \PHPMailer\PHPMailer\PHPMailer {
 						$updateData['date_time'] = current_time( 'mysql', true );
 						$updateData['status']    = 1;
 						Utils::updateEmailLog( $updateData );
-					} 
+					} else if ( false === $result && ! empty( $logId )) {
+						$error_mess = 'This error may be caused by: Incorrect From email, SMTP Host, Post, Username or Password.';
+						if ( ! empty( $this->ErrorInfo ) ) {
+							$error_mess = $this->ErrorInfo;
+						}
+						$extra_info               = Utils::getExtraInfo( $logId );
+						$extra_info['error_mess'] = $error_mess;
+						$updateData['extra_info'] = wp_json_encode($extra_info);
+						$updateData['id']         = $logId;
+						Utils::updateEmailLog( $updateData );
+					}
 
 					return $result;
 				} catch ( \Exception $exc ) {

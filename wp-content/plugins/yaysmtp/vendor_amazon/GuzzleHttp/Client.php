@@ -303,7 +303,7 @@ class Client implements \YaySMTP\Aws3\GuzzleHttp\ClientInterface
         if (isset($options['query'])) {
             $value = $options['query'];
             if (is_array($value)) {
-                $value = http_build_query($value, null, '&', PHP_QUERY_RFC3986);
+                $value = http_build_query($value, '', '&', PHP_QUERY_RFC3986);
             }
             if (!is_string($value)) {
                 throw new \InvalidArgumentException('query must be a string or array');

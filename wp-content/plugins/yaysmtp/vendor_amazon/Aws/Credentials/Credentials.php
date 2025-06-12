@@ -58,11 +58,19 @@ class Credentials implements \YaySMTP\Aws3\Aws\Credentials\CredentialsInterface,
     }
     public function serialize()
     {
-        return json_encode($this->toArray());
+        return \json_encode($this->__serialize());
     }
     public function unserialize($serialized)
     {
-        $data = json_decode($serialized, true);
+        $data = \json_decode($serialized, \true);
+        $this->__unserialize($data);
+    }
+    public function __serialize()
+    {
+        return $this->toArray();
+    }
+    public function __unserialize($data)
+    {
         $this->key = $data['key'];
         $this->secret = $data['secret'];
         $this->token = $data['token'];

@@ -2,9 +2,9 @@
 /**
  * Plugin Name: Crisp
  * Plugin URI: http://wordpress.org/plugins/crisp/
- * Description: Crisp is a Livechat plugin
+ * Description: Crisp Live Chat - Crisp provides a comprehensive live chat widget solution with an AI chatbot, CRM, help center, and more. Seamlessly integrated with WordPress and WooCommerce, it automatically displays the names and emails of logged-in visitors. Create a free account or log in with an existing one to get started.
  * Author: Crisp
- * Version: 0.44
+ * Version: 0.48
  * Author URI: https://crisp.chat
  * Text Domain: crisp
 */
@@ -157,8 +157,8 @@ function crisp_sync_wordpress_user() {
 
   $website_verify = get_option("website_verify");
 
-  $email = $current_user->user_email;
-  $nickname = $current_user->display_name;
+  $email = esc_js($current_user->user_email);
+  $nickname = esc_js($current_user->display_name);
 
   if (!empty($email) && empty($website_verify)) {
     $output .= "\$crisp.push(['set', 'user:email', '" . $email . "']);";
@@ -197,10 +197,10 @@ function crisp_sync_woocommerce_customer() {
   $nickname = "";
 
   if (isset($customer["first_name"]) && !empty($customer["first_name"])) {
-    $nickname = $customer["first_name"];
+    $nickname = esc_js($customer["first_name"]);
   }
   if (isset($customer["last_name"]) && !empty($customer["last_name"])) {
-    $nickname .= " ".$customer["last_name"];
+    $nickname .= " ".(esc_js($customer["last_name"]));
   }
 
   if (!empty($nickname)) {
@@ -226,7 +226,7 @@ function crisp_sync_woocommerce_customer() {
 
   foreach ($data_keys as $key) {
     if (isset($customer[$key]) && !empty($customer[$key])) {
-      $data[] = "['". $key . "', '" . $customer[$key] . "']";
+      $data[] = "['". esc_js($key) . "', '" . esc_js($customer[$key]) . "']";
     }
   }
 
@@ -261,7 +261,9 @@ function crisp_enqueue_script() {
   $output .= crisp_sync_wordpress_user();
   $output .= crisp_sync_woocommerce_customer();
 
-  wp_enqueue_script("crisp", "https://client.crisp.chat/l.js", array(), "", true);
+  $cache_buster = date("Ymd");
+
+  wp_enqueue_script("crisp", "https://client.crisp.chat/l.js", array(), $cache_buster, true);
   wp_add_inline_script("crisp", $output, "before");
 }
 

@@ -41,7 +41,7 @@ class SendinblueController {
 
 		// create log - start
 		$dataLogsDB           = Utils::prepareDataLogInit( $phpmailer );
-		$dataLogsDB['mailer'] = 'Sendinblue';
+		$dataLogsDB['mailer'] = 'Brevo';
 		$this->log_id 		  = Utils::insertEmailLogs( $dataLogsDB );
 
 		do_action('yaysmtp_send_before', $phpmailer, $this->log_id);
@@ -221,8 +221,18 @@ class SendinblueController {
 			if ( ! in_array( $code, $codeSucArrs ) && ! empty( $resp['response'] ) ) {
 				$error   = $resp['response'];
 				$message = '';
+				$message_extra = '';
 				if ( ! empty( $error ) ) {
 					$message = '[' . sanitize_key( $error['code'] ) . ']: ' . $error['message'];
+
+					if ( ! empty( $resp['body'] ) ) { // string or json string
+						$body_error = json_decode( $resp['body'], true );
+						if ( $body_error && ! empty( $body_error['message'] ) ) { 
+							$message_extra = '[' . sanitize_key( $error['code'] ) . ']: ' . $body_error['message'];
+						} else {						
+							$message_extra = '[' . sanitize_key( $error['code'] ) . ']: ' . $resp['body'];		
+						}
+					}
 				}
 
 				if ( $this->use_fallback_smtp ) {
@@ -230,7 +240,7 @@ class SendinblueController {
 					LogErrors::setErrFallback( $message );
 				} else {
 					LogErrors::clearErr();
-					LogErrors::setErr( 'Mailer: Sendinblue' );
+					LogErrors::setErr( 'Mailer: Brevo' );
 					LogErrors::setErr( $message );
 				}
 
@@ -238,6 +248,13 @@ class SendinblueController {
 					$updateData['id']           = $this->log_id;
 					$updateData['date_time']    = current_time( 'mysql', true );
 					$updateData['reason_error'] = $message;
+
+					if ( ! empty( $message_extra ) ) {
+						$extra_info               = Utils::getExtraInfo( $this->log_id );
+						$extra_info['error_mess'] = $message_extra;		
+						$updateData['extra_info'] = wp_json_encode($extra_info);
+					}
+
 					Utils::updateEmailLog( $updateData );
 				}
 			} else {

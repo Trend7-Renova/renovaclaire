@@ -175,6 +175,28 @@ class SparkPostController {
 				$this->body['content']['reply_to'] = implode( ',', $dataReplyTo );
 			}
 		}
+
+		// Set attachments.
+		$attachments = $phpmailer->getAttachments();
+		if ( ! empty( $attachments ) ) { 
+			$attachData = [];
+
+			foreach ( $attachments as $attach ) {
+				if ( ! empty( $attach ) ) {
+					$fileType = str_replace( ';', '', trim( $attach[4] ) );
+					$attachData[] = [
+						'name' => $attach[2],
+						'data' => base64_encode( file_get_contents( $attach[0] ) ), 
+						'type' => $fileType
+					];
+				}
+
+			}
+	
+			if ( ! empty( $attachData ) ) {
+				$this->body['content']['attachments'] = $attachData;
+			}
+		}
 	}
 
 	public function send() {
@@ -230,6 +252,13 @@ class SparkPostController {
 				$updateData['id']           = $this->log_id;
 				$updateData['date_time']    = current_time( 'mysql', true );
 				$updateData['reason_error'] = $message;
+
+				if ( ! empty( $message ) ) {
+					$extra_info               = Utils::getExtraInfo( $this->log_id );
+					$extra_info['error_mess'] = $message;		
+					$updateData['extra_info'] = wp_json_encode($extra_info);
+				}
+
 				Utils::updateEmailLog( $updateData );
 			}
 

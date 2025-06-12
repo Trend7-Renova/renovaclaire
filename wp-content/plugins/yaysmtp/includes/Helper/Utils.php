@@ -22,28 +22,12 @@ class Utils {
 		return sanitize_text_field( $val );
 	}
 
-	public static function saniValArray( $array ) {
-		$newArray = array();
-		foreach ( $array as $key => $val ) { // level 1
-			if ( is_array( $val ) ) {
-				foreach ( $val as $key_1 => $val_1 ) { // level 2
-					if ( is_array( $val_1 ) ) {
-						foreach ( $val_1 as $key_2 => $val_2 ) { // level 3
-							$newArray[ $key ][ $key_1 ][ $key_2 ] = ( isset( $array[ $key ][ $key_1 ][ $key_2 ] ) ) ? sanitize_text_field( $val_2 ) : '';
-						}
-					} else {
-						if ('pass' === $key_1) {
-							$newArray[ $key ][ $key_1 ] = ( isset( $array[ $key ][ $key_1 ] ) ) ? $val_1 : '';
-						} else {
-							$newArray[ $key ][ $key_1 ] = ( isset( $array[ $key ][ $key_1 ] ) ) ? sanitize_text_field( $val_1 ) : '';
-						}
-					}
-				}
-			} else {
-				$newArray[ $key ] = ( isset( $array[ $key ] ) ) ? sanitize_text_field( $val ) : '';
-			}
+	public static function saniValArray( $value ) {
+		if ( is_array( $value ) ) {
+			return array_map( 'self::saniValArray', $value );
+		} else {
+			return sanitize_text_field( wp_unslash($value) );
 		}
-		return $newArray;
 	}
 
 	public static function isJson( $string ) {
@@ -51,7 +35,7 @@ class Utils {
 	}
 
 	public static function checkNonce() {
-		$nonce = sanitize_text_field( $_POST['nonce'] ); //phpcs:ignore
+		$nonce = sanitize_text_field( wp_unslash( isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ) );
 		if ( ! wp_verify_nonce( $nonce, 'ajax-nonce' ) ) {
 			wp_send_json_error( array( 'mess' => 'Nonce is invalid' ) );
 		}
@@ -290,6 +274,32 @@ class Utils {
 		return $rst;
 	}
 
+	public static function getImportedLogPluginSetting( $forceChildSite = false ) {
+		$rst = array();
+
+		$multisite = self::getMainSiteMultisiteSetting();
+		if ( 'yes' === $multisite && ! $forceChildSite ) {
+			$setting = get_blog_option( get_main_site_id(), 'yaysmtp_imported_log_plugin_trace_settings', array() );
+			if ( ! empty( $setting ) && is_array( $setting ) ) {
+				$rst = $setting;
+			}
+			return $rst;
+		}
+
+		$setting = get_option( 'yaysmtp_imported_log_plugin_trace_settings' );
+		if ( ! empty( $setting ) && is_array( $setting ) ) {
+			$rst = $setting;
+		}
+		return $rst;
+	}
+
+	// Save plugin that have imported email logs
+	public static function setImporttedLogPlugin( $plugin ) {
+		$setting            = self::getImportedLogPluginSetting();
+		$setting[ $plugin ] = 1;
+		update_option( 'yaysmtp_imported_log_plugin_trace_settings', $setting );
+	}
+
 	public static function setYaySmtpSetting( $key, $value = '', $mailer = '' ) {
 		if ( empty( $mailer ) && ! empty( $key ) ) { // Update: fromEmail / fromName / currentMailer. Ex: ['fromEmail' => 'admin']
 			$setting         = self::getYaySmtpSetting();
@@ -453,7 +463,7 @@ class Utils {
 
 			if ( 'basic_inf' !== $infTypeSetting ) {
 				$content['content_type'] = $data['content_type'];
-				$content['body_content'] = maybe_serialize( $data['body_content'] );
+				$content['body_content'] = self::wpKses( maybe_serialize( $data['body_content'] ));
 			}
 
 			// Get email source ( what plugin, theme, or wp core ? )
@@ -467,6 +477,14 @@ class Utils {
 					} else {
 						$content['root_name'] = '[' . $root . '] - Development Mode';
 					}
+
+					$file_path_line = $filePath . ':' . $data['line'];
+					$content['extra_info'] = wp_json_encode([
+						'source' => [
+							'root_name' => $content['root_name'],
+							'root_path' => $file_path_line
+						]
+					]);
 					break;
 				}
 			}
@@ -489,6 +507,18 @@ class Utils {
 			unset( $data['id'] );
 			$wpdb->update( $tableName, $data, array( 'id' => $logId ) );
 		}
+	}
+
+	public static function getExtraInfo( $log_id = null ) {
+		$extra_info = [];
+		if ( ! empty( $log_id ) ) {
+			global $wpdb;
+			$result_query = $wpdb->get_row( $wpdb->prepare( "Select extra_info FROM {$wpdb->prefix}yaysmtp_email_logs WHERE id = %d", $log_id ) );
+			if ( ! empty( $result_query ) ) { 
+				$extra_info = json_decode( $result_query->extra_info, true );
+			}
+		}
+		return $extra_info;
 	}
 
 	public static function getRoot( $file ) {
@@ -619,34 +649,15 @@ class Utils {
 
 	public static function getMailBankSettingsTable() {
 		global $wpdb;
-		$tablePrefix = $wpdb->prefix;
-		if ( is_multisite() ) {
-			$tableExist = $wpdb->query(
-				'SHOW TABLES LIKE "' . $wpdb->base_prefix . 'mail_bank_meta"'
-			);
-
-			if ( ! empty( $tableExist ) ) {
-				$settings    = $wpdb->get_var(
-					$wpdb->prepare(
-						'SELECT meta_value FROM ' . $wpdb->base_prefix . 'mail_bank_meta WHERE meta_key=%s',
-						'settings'
-					)
-				);
-				  $dataArray = maybe_unserialize( $settings );
-				if ( isset( $dataArray['fetch_settings'] ) && 'network_site' === $dataArray['fetch_settings'] ) {
-						$tablePrefix = $wpdb->base_prefix;
-				}
-			}
-		}
-
+		
 		$result = null;
 		if ( is_multisite() ) {
 			$tableExist2 = $wpdb->query(
-				'SHOW TABLES LIKE "{$wpdb->base_prefix}mail_bank_meta"'
+				'SHOW TABLES LIKE "' . $wpdb->base_prefix . 'mail_bank_meta"'
 			);
 		} else {
 			$tableExist2 = $wpdb->query(
-				'SHOW TABLES LIKE "{$wpdb->prefix}mail_bank_meta"'
+				'SHOW TABLES LIKE "' . $wpdb->prefix . 'mail_bank_meta"'
 			);
 		}
 
@@ -654,7 +665,7 @@ class Utils {
 			if ( ! empty( $tableExist2 ) ) {
 				$result = $wpdb->get_var(
 					$wpdb->prepare(
-						'SELECT meta_value FROM {$wpdb->base_prefix}mail_bank_meta WHERE meta_key=%s',
+						"SELECT meta_value FROM {$wpdb->base_prefix}mail_bank_meta WHERE meta_key=%s",
 						'email_configuration'
 					)
 				);
@@ -663,7 +674,7 @@ class Utils {
 			if ( ! empty( $tableExist2 ) ) {
 				$result = $wpdb->get_var(
 					$wpdb->prepare(
-						'SELECT meta_value FROM {$wpdb->prefix}mail_bank_meta WHERE meta_key=%s',
+						"SELECT meta_value FROM {$wpdb->prefix}mail_bank_meta WHERE meta_key=%s",
 						'email_configuration'
 					)
 				);
@@ -675,26 +686,26 @@ class Utils {
 
 	public static function getYaysmtpImportPlugins() {
 		$yaysmtpImportPlugins = array();
-		$esyWpSmtpSettings    = get_option( 'swpsmtp_options', array() );
+		$esyWpSmtpSettings    = get_option( 'easy_wp_smtp', array() );
 		$wpMailSettings       = get_option( 'wp_mail_smtp', array() );
 		$smtpMailerSettings   = get_option( 'smtp_mailer_options', array() );
 		$wpSmtpsettings       = get_option( 'wp_smtp_options', array() );
 		$mailBankSettings     = self::getMailBankSettingsTable();
 		$postSmtpSettings     = get_option( 'postman_options', array() );
 
-		if ( ! empty( $esyWpSmtpSettings ) ) {
-			$setts = array(
-				'val'   => 'easywpsmtp',
-				'title' => 'Easy WP SMTP',
-				'img'   => 'easywpsmtp.png',
-			);
-			array_push( $yaysmtpImportPlugins, $setts );
-		}
 		if ( ! empty( $wpMailSettings ) ) {
 			$setts = array(
 				'val'   => 'wpmailsmtp',
 				'title' => __( 'WP Mail SMTP', 'yay-smtp' ),
 				'img'   => 'wpmailsmtp.png',
+			);
+			array_push( $yaysmtpImportPlugins, $setts );
+		}
+		if ( ! empty( $esyWpSmtpSettings ) ) {
+			$setts = array(
+				'val'   => 'easywpsmtp',
+				'title' => 'Easy WP SMTP',
+				'img'   => 'easywpsmtp.png',
 			);
 			array_push( $yaysmtpImportPlugins, $setts );
 		}
@@ -732,6 +743,98 @@ class Utils {
 		}
 
 		return $yaysmtpImportPlugins;
+	}
+
+	public static function getEmailLogsImportPlugins() {
+		global $wpdb;
+		$importPlugins = array();
+
+		// WP Mail SMTP
+		$wpMailSmtpSettings = null;
+		$wpMailSmtpExist    = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'wpmailsmtp_emails_log"');
+		if( !empty($wpMailSmtpExist) ) {
+			$wpMailSmtpSettings = $wpdb->get_var(
+				$wpdb->prepare("SELECT id FROM {$wpdb->prefix}wpmailsmtp_emails_log LIMIT 1")
+			);
+		}
+		if ( ! empty( $wpMailSmtpSettings ) ) {
+			$setts = array(
+				'val'   => 'wpmailsmtp',
+				'title' => __( 'WP Mail SMTP', 'yay-smtp' ),
+				'img'   => 'wpmailsmtp.png',
+			);
+			array_push( $importPlugins, $setts );
+		}
+
+		// WP SMTP
+		$wpSmtpSettings = null;
+		$wpSmtpExist    = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'wpsmtp_logs"');
+		if( !empty($wpSmtpExist) ) {
+			$wpSmtpSettings = $wpdb->get_var(
+				$wpdb->prepare("SELECT mail_id FROM {$wpdb->prefix}wpsmtp_logs LIMIT 1")
+			);
+		}
+		if ( ! empty( $wpSmtpSettings ) ) {
+			$setts = array(
+				'val'   => 'wpsmtp',
+				'title' => __( 'WP SMTP', 'yay-smtp' ),
+				'img'   => 'wpsmtp.png',
+			);
+			array_push( $importPlugins, $setts );
+		}
+
+		// Post SMTP
+		$postSmtpSettings = null;
+		$postSmtpExist    = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'post_smtp_logs"');
+		if( !empty($postSmtpExist) ) {
+			$postSmtpSettings = $wpdb->get_var(
+				$wpdb->prepare("SELECT id FROM {$wpdb->prefix}post_smtp_logs LIMIT 1")
+			);
+		}
+		if ( ! empty( $postSmtpSettings ) ) {
+			$setts = array(
+				'val'   => 'postsmtp',
+				'title' => __( 'Post SMTP Mailer', 'yay-smtp' ),
+				'img'   => 'postsmtp.png',
+			);
+			array_push( $importPlugins, $setts );
+		}
+
+		// Mail Bank
+		$mailBankSettings = null;
+		$mailBankExist    = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'mail_bank_logs"');
+		if( !empty($mailBankExist) ) {
+			$mailBankSettings = $wpdb->get_var(
+				$wpdb->prepare("SELECT id FROM {$wpdb->prefix}mail_bank_logs LIMIT 1")
+			);
+		}
+		if ( ! empty( $mailBankSettings ) ) {
+			$setts = array(
+				'val'   => 'mailbank',
+				'title' => __( 'Mail Bank', 'yay-smtp' ),
+				'img'   => 'mailbank.png',
+			);
+			array_push( $importPlugins, $setts );
+		}
+		
+		// Easy WP SMTP
+		$easyWpSmtpSettings = null;
+		$easyWpSmtpExist    = $wpdb->query('SHOW TABLES LIKE "' . $wpdb->prefix . 'easywpsmtp_emails_log"');
+		if( !empty($easyWpSmtpExist) ) {
+			$easyWpSmtpSettings = $wpdb->get_var(
+				$wpdb->prepare("SELECT id FROM {$wpdb->prefix}easywpsmtp_emails_log LIMIT 1")
+			);
+		}
+		if ( ! empty( $easyWpSmtpSettings ) ) {
+			$setts = array(
+				'val'   => 'easywpsmtp',
+				'title' => 'Easy WP SMTP',
+				'img'   => 'easywpsmtp.png',
+			);
+			array_push( $importPlugins, $setts );
+		}
+
+		return $importPlugins;
 	}
 
 	public static function getTemplateHtml( $template_name, $template_path = '' ) {
@@ -1035,7 +1138,7 @@ class Utils {
 
 	public static function getDeleteDatetimeSetting() {
 		$emailLogSetting = self::getYaySmtpEmailLogSetting();
-		$result          = isset( $emailLogSetting ) && isset( $emailLogSetting['email_log_delete_time'] ) ? (int) $emailLogSetting['email_log_delete_time'] : 60;
+		$result          = isset( $emailLogSetting ) && isset( $emailLogSetting['email_log_delete_time'] ) ? (int) $emailLogSetting['email_log_delete_time'] : 0;
 		return $result;
 	}
 
@@ -1044,6 +1147,25 @@ class Utils {
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . $wpdb->prefix . 'yaysmtp_email_logs' ) );
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . $wpdb->prefix . 'yaysmtp_event_email_clicked_link' ) );
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . $wpdb->prefix . 'yaysmtp_event_email_opened' ) );
+	}
+	
+	public static function deleteAllEmailLogsWithCondition( $days_setting = null, $days_param = null ) {
+		global $wpdb;
+		if ( !empty( $days_setting ) && !empty( $days_param ) && ( intval($days_setting) > intval($days_param) ) ) {
+			$period_day_not_delete = intval( $days_param );
+			$current_time_gmt      = current_time( 'mysql', true );
+
+			$datetime_obj = new \DateTime( $current_time_gmt );
+			$datetime_obj->modify( '-' . intval( $period_day_not_delete ) . ' days' );
+			$datetime_not_delete = $datetime_obj->format( 'Y-m-d H:i:s' );
+
+			$wpdb->query( $wpdb->prepare( 
+				"DELETE logs, cl, eo FROM {$wpdb->prefix}yaysmtp_email_logs AS logs
+				LEFT JOIN {$wpdb->prefix}yaysmtp_event_email_clicked_link cl ON logs.id = cl.log_id
+				LEFT JOIN {$wpdb->prefix}yaysmtp_event_email_opened eo ON logs.id = eo.log_id
+				WHERE logs.date_time < %s", $datetime_not_delete
+			));
+		}
 	}
 	
 	public static function getFullUrl() {
@@ -1152,7 +1274,7 @@ class Utils {
 		return array(
 			'mail'       => 'Default',
 			'sendgrid'   => 'SendGrid',
-			'sendinblue' => 'Sendinblue',
+			'sendinblue' => 'Brevo',
 			'amazonses'  => 'Amazon SES',
 			'mailgun'    => 'Mailgun',
 			'smtpcom'    => 'SMTP.com',
@@ -1209,5 +1331,71 @@ class Utils {
 			'tracking_clicked' => esc_html__( 'Clicked', 'yay-smtp' ),
 			'root_name'    	   => esc_html__( 'Generated by', 'yay-smtp' )
 		);
+	}
+
+	public static function getPeopleOfWpMailSmtp( $type = '', $people = null) {
+		$people = self::isJson( $people ) ? json_decode( $people ) : array();
+		$type   = sanitize_key( $type );
+		$rst    = array();
+
+		if ( empty( $type ) ) {
+			$rst = $people;
+		} elseif ( isset( $people->{$type} ) ) {
+			$rst = $people->{$type};
+		}
+
+		return $rst;
+	}
+
+	public static function getEmailFromString( $string='', $only_first_email = true) {
+		$pattern = "/[\._a-zA-Z0-9-]+@[\._a-zA-Z0-9-]+/i";
+		preg_match_all($pattern, $string, $matches);
+		
+		return $only_first_email ? $matches[0][0] : $matches[0];
+	}
+
+	public static function wpKsesAllowedHtml( $cus_attr_tags = [] ) {
+        $allowed_html_tags           = wp_kses_allowed_html( 'post' );
+        $allowed_html_tags['style']  = true;
+        $allowed_html_tags['html']   = [];
+        $allowed_html_tags['header'] = [];
+        $allowed_html_tags['meta']   = [];
+        $allowed_html_attr           = $cus_attr_tags;
+
+        $allowed_html_attr ['charset']                   = true;
+        $allowed_html_attr ['http-equiv']                = true;
+        $allowed_html_attr ['content']                   = true;
+        $allowed_html_attr ['name']                      = true;
+        return array_map(
+            function ( $item ) use ( $allowed_html_attr ) {
+                return is_array( $item ) ? array_merge( $item, $allowed_html_attr ) : $item;
+            },
+            $allowed_html_tags
+        );
+    }
+
+	public static function wpKses( $html ) {
+        // First, decode HTML entities to ensure we catch encoded XSS attempts
+        $html = html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        
+        // Remove any script tags and their content
+        $html = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $html);
+        
+        // Remove any on* attributes that could execute JavaScript
+        $html = preg_replace('/\son\w+="[^"]*"/i', '', $html);
+        $html = preg_replace('/\son\w+=\'[^\']*\'/i', '', $html);
+        
+        $allowed_html = self::wpKsesAllowedHtml();
+        $html = wp_kses($html, $allowed_html);
+       
+        return $html;
+    }
+
+	public static function getHtmlContentTypes() {
+		return [
+			'text/html',
+			'multipart/alternative',
+			'multipart/mixed',
+		];	
 	}
 }

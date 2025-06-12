@@ -6,6 +6,7 @@ use WP_Post;
 use WP_Post_Type;
 use WP_Taxonomy;
 use WP_User;
+use WPSEO_Addon_Manager;
 use WPSEO_Admin_Asset_Manager;
 use WPSEO_Admin_Editor_Specific_Replace_Vars;
 use WPSEO_Admin_Recommended_Replace_Vars;
@@ -59,7 +60,6 @@ class Settings_Integration implements Integration_Interface {
 			'myyoast-oauth',
 			'semrush_tokens',
 			'custom_taxonomy_slugs',
-			'zapier_subscription',
 			'import_cursors',
 			'workouts_data',
 			'configuration_finished_steps',
@@ -93,6 +93,7 @@ class Settings_Integration implements Integration_Interface {
 			'deny_ccbot_crawling',
 			'deny_google_extended_crawling',
 			'deny_gptbot_crawling',
+			'enable_llms_txt',
 		],
 	];
 
@@ -257,10 +258,18 @@ class Settings_Integration implements Integration_Interface {
 
 		// Are we saving the settings?
 		if ( $this->current_page_helper->get_current_admin_page() === 'options.php' ) {
-			// phpcs:disable WordPress.PHP.NoSilencedErrors.Discouraged -- This deprecation will be addressed later.
-			$post_action = \filter_input( \INPUT_POST, 'action', @\FILTER_SANITIZE_STRING );
-			$option_page = \filter_input( \INPUT_POST, 'option_page', @\FILTER_SANITIZE_STRING );
-			// phpcs:enable
+			$post_action = '';
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reason: We are not processing form information.
+			if ( isset( $_POST['action'] ) && \is_string( $_POST['action'] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Reason: We are not processing form information.
+				$post_action = \wp_unslash( $_POST['action'] );
+			}
+			$option_page = '';
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reason: We are not processing form information.
+			if ( isset( $_POST['option_page'] ) && \is_string( $_POST['option_page'] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Reason: We are not processing form information.
+				$option_page = \wp_unslash( $_POST['option_page'] );
+			}
 
 			if ( $post_action === 'update' && $option_page === self::PAGE ) {
 				\add_action( 'admin_init', [ $this, 'register_setting' ] );
@@ -370,7 +379,7 @@ class Settings_Integration implements Integration_Interface {
 		\wp_enqueue_media();
 		$this->asset_manager->enqueue_script( 'new-settings' );
 		$this->asset_manager->enqueue_style( 'new-settings' );
-		if ( \YoastSEO()->classes->get( Promotion_Manager::class )->is( 'black-friday-2023-promotion' ) ) {
+		if ( \YoastSEO()->classes->get( Promotion_Manager::class )->is( 'black-friday-2024-promotion' ) ) {
 			$this->asset_manager->enqueue_style( 'black-friday-banner' );
 		}
 		$this->asset_manager->localize_script( 'new-settings', 'wpseoScriptData', $this->get_script_data() );
@@ -437,6 +446,7 @@ class Settings_Integration implements Integration_Interface {
 			'taxonomies'                     => $transformed_taxonomies,
 			'fallbacks'                      => $this->get_fallbacks(),
 			'showNewContentTypeNotification' => $show_new_content_type_notification,
+			'currentPromotions'              => \YoastSEO()->classes->get( Promotion_Manager::class )->get_current_promotions(),
 		];
 	}
 
@@ -453,8 +463,21 @@ class Settings_Integration implements Integration_Interface {
 		$page_on_front            = \get_option( 'page_on_front' );
 		$page_for_posts           = \get_option( 'page_for_posts' );
 
+		$addon_manager          = new WPSEO_Addon_Manager();
+		$woocommerce_seo_active = \is_plugin_active( $addon_manager->get_plugin_file( WPSEO_Addon_Manager::WOOCOMMERCE_SLUG ) );
+
 		if ( empty( $page_on_front ) ) {
 			$page_on_front = $page_for_posts;
+		}
+
+		$business_settings_url = \get_admin_url( null, 'admin.php?page=wpseo_local' );
+		if ( \defined( 'WPSEO_LOCAL_FILE' ) ) {
+			$local_options      = \get_option( 'wpseo_local' );
+			$multiple_locations = $local_options['use_multiple_locations'];
+			$same_organization  = $local_options['multiple_locations_same_organization'];
+			if ( $multiple_locations === 'on' && $same_organization !== 'on' ) {
+				$business_settings_url = \get_admin_url( null, 'edit.php?post_type=wpseo_locations' );
+			}
 		}
 
 		return [
@@ -466,13 +489,14 @@ class Settings_Integration implements Integration_Interface {
 			'isWooCommerceActive'           => $this->woocommerce_helper->is_active(),
 			'isLocalSeoActive'              => \defined( 'WPSEO_LOCAL_FILE' ),
 			'isNewsSeoActive'               => \defined( 'WPSEO_NEWS_FILE' ),
-			'promotions'                    => \YoastSEO()->classes->get( Promotion_Manager::class )->get_current_promotions(),
+			'isWooCommerceSEOActive'        => $woocommerce_seo_active,
 			'siteUrl'                       => \get_bloginfo( 'url' ),
 			'siteTitle'                     => \get_bloginfo( 'name' ),
 			'sitemapUrl'                    => WPSEO_Sitemaps_Router::get_base_url( 'sitemap_index.xml' ),
 			'hasWooCommerceShopPage'        => $shop_page_id !== -1,
 			'editWooCommerceShopPageUrl'    => \get_edit_post_link( $shop_page_id, 'js' ),
 			'wooCommerceShopPageSettingUrl' => \get_admin_url( null, 'admin.php?page=wc-settings&tab=products' ),
+			'localSeoPageSettingUrl'        => $business_settings_url,
 			'homepageIsLatestPosts'         => $homepage_is_latest_posts,
 			'homepagePageEditUrl'           => \get_edit_post_link( $page_on_front, 'js' ),
 			'homepagePostsEditUrl'          => \get_edit_post_link( $page_for_posts, 'js' ),
@@ -493,6 +517,7 @@ class Settings_Integration implements Integration_Interface {
 			'upsellSettings'                => $this->get_upsell_settings(),
 			'siteRepresentsPerson'          => $this->get_site_represents_person( $settings ),
 			'siteBasicsPolicies'            => $this->get_site_basics_policies( $settings ),
+			'llmsTxtUrl'                    => \home_url( 'llms.txt' ),
 		];
 	}
 
@@ -548,7 +573,7 @@ class Settings_Integration implements Integration_Interface {
 	 * @param int    $policy   The policy id to check.
 	 * @param string $key      The option key name.
 	 *
-	 * @return array The policy data.
+	 * @return array<int, string> The policy data.
 	 */
 	private function maybe_add_policy( $policies, $policy, $key ) {
 		$policy_array = [
@@ -575,7 +600,7 @@ class Settings_Integration implements Integration_Interface {
 	/**
 	 * Returns settings for the Call to Buy (CTB) buttons.
 	 *
-	 * @return string[] The array of CTB settings.
+	 * @return array<string> The array of CTB settings.
 	 */
 	public function get_upsell_settings() {
 		return [
@@ -611,6 +636,64 @@ class Settings_Integration implements Integration_Interface {
 		foreach ( self::DISALLOWED_SETTINGS as $option_name => $disallowed_settings ) {
 			foreach ( $disallowed_settings as $disallowed_setting ) {
 				unset( $defaults[ $option_name ][ $disallowed_setting ] );
+			}
+		}
+
+		if ( \defined( 'WPSEO_LOCAL_FILE' ) ) {
+			$defaults = $this->get_defaults_from_local_seo( $defaults );
+		}
+
+		return $defaults;
+	}
+
+	/**
+	 * Retrieves the organization schema values from Local SEO for defaults in Site representation fields.
+	 * Specifically for the org-vat-id, org-tax-id, org-email and org-phone options.
+	 *
+	 * @param array<string|int|bool> $defaults The settings defaults.
+	 *
+	 * @return array<string|int|bool> The settings defaults with local seo overides.
+	 */
+	protected function get_defaults_from_local_seo( $defaults ) {
+		$local_options      = \get_option( 'wpseo_local' );
+		$multiple_locations = $local_options['use_multiple_locations'];
+		$same_organization  = $local_options['multiple_locations_same_organization'];
+		$shared_info        = $local_options['multiple_locations_shared_business_info'];
+		if ( $multiple_locations !== 'on' || ( $multiple_locations === 'on' && $same_organization === 'on' && $shared_info === 'on' ) ) {
+			$defaults['wpseo_titles']['org-vat-id'] = $local_options['location_vat_id'];
+			$defaults['wpseo_titles']['org-tax-id'] = $local_options['location_tax_id'];
+			$defaults['wpseo_titles']['org-email']  = $local_options['location_email'];
+			$defaults['wpseo_titles']['org-phone']  = $local_options['location_phone'];
+		}
+
+		if ( \wpseo_has_primary_location() ) {
+			$primary_location = $local_options['multiple_locations_primary_location'];
+
+			$location_keys = [
+				'org-phone'  => [
+					'is_overridden' => '_wpseo_is_overridden_business_phone',
+					'value'         => '_wpseo_business_phone',
+				],
+				'org-email'  => [
+					'is_overridden' => '_wpseo_is_overridden_business_email',
+					'value'         => '_wpseo_business_email',
+				],
+				'org-tax-id' => [
+					'is_overridden' => '_wpseo_is_overridden_business_tax_id',
+					'value'         => '_wpseo_business_tax_id',
+				],
+				'org-vat-id' => [
+					'is_overridden' => '_wpseo_is_overridden_business_vat_id',
+					'value'         => '_wpseo_business_vat_id',
+				],
+			];
+
+			foreach ( $location_keys as $key => $meta_keys ) {
+				$is_overridden = ( $shared_info === 'on' ) ? \get_post_meta( $primary_location, $meta_keys['is_overridden'], true ) : false;
+				if ( $is_overridden === 'on' || $shared_info !== 'on' ) {
+					$post_meta_value                  = \get_post_meta( $primary_location, $meta_keys['value'], true );
+					$defaults['wpseo_titles'][ $key ] = ( $post_meta_value ) ? $post_meta_value : '';
+				}
 			}
 		}
 
@@ -890,7 +973,7 @@ class Settings_Integration implements Integration_Interface {
 			$route = \substr( $route, 1 );
 		}
 
-		return \rawurlencode( $route );
+		return $route;
 	}
 
 	/**

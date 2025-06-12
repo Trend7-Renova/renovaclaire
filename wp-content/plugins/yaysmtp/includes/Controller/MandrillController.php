@@ -74,10 +74,13 @@ class MandrillController {
 
 		// Reply to
 		$replyToAddresses = $phpmailer->getReplyToAddresses();
-		if ( ! empty( $replyToAddresses[0] ) ) {
-			$addrReplyTo = isset( $replyToAddresses[0][0] ) ? $replyToAddresses[0][0] : false;
-			if ( ! empty( $addrReplyTo ) ) {
-				$this->body['message']['headers']['reply-to'] = $addrReplyTo;
+		if ( ! empty( $replyToAddresses ) ) {
+			$emailReplyTo = array_shift( $replyToAddresses );
+			if ( ! empty( $emailReplyTo ) && is_array( $emailReplyTo ) ) {
+				$addrReplyTo = isset( $emailReplyTo[0] ) ? $emailReplyTo[0] : false;
+				if ( ! empty( $addrReplyTo ) && filter_var( $addrReplyTo, FILTER_VALIDATE_EMAIL ) ) {
+					$this->body['message']['headers']['reply-to'] = trim($addrReplyTo);
+				}
 			}
 		}
 		// Set body - message - header - end
@@ -204,6 +207,13 @@ class MandrillController {
 				$updateData['id']           = $this->log_id;
 				$updateData['date_time']    = current_time( 'mysql', true );
 				$updateData['reason_error'] = $message;
+
+				if ( ! empty( $message ) ) {
+					$extra_info               = Utils::getExtraInfo( $this->log_id );
+					$extra_info['error_mess'] = $message;		
+					$updateData['extra_info'] = wp_json_encode($extra_info);
+				}
+
 				Utils::updateEmailLog( $updateData );
 			}
 		} else {
@@ -229,6 +239,13 @@ class MandrillController {
 					$updateData['id']           = $this->log_id;
 					$updateData['date_time']    = current_time( 'mysql', true );
 					$updateData['reason_error'] = $message;
+
+					if ( ! empty( $message ) ) {
+						$extra_info               = Utils::getExtraInfo( $this->log_id );
+						$extra_info['error_mess'] = $message;		
+						$updateData['extra_info'] = wp_json_encode($extra_info);
+					}
+					
 					Utils::updateEmailLog( $updateData );
 				}
 			} else {
@@ -238,7 +255,7 @@ class MandrillController {
 					LogErrors::clearErr();
 				}
 	
-				if ( ! empty( $logId ) ) { 
+				if ( ! empty( $this->log_id ) ) { 
 					$updateData['id']        = $this->log_id;
 					$updateData['date_time'] = current_time( 'mysql', true );
 					$updateData['status']    = 1;

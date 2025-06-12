@@ -279,30 +279,30 @@
       }
     );
 
-    $(".yaysmtp-import-settings-btn").prop(
-      "disabled",
-      true
-    );
+    // $(".yaysmtp-import-settings-btn").prop(
+    //   "disabled",
+    //   true
+    // );
 
-    $(".yay-smtper-plugin").click(function() {
-      $(this).addClass("active");
-      let pluginEls = $(this).siblings(".yay-smtper-plugin");
-      $.each(pluginEls, function() {
-        $(this).removeClass("active");
-      });
+    // $(".yay-smtper-plugin").click(function() {
+    //   $(this).addClass("active");
+    //   let pluginEls = $(this).siblings(".yay-smtper-plugin");
+    //   $.each(pluginEls, function() {
+    //     $(this).removeClass("active");
+    //   });
 
-      let pluginName = $(this).attr("data-plugin");
-      $(".yaysmtp-import-plugin-choose").val(pluginName);
+    //   let pluginName = $(this).attr("data-plugin");
+    //   $(".yaysmtp-import-plugin-choose").val(pluginName);
 
-      $(".yaysmtp-import-settings-btn").prop(
-        "disabled",
-        false
-      );
-    });
+    //   $(".yaysmtp-import-settings-btn").prop(
+    //     "disabled",
+    //     false
+    //   );
+    // });
 
     $(".yaysmtp-import-settings-btn").click(
       function() {
-        let pluginName = $(".yaysmtp-import-plugin-choose").val();
+        let pluginName = $("#yaysmtp_settings_plugin_import").val();
         if ("" != pluginName) {
           $.ajax({
             url: yaySmtpWpData.YAY_ADMIN_AJAX,
@@ -316,7 +316,41 @@
               yaySMTPspinner("yay-smtp-wrap", true);
             },
             success: function(result) {
-              yaySMTPNotification(result.data.mess, "yay-smtp-wrap", true);
+              if(result.success){
+                yaySMTPNotification(result.data.mess, "yay-smtp-wrap", true);
+              }else{
+                yaySMTPNotification(result.data.mess, "yay-smtp-wrap", false);
+              }
+
+              yaySMTPspinner("yay-smtp-wrap", false);
+            }
+          });
+        }
+      }
+    );
+
+    $(".yaysmtp-import-email-logs-btn").click(
+      function() {
+        let pluginName = $("#yaysmtp_email_logs_plugin_import").val();
+        if ("" != pluginName) {
+          $.ajax({
+            url: yaySmtpWpData.YAY_ADMIN_AJAX,
+            type: "POST",
+            data: {
+              action: "yaysmtp_import_smtp_email_logs",
+              nonce: yaySmtpWpData.ajaxNonce,
+              plugin_name: pluginName
+            },
+            beforeSend: function() {
+              yaySMTPspinner("yay-smtp-wrap", true);
+            },
+            success: function(result) {
+              if(result.success){
+                $("#yaysmtp_email_logs_plugin_import option:selected").prop('disabled', true);
+                yaySMTPNotification(result.data.mess, "yay-smtp-wrap", true);
+              }else{
+                yaySMTPNotification(result.data.mess, "yay-smtp-wrap", false);
+              }
               yaySMTPspinner("yay-smtp-wrap", false);
             }
           });

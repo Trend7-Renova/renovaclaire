@@ -10,14 +10,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class ZohoController {
-	public $apiLink = 'https://mail.zoho.com/api/accounts/6575615000000008002/messages';
+	public $apiLink = '';
 	public $smtpObj;
 	public $body = array();
+	private $headers = [];
+	private $data_center = 'zoho.com';
 
 	public function __construct( $smtpObj ) {
 		Utils::setFrom($smtpObj);
-
-		$this->smtpObj = $smtpObj;
+		$this->smtpObj     = $smtpObj;
+		$this->data_center = ZohoServiceVendController::getDataCenter(); 
+		$this->apiLink     = 'https://mail.' . $this->data_center . '/api/accounts/6575615000000008002/messages';
 	}
 
 	/**
@@ -27,7 +30,7 @@ class ZohoController {
 		$yst = Utils::getYaySmtpSetting();
 
 		$response = wp_remote_get(
-			'http://mail.zoho.com/api/accounts',
+			'https://mail.' . $this->data_center . '/api/accounts',
 			array(
 				'headers' => array(
 					'Authorization' => 'Zoho-oauthtoken ' . $yst['zoho']['access_token'],
@@ -55,9 +58,9 @@ class ZohoController {
 	public function setUrl( $account_id ) {
 
 		if ( '' !== $account_id && isset( $account_id ) ) {
-			$this->apiLink = 'https://mail.zoho.com/api/accounts/' . $account_id . '/messages';
+			$this->apiLink = 'https://mail.' . $this->data_center . '/api/accounts/' . $account_id . '/messages';
 		} else {
-			$this->apiLink = 'https://mail.zoho.com/api/accounts//messages';
+			$this->apiLink = 'https://mail.' . $this->data_center . '/api/accounts//messages';
 		}
 	}
 
@@ -78,7 +81,7 @@ class ZohoController {
 		if ( ZohoServiceVendController::isDiffInfo() ) {
 			ZohoServiceVendController::doResetToken();
 		} elseif ( ZohoServiceVendController::isExpired() ) {
-			$regenerate_url   = 'https://accounts.zoho.com/oauth/v2/token?';
+			$regenerate_url   = 'https://accounts.' . $this->data_center . '/oauth/v2/token?';
 			$regenerate_url  .= 'refresh_token=' . ZohoServiceVendController::getSetting( 'refresh_token' );
 			$regenerate_url  .= '&client_id=' . ZohoServiceVendController::getSetting( 'client_id' );
 			$regenerate_url  .= '&client_secret=' . ZohoServiceVendController::getSetting( 'client_secret' );
@@ -96,14 +99,56 @@ class ZohoController {
 		$this->headers['accept']        = 'application/json';
 		$this->body                     = array_merge( $this->body, array( 'subject' => $this->smtpObj->Subject ) );
 		$this->body                     = array_merge( $this->body, array( 'fromAddress' => '"' . $this->smtpObj->FromName . '" <' . $this->smtpObj->From . '>' ) );
-		$this->body                     = array_merge( $this->body, array( 'ccAddress' => isset( $this->smtpObj->cc ) ? $this->smtpObj->cc : '' ) );
-		$this->body                     = array_merge( $this->body, array( 'bccAddress' => isset( $this->smtpObj->bcc ) ? $this->smtpObj->bcc : '' ) );
 		$this->body                     = array_merge( $this->body, array( 'content' => $this->smtpObj->Body ) );
 
 		update_option( 'Shrief', $this->smtpObj->getToAddresses() );
-
 		$optionShrief = get_option( 'Shrief' );
-		$this->body   = array_merge( $this->body, array( 'toAddress' => $optionShrief[0][0] ) );
+		if ( ! empty( $optionShrief ) && is_array( $optionShrief ) ) {
+			$dataTo = [];
+			foreach ( $optionShrief as $toEmail ) {
+				if ( empty( $toEmail[1] ) ) {
+					$dataTo[] = $toEmail[0];
+				} else {
+					$dataTo[] = sprintf( '%s <%s>', $toEmail[1], $toEmail[0] );
+				}
+			}
+
+			if ( ! empty( $dataTo ) ) {
+				$this->body   = array_merge( $this->body, array( 'toAddress' => implode( ",", $dataTo ) ) );
+			}
+		}
+
+		$ccAddresses = $this->smtpObj->getCcAddresses();
+		if ( ! empty( $ccAddresses ) && is_array( $ccAddresses ) ) {
+			$dataCc = [];
+			foreach ( $ccAddresses as $ccEmail ) {
+				if ( empty( $ccEmail[1] ) ) {
+					$dataCc[] = $ccEmail[0];
+				} else {
+					$dataCc[] = sprintf( '%s <%s>', $ccEmail[1], $ccEmail[0] );
+				}
+			}
+
+			if ( ! empty( $dataCc ) ) {
+				$this->body   = array_merge( $this->body, array( 'ccAddress' => implode( ",", $dataCc ) ) );
+			}
+		}
+
+		$bccAddresses = $this->smtpObj->getBccAddresses();
+		if ( ! empty( $bccAddresses ) && is_array( $bccAddresses ) ) {
+			$dataBcc = [];
+			foreach ( $bccAddresses as $bccEmail ) {
+				if ( empty( $bccEmail[1] ) ) {
+					$dataBcc[] = $bccEmail[0];
+				} else {
+					$dataBcc[] = sprintf( '%s <%s>', $bccEmail[1], $bccEmail[0] );
+				}
+			}
+			
+			if ( ! empty( $dataBcc ) ) {
+				$this->body   = array_merge( $this->body, array( 'bccAddress' => implode( ",", $dataBcc ) ) );
+			}
+		}
 
 		// Set attachments.
 		$attachments = $this->smtpObj->getAttachments();
@@ -196,6 +241,12 @@ class ZohoController {
 		} elseif ( 500 == $response['response']['code'] ) {
 			LogErrors::clearErr();
 			LogErrors::setErr( 'Please use your Zoho mail to send email. We do not support this type of mail address' );
+
+			$extra_info               = Utils::getExtraInfo( $logId );
+			$extra_info['error_mess'] = 'Please use your Zoho mail to send email. We do not support this type of mail address';		
+			$updateData['extra_info'] = wp_json_encode($extra_info);
+			$updateData['id']         = $logId;
+			Utils::updateEmailLog( $updateData );
 		} else {
 			LogErrors::clearErr();
 			LogErrors::setErr( $error );
@@ -204,6 +255,13 @@ class ZohoController {
 				$updateData['id']           = $logId;
 				$updateData['date_time']    = current_time( 'mysql', true );
 				$updateData['reason_error'] = $error;
+
+				if ( ! empty( $error ) ) {
+					$extra_info               = Utils::getExtraInfo( $logId );
+					$extra_info['error_mess'] = $error;		
+					$updateData['extra_info'] = wp_json_encode($extra_info);
+				}
+
 				Utils::updateEmailLog( $updateData );
 			}
 		}

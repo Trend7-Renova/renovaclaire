@@ -708,6 +708,24 @@ var yaysmtp_mail_logs_endTime_picker = moment();
                     .html("");
                 }
 
+                if ( 0 === parseInt(data.status) && '' !== data.extra_info ) { 
+                  $('.yaysmtp-error-detail-wrap').show();
+                  const extraInfo = data.extra_info;
+                  if (typeof extraInfo.source !== "undefined") { 
+                    const sourceTrace = '<span class="yaysmtp-source-root-name">' + extraInfo.source.root_name + '</span>: ' + extraInfo.source.root_path;
+                    $(".yay-smtp-wrap.mail-logs")
+                    .find(".yay-smtp-mail-detail-drawer .error-detail-source-content")
+                    .html(sourceTrace);
+                  }
+                  if (typeof extraInfo.error_mess !== "undefined") { 
+                    $(".yay-smtp-wrap.mail-logs")
+                    .find(".yay-smtp-mail-detail-drawer .error-detail-message-content")
+                    .html(extraInfo.error_mess);
+                  }
+                } else {
+                  $('.yaysmtp-error-detail-wrap').hide();
+                }
+
                 if ( yaySmtpWpData.yaysmtpLogSettings.email_opened && 
                   'yes' === yaySmtpWpData.yaysmtpLogSettings.email_opened ) {
                     $(".yay-smtp-wrap.mail-logs")
@@ -1037,26 +1055,37 @@ var yaysmtp_mail_logs_endTime_picker = moment();
         $(".yay-smtp-general-settings-wrap .yay-postmark-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-sparkpost-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-outlookms-des").hide();
+        $(".yay-smtp-general-settings-wrap .yay-gmail-des").hide();
       } else if (mailer == "postmark") {
         $(".yay-smtp-general-settings-wrap .yay-postmark-des").show();
         $(".yay-smtp-general-settings-wrap .yay-amazon-ses-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-sparkpost-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-outlookms-des").hide();
+        $(".yay-smtp-general-settings-wrap .yay-gmail-des").hide();
       } else if (mailer == "sparkpost") {
         $(".yay-smtp-general-settings-wrap .yay-sparkpost-des").show();
         $(".yay-smtp-general-settings-wrap .yay-amazon-ses-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-postmark-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-outlookms-des").hide();
+        $(".yay-smtp-general-settings-wrap .yay-gmail-des").hide();
       } else if (mailer == "outlookms") {
         $(".yay-smtp-general-settings-wrap .yay-sparkpost-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-amazon-ses-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-postmark-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-outlookms-des").show();
+        $(".yay-smtp-general-settings-wrap .yay-gmail-des").hide();
+      } else if (mailer == "gmail") {
+        $(".yay-smtp-general-settings-wrap .yay-sparkpost-des").hide();
+        $(".yay-smtp-general-settings-wrap .yay-amazon-ses-des").hide();
+        $(".yay-smtp-general-settings-wrap .yay-postmark-des").hide();
+        $(".yay-smtp-general-settings-wrap .yay-outlookms-des").hide();
+        $(".yay-smtp-general-settings-wrap .yay-gmail-des").show();
       } else {
         $(".yay-smtp-general-settings-wrap .yay-amazon-ses-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-postmark-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-sparkpost-des").hide();
         $(".yay-smtp-general-settings-wrap .yay-outlookms-des").hide();
+        $(".yay-smtp-general-settings-wrap .yay-gmail-des").hide();
       }
     });
 
@@ -1073,26 +1102,37 @@ var yaysmtp_mail_logs_endTime_picker = moment();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-postmark-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-sparkpost-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-outlookms-des").hide();
+        $(".yaysmtp-fallback-setting-opt-wrap .yay-gmail-des").hide();
       } else if (mailer == "postmark") {
         $(".yaysmtp-fallback-setting-opt-wrap .yay-postmark-des").show();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-amazon-ses-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-sparkpost-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-outlookms-des").hide();
+        $(".yaysmtp-fallback-setting-opt-wrap .yay-gmail-des").hide();
       } else if (mailer == "sparkpost") {
         $(".yaysmtp-fallback-setting-opt-wrap .yay-sparkpost-des").show();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-amazon-ses-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-postmark-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-outlookms-des").hide();
+        $(".yaysmtp-fallback-setting-opt-wrap .yay-gmail-des").hide();
       } else if (mailer == "outlookms") {
         $(".yaysmtp-fallback-setting-opt-wrap .yay-sparkpost-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-amazon-ses-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-postmark-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-outlookms-des").show();
+        $(".yaysmtp-fallback-setting-opt-wrap .yay-gmail-des").hide();
+      } else if (mailer == "gmail") {
+        $(".yaysmtp-fallback-setting-opt-wrap .yay-sparkpost-des").hide();
+        $(".yaysmtp-fallback-setting-opt-wrap .yay-amazon-ses-des").hide();
+        $(".yaysmtp-fallback-setting-opt-wrap .yay-postmark-des").hide();
+        $(".yaysmtp-fallback-setting-opt-wrap .yay-outlookms-des").hide();
+        $(".yaysmtp-fallback-setting-opt-wrap .yay-gmail-des").show();
       } else {
         $(".yaysmtp-fallback-setting-opt-wrap .yay-amazon-ses-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-postmark-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-sparkpost-des").hide();
         $(".yaysmtp-fallback-setting-opt-wrap .yay-outlookms-des").hide();
+        $(".yaysmtp-fallback-setting-opt-wrap .yay-gmail-des").hide();
       }
     });
 
@@ -1766,6 +1806,8 @@ var yaysmtp_mail_logs_endTime_picker = moment();
 
     // Apply select2 for Smtper choose
     yaySMTPApplySelect2();
+    yaySMTPEmailLogsImportSelect2();
+    yaySMTPSettingsImportSelect2();
 
     // Search base on calendar for mail logs - start
     if( yaySMTPPage == "yaysmtp" ) {
@@ -2215,6 +2257,88 @@ function yaySMTPApplySelect2() {
               smtper.text +
               "</span>"
           );
+          return span;
+        }
+      }
+    });
+  }
+}
+
+function yaySMTPSettingsImportSelect2() {
+  if( jQuery("#yaysmtp_settings_plugin_import").length > 0 ) {
+    jQuery("#yaysmtp_settings_plugin_import").select2({
+      minimumResultsForSearch: -1,
+      templateResult: function(plugin) {
+        if (typeof plugin.id !== "undefined" && typeof plugin.element !== "undefined") {
+          let span = jQuery(
+            '<span><span class="yaysmtp-plugin-icon">' +
+            '<img width="18" height="18" src="' + plugin.element.dataset.iconSrc + '" />' +
+            "</span>" + plugin.text + "</span>"
+          );
+
+          if(plugin.id == "") {
+            span = jQuery(
+              '<span><span class="yaysmtp-plugin-icon">' +
+              "</span>" + plugin.text + "</span>"
+            );
+          }
+          return span;
+        }
+      },
+      templateSelection: function(plugin) {
+        if (typeof plugin.id !== "undefined" && typeof plugin.element !== "undefined") {
+          var span = jQuery(
+            '<span><span class="yaysmtp-plugin-icon">' +
+            '<img width="18" height="18" src="' + plugin.element.dataset.iconSrc + '" />' +
+            "</span>" + plugin.text + "</span>"
+          );
+          if(plugin.id == "") {
+            span = jQuery(
+              '<span><span class="yaysmtp-plugin-icon">' +
+              "</span>" + plugin.text + "</span>"
+            );
+          }
+          return span;
+        }
+      }
+    });
+  }
+}
+
+function yaySMTPEmailLogsImportSelect2() {
+  if( jQuery("#yaysmtp_email_logs_plugin_import").length > 0 ) {
+    jQuery("#yaysmtp_email_logs_plugin_import").select2({
+      minimumResultsForSearch: -1,
+      templateResult: function(smtper) {
+        if (typeof smtper.id !== "undefined" && typeof smtper.element !== "undefined") {
+          let span = jQuery(
+            '<span><span class="yaysmtp-plugin-icon">' +
+            '<img width="18" height="18" src="' + smtper.element.dataset.iconSrc + '" />' +
+            "</span>" + smtper.text + "</span>"
+          );
+
+          if(smtper.id == "") {
+            span = jQuery(
+              '<span><span class="yaysmtp-plugin-icon">' +
+              "</span>" + smtper.text + "</span>"
+            );
+          }
+          return span;
+        }
+      },
+      templateSelection: function(smtper) {
+        if (typeof smtper.id !== "undefined" && typeof smtper.element !== "undefined") {
+          var span = jQuery(
+            '<span><span class="yaysmtp-plugin-icon">' +
+            '<img width="18" height="18" src="' + smtper.element.dataset.iconSrc + '" />' +
+            "</span>" + smtper.text + "</span>"
+          );
+          if(smtper.id == "") {
+            span = jQuery(
+              '<span><span class="yaysmtp-plugin-icon">' +
+              "</span>" + smtper.text + "</span>"
+            );
+          }
           return span;
         }
       }

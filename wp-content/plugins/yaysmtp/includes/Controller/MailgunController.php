@@ -147,6 +147,32 @@ class MailgunController {
 				$this->body = array_merge( $this->body, array( 'h:Reply-To' => implode( ',', $dataReplyTo ) ) );
 			}
 		}
+
+		// Set attachments.
+		$attachments = $phpmailer->getAttachments();
+		if ( ! empty( $attachments ) ) { 
+			$attachData = [];
+			foreach ( $attachments as $attach ) {
+				$file = $this->getAttachFileContent( $attach );
+				if ( ! empty ( $file ) ) {
+					$attachData[] = [
+						'content' => $file,
+						'name'    => $this->getAttachFileName( $attach ),
+					];
+				}
+			}
+
+			if ( ! empty( $attachData ) ) {
+				$boundary = sha1(uniqid('', true));
+
+				$payload = $this->buildPayloadFromBody( $this->body, $boundary);			
+				$payload .= $this->buildAttachsPayload( $attachData, $boundary);
+				$payload .= '--' . $boundary . '--';
+
+				$this->body = $payload;
+				$this->headers['Content-Type'] = 'multipart/form-data; boundary=' . $boundary;
+			}
+		}
 	}
 
 	public function send() {
@@ -186,8 +212,18 @@ class MailgunController {
 			if ( ! in_array( $code, $codeSucArrs ) && ! empty( $resp['response'] ) ) {
 				$error   = $resp['response'];
 				$message = '';
+				$message_extra = '';
 				if ( ! empty( $error ) ) {
 					$message = '[' . sanitize_key( $error['code'] ) . ']: ' . $error['message'];
+
+					if ( ! empty( $resp['body'] ) ) { // string or json string
+						$body_error = json_decode( $resp['body'], true );
+						if ( $body_error && ! empty( $body_error['message'] ) ) { 
+							$message_extra = '[' . sanitize_key( $error['code'] ) . ']: ' . $body_error['message'];
+						} else {						
+							$message_extra = '[' . sanitize_key( $error['code'] ) . ']: ' . $resp['body'];		
+						}
+					}
 				}
 					
 				if ( $this->use_fallback_smtp ) {
@@ -203,6 +239,13 @@ class MailgunController {
 					$updateData['id']           = $this->log_id;
 					$updateData['date_time']    = current_time( 'mysql', true );
 					$updateData['reason_error'] = $message;
+
+					if ( ! empty( $message_extra ) ) {
+						$extra_info               = Utils::getExtraInfo( $this->log_id );
+						$extra_info['error_mess'] = $message_extra;		
+						$updateData['extra_info'] = wp_json_encode($extra_info);
+					}
+
 					Utils::updateEmailLog( $updateData );
 				}
 			} else {
@@ -277,5 +320,58 @@ class MailgunController {
 
 		}
 		return $region;
+	}
+
+	private function getAttachFileName( $attachFile ) {
+		return ! empty( $attachFile[2] ) ? trim( $attachFile[2] ) : 'file-' . microtime() . '.' . str_replace( ';', '', trim( $attachFile[4] ) );
+	}
+
+	private function getAttachFileContent( $attachFile ) {
+		$result = null;
+		if ( true === $attachFile[5] ) { 
+			$result = $attachFile[0];
+		} elseif ( is_file( $attachFile[0] ) && is_readable( $attachFile[0] ) ) {
+			$result = file_get_contents( $attachFile[0] );
+		}
+
+		return $result;
+	}
+
+	private function buildPayloadFromBody ( $body, $boundary ) {
+		$payload = ''; 
+		foreach ( $body as $key => $val ) {
+			if ( is_array( $val ) ) {
+				foreach ( $val as $val_1 ) {
+					$payload .= '--' . $boundary;
+					$payload .= "\r\n";
+					$payload .= 'Content-Disposition: form-data; name="' . $key . "\"\r\n\r\n";
+					$payload .= $val_1;
+					$payload .= "\r\n";
+				}
+			} else {
+				$payload .= '--' . $boundary;
+				$payload .= "\r\n";
+				$payload .= 'Content-Disposition: form-data; name="' . $key . '"' . "\r\n\r\n";
+				$payload .= $val;
+				$payload .= "\r\n";
+			}
+		}
+
+		return $payload;
+	}
+
+
+	private function buildAttachsPayload ( $attachData, $boundary ) {
+    	$payload = '';
+
+		foreach ( $attachData as $key => $attachFile ) {
+			$payload .= '--' . $boundary;
+			$payload .= "\r\n";
+			$payload .= 'Content-Disposition: form-data; name="attachment[' . $key . ']"; filename="' . $attachFile['name'] . '"' . "\r\n\r\n";
+			$payload .= $attachFile['content'];
+			$payload .= "\r\n";
+		}
+
+		return $payload;
 	}
 }

@@ -463,6 +463,7 @@ class Functions {
 				}
 
 				// Result ALL
+				$totalItems = 0;
 				if ( ! empty( $valSearch ) ) {
 					$subjectWhere = 'subject LIKE "%%' . $valSearch . '%%"';
 					$toEmailWhere = 'email_to LIKE "%%' . $valSearch . '%%"';
@@ -473,9 +474,9 @@ class Functions {
 						$whereQuery = '(' . $whereQuery . ') AND (' . $dateWhere . ')';
 					}
 
-					$sqlRepareAll = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}yaysmtp_email_logs WHERE $whereQuery" );
+					$totalItems = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}yaysmtp_email_logs WHERE $whereQuery" );
 					$sqlRepare    = $wpdb->prepare(
-						"SELECT * FROM {$wpdb->prefix}yaysmtp_email_logs WHERE $whereQuery ORDER BY $sortField $sortVal LIMIT %d OFFSET %d",
+						"SELECT l.id, l.subject, l.email_from, l.email_to, l.mailer, l.date_time, l.status, l.root_name FROM {$wpdb->prefix}yaysmtp_email_logs AS l WHERE $whereQuery ORDER BY $sortField $sortVal LIMIT %d OFFSET %d",
 						$limit,
 						$offset
 					);
@@ -485,16 +486,13 @@ class Functions {
 						$whereQuery = '(' . $statusWhere . ') AND (' . $dateWhere . ')';
 					}
 
-					$sqlRepareAll = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}yaysmtp_email_logs WHERE $whereQuery" );
+					$totalItems = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}yaysmtp_email_logs WHERE $whereQuery" );
 					$sqlRepare    = $wpdb->prepare(
-						"SELECT * FROM {$wpdb->prefix}yaysmtp_email_logs WHERE $whereQuery ORDER BY $sortField $sortVal LIMIT %d OFFSET %d",
+						"SELECT l.id, l.subject, l.email_from, l.email_to, l.mailer, l.date_time, l.status, l.root_name FROM {$wpdb->prefix}yaysmtp_email_logs AS l WHERE $whereQuery ORDER BY $sortField $sortVal LIMIT %d OFFSET %d",
 						$limit,
 						$offset
 					);
 				}
-
-				$resultQueryAll = $wpdb->get_results( $sqlRepareAll ); // phpcs:ignore
-				$totalItems     = ! empty( $resultQueryAll ) ? count( $resultQueryAll ) : 0;
 
 				// Result Custom
 				$results = $wpdb->get_results( $sqlRepare ); // phpcs:ignore
@@ -583,24 +581,19 @@ class Functions {
 
 							// Update new settings
 							foreach ( $params as $key => $val ) {
-								  // Add wp schedule event if delete time change - start.
+								// Save Logs change - start.
 								if ( 'email_log_delete_time' === $key ) {
 									$dayTimes              = (int) $val;
 									$deleteDatetimeSetting = Utils::getDeleteDatetimeSetting();
 									if ( 0 === $dayTimes ) {
-											  wp_clear_scheduled_hook( 'yaysmtp_delete_email_log_schedule_hook' );
-									} elseif ( 0 !== $dayTimes && $dayTimes !== $deleteDatetimeSetting ) {
 										wp_clear_scheduled_hook( 'yaysmtp_delete_email_log_schedule_hook' );
-
-										add_action( 'yaysmtp_delete_email_log_schedule_hook', array( $this, 'deleteEmailLogSchedule' ) );
-										if ( ! wp_next_scheduled( 'yaysmtp_delete_email_log_schedule_hook' ) ) {
-											  wp_schedule_event( time(), 'yaysmtp_specific_delete_time', 'yaysmtp_delete_email_log_schedule_hook' );
-										}
+									} elseif ( 0 !== $dayTimes && $dayTimes !== $deleteDatetimeSetting ) {
+										Utils::deleteAllEmailLogsWithCondition($deleteDatetimeSetting, $dayTimes);
 									}
 								}
-								  // Add wp schedule event if delete time change - end.
+								// Save Logs change - end.
 
-								  Utils::setYaySmtpEmailLogSetting( $key, $val );
+								Utils::setYaySmtpEmailLogSetting( $key, $val );
 							}
 
 							restore_current_blog();
@@ -609,22 +602,17 @@ class Functions {
 				} else {
 					unset( $params['isNetworkAdmin'] );
 					foreach ( $params as $key => $val ) {
-						// Add wp schedule event if delete time change - start.
+						// Save Logs change - start.
 						if ( 'email_log_delete_time' === $key ) {
-								$dayTimes              = (int) $val;
-								$deleteDatetimeSetting = Utils::getDeleteDatetimeSetting();
+							$dayTimes              = (int) $val;
+							$deleteDatetimeSetting = Utils::getDeleteDatetimeSetting();
 							if ( 0 === $dayTimes ) {
 								wp_clear_scheduled_hook( 'yaysmtp_delete_email_log_schedule_hook' );
 							} elseif ( 0 !== $dayTimes && $dayTimes !== $deleteDatetimeSetting ) {
-								wp_clear_scheduled_hook( 'yaysmtp_delete_email_log_schedule_hook' );
-
-								add_action( 'yaysmtp_delete_email_log_schedule_hook', array( $this, 'deleteEmailLogSchedule' ) );
-								if ( ! wp_next_scheduled( 'yaysmtp_delete_email_log_schedule_hook' ) ) {
-												wp_schedule_event( time(), 'yaysmtp_specific_delete_time', 'yaysmtp_delete_email_log_schedule_hook' );
-								}
+								Utils::deleteAllEmailLogsWithCondition($deleteDatetimeSetting, $dayTimes);
 							}
 						}
-						// Add wp schedule event if delete time change - end.
+						// Save Logs change - end.
 
 						Utils::setYaySmtpEmailLogSetting( $key, $val );
 					}
@@ -656,13 +644,17 @@ class Functions {
 				$params = Utils::saniValArray( $_POST['params'] );// phpcs:ignore
 				$ids    = isset( $params['ids'] ) ? $params['ids'] : ''; // '1,2,3'
 
+				$ids_array = explode( ',', (string) $ids );
+				$ids_array = array_map( 'intval', $ids_array );
+				$id_placeholders  = implode( ', ', array_fill( 0, count( $ids_array ), '%d' ) );
+
 				if ( empty( $ids ) ) {
 					wp_send_json_error( array( 'mess' => __( 'No email log id found.', 'yay-smtp' ) ) );
 				}
 
-				$deletedEmailLogs 		 = $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}yaysmtp_email_logs WHERE ID IN( $ids )" ) );
-				$deletedEmailClickedLink = $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}yaysmtp_event_email_clicked_link WHERE log_id IN( $ids )" ) );
-				$deletedEmailOpened 	 = $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}yaysmtp_event_email_opened WHERE log_id IN( $ids )" ) );
+				$deletedEmailLogs 		 = $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}yaysmtp_email_logs WHERE ID IN ( {$id_placeholders} )", $ids_array ) );
+				$deletedEmailClickedLink = $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}yaysmtp_event_email_clicked_link WHERE log_id IN ( {$id_placeholders} )", $ids_array ) );
+				$deletedEmailOpened 	 = $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}yaysmtp_event_email_opened WHERE log_id IN ( {$id_placeholders} )", $ids_array ) );
 
 				if ( '' !== $wpdb->last_error ) {
 					wp_send_json_error( array( 'mess' => $wpdb->last_error ) );
@@ -734,11 +726,12 @@ class Functions {
 						'mail_source' 		  => ! empty( $resultQuery->root_name ) ? $resultQuery->root_name : __( 'Unknown', 'yay-smtp' ),
 						'email_opened' 		  => 'No',
 						'email_clicked_links' => 'No',
+						'extra_info'          => ! empty( $resultQuery->extra_info ) ? json_decode( $resultQuery->extra_info, true ) : '',
 					);
 
 					if ( ! empty( $resultQuery->content_type ) ) {
 						$resultArr['content_type'] = $resultQuery->content_type;
-						$resultArr['body_content'] = maybe_serialize( $resultQuery->body_content );
+						$resultArr['body_content'] = Utils::wpKses( maybe_serialize( $resultQuery->body_content ) );
 					}
 
 					if ( ! empty( $resultQuery->reason_error ) ) {

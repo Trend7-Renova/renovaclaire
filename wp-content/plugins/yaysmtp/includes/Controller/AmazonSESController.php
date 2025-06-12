@@ -67,15 +67,25 @@ class AmazonSESController {
 			return $sent;
 
 		} catch ( \Exception $e ) {
-			$this->errMess = $e->getAwsErrorMessage();
+			$errMess = $e->getMessage();
 
 			if ( $this->use_fallback_smtp ) {
 				LogErrors::clearErrFallback();
-				LogErrors::setErrFallback( $this->errMess );
+				LogErrors::setErrFallback( $errMess );
 			} else {
 				LogErrors::clearErr();
 				LogErrors::setErr( 'Mailer: Amazon SES' );
-				LogErrors::setErr( $this->errMess );
+				LogErrors::setErr( $errMess );
+			}
+
+			if ( ! empty( $logId ) ) {
+				$updateData['id'] = $logId;
+				if ( ! empty( $errMess ) ) {
+					$extra_info               = Utils::getExtraInfo( $logId );
+					$extra_info['error_mess'] = $errMess;		
+					$updateData['extra_info'] = wp_json_encode($extra_info);
+				}
+				Utils::updateEmailLog( $updateData );
 			}
 
 			return;

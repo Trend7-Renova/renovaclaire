@@ -23,6 +23,7 @@ $amozonSesDesShow         = 'none';
 $postmarkDesShow          = 'none';
 $sparkPostDesShow         = 'none';
 $outlookmsDesShow         = 'none';
+$gmailDesShow             = 'none';
 if ( Utils::getCurrentMailer() == 'amazonses' ) {
 	$amozonSesDesShow = 'block';
 } elseif ( Utils::getCurrentMailer() == 'postmark' ) {
@@ -31,6 +32,8 @@ if ( Utils::getCurrentMailer() == 'amazonses' ) {
 	$sparkPostDesShow = 'block';
 } elseif ( Utils::getCurrentMailer() == 'outlookms' ) {
 	$outlookmsDesShow = 'block';
+} elseif ( Utils::getCurrentMailer() == 'gmail' ) {
+	$gmailDesShow = 'block';
 }
 // SHOW/HIDE Amazon SES veriry Email Sender Description. - end
 
@@ -194,6 +197,9 @@ $multisiteSetting          = Utils::getMainSiteMultisiteSetting();
 			  </p>
 			  <p class="setting-description yay-outlookms-des" style="display: <?php echo esc_attr( $outlookmsDesShow ); ?>">
 				- You can only send mail from Microsoft email account.<br>
+			  </p>
+			  <p class="setting-description yay-gmail-des" style="display: <?php echo esc_attr( $gmailDesShow ); ?>">
+				- You can only send mail from Google email account.<br>
 			  </p>
 			</div>
 		  </div>

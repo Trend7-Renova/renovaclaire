@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $yaySmtpSettingSave           = isset( $yaySmtpEmailLogSetting ) && isset( $yaySmtpEmailLogSetting['save_email_log'] ) ? $yaySmtpEmailLogSetting['save_email_log'] : 'yes';
 $yaySmtpSettingInfType        = isset( $yaySmtpEmailLogSetting ) && isset( $yaySmtpEmailLogSetting['email_log_inf_type'] ) ? $yaySmtpEmailLogSetting['email_log_inf_type'] : 'full_inf';
-$yaySmtpSettingDeleteDatetime = isset( $yaySmtpEmailLogSetting ) && isset( $yaySmtpEmailLogSetting['email_log_delete_time'] ) ? (int) $yaySmtpEmailLogSetting['email_log_delete_time'] : 60;
+$yaySmtpSettingDeleteDatetime = isset( $yaySmtpEmailLogSetting ) && isset( $yaySmtpEmailLogSetting['email_log_delete_time'] ) ? (int) $yaySmtpEmailLogSetting['email_log_delete_time'] : 0;
 $yaySmtpDaleteTimes           = array(
 	'7'   => 'Last 7 Days',
 	'30'  => 'Last 30 Days',
@@ -89,8 +89,8 @@ $email_clicked_links   = isset( $yaySmtpEmailLogSetting ) && isset( $yaySmtpEmai
 				?>
 			  </select>
 			  <p class="yay-smtp-card-description">
-				<b><?php echo esc_html__( 'Caution: ', 'yay-smtp' ); ?></b>
-				<?php echo esc_html__( 'If you change the log retention period, all currently saved logs will be deleted from the database.', 'yay-smtp' ); ?>
+				<b><?php echo esc_html__( 'Warning: ', 'yay-smtp' ); ?></b>
+				<?php echo esc_html__( 'Selecting \'Save Logs\' will permanently remove emails older than your selected period.', 'yay-smtp' ); ?>
 			  </p>
 			</div>
 		  </div>

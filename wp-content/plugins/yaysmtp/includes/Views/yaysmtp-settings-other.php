@@ -24,18 +24,18 @@ if ( empty( $yaysmtpImportPlugins ) ) {
 				<div>
 					<label><?php echo wp_kses_post( $yaySmtpImportTitle ); ?></label>
 					<?php if ( ! empty( $yaysmtpImportPlugins ) ) { ?>
-					<div class="yay-smtp-card-body-child">
-						<input type="hidden" class="yaysmtp-import-plugin-choose">
+					<div class="yay-smtp-card-body-child yaysmtp-settings-plugin-import-wrap">
+						<select class="yay-settings settings-plugin-import" id="yaysmtp_settings_plugin_import">
 						<?php
-							foreach ( $yaysmtpImportPlugins as $pluginEl ) {
-								?>
-							<div class="yay-smtper-plugin" data-plugin="<?php echo esc_attr( $pluginEl['val'] ); ?>">
-							<div class="icon-smtp"><img src="<?php echo esc_attr( YAY_SMTP_PLUGIN_URL ) . 'assets/img/' . esc_attr( $pluginEl['img'] ); ?>" height="25" width="25"></div>
-							<div class="title-smtp"><span><?php echo esc_attr( $pluginEl['title'] ); ?><span></div>
-							</div>
-								<?php
-							}
+						foreach ( $yaysmtpImportPlugins as $pluginEl ) {
+							$optEl = '<option value="' . esc_attr( $pluginEl['val'] ) . '" data-icon-src="' . esc_attr( YAY_SMTP_PLUGIN_URL )  . 'assets/img/' . esc_attr( $pluginEl['img'] ) . '">';
+							$optEl .= esc_attr( $pluginEl['title'] );
+							$optEl .= '</option>';
+
+							echo $optEl;
+						}
 						?>
+						</select>
 					</div>
 					<?php } ?>
 				</div>

@@ -160,6 +160,47 @@ class MailjetController {
 			}
 		}
 
+		// Set attachments.
+		$attachments = $phpmailer->getAttachments();
+		$attachsModify = array();
+		if ( ! empty( $attachments ) ) {
+			if ( ! is_array( $attachments ) ) {
+				$attachArr = explode( PHP_EOL, $attachments );
+			} else {
+				$attachArr = $attachments;
+			}
+			$allowedAttach = array( 'xlsx', 'xls', 'ods', 'docx', 'docm', 'doc', 'csv', 'pdf', 'txt', 'gif', 'jpg', 'jpeg', 'png', 'tif', 'tiff', 'rtf', 'bmp', 'cgm', 'css', 'shtml', 'html', 'htm', 'zip', 'xml', 'ppt', 'pptx', 'tar', 'ez', 'ics', 'mobi', 'msg', 'pub', 'eps', 'odt', 'mp3', 'm4a', 'm4v', 'wma', 'ogg', 'flac', 'wav', 'aif', 'aifc', 'aiff', 'mp4', 'mov', 'avi', 'mkv', 'mpeg', 'mpg', 'wmv' );
+			foreach ( $attachArr as $file ) {
+				if ( ! empty( $file ) ) {
+					$contentFile = false;
+					try {
+						if ( is_file( $file[0] ) && is_readable( $file[0] ) ) {
+							$extension = pathinfo( $file[0], PATHINFO_EXTENSION );
+							if ( in_array( $extension, $allowedAttach, true ) ) {
+								$contentFile = file_get_contents( $file[0] );
+							}
+						}
+					} catch ( \Exception $except ) {
+						$contentFile = false;
+					}
+
+					if ( false === $contentFile ) {
+						continue;
+					}
+
+					$fileType = str_replace( ';', '', trim( $file[4] ) );
+					$attachsModify[] = array(
+						'Base64Content' => base64_encode( $contentFile ),
+						'ContentType'   => $fileType,
+						'Filename'      => $file[2]
+					);
+				}
+			}
+		}
+				
+        if( ! empty( $attachsModify ) ) {
+			$this->body['Messages'][0]['Attachments'] = $attachsModify;        
+        }
 	}
 
 	public function send() {
@@ -193,9 +234,19 @@ class MailjetController {
 			$errorBody     = $resp['body'];
 			$errorResponse = $resp['response'];
 			$message       = '';
+			$message_extra = '';
 
-			if ( ! empty( $errorBody ) ) {
-				$message = '[' . sanitize_key( $errorResponse['code'] ) . ']: ' . $errorBody;
+			if ( ! empty( $errorResponse ) && ! empty( $errorResponse['code'] ) ) {
+				$message = '[' . sanitize_key( $errorResponse['code'] ) . ']: ' . $errorResponse['message'];
+
+				if ( ! empty( $errorBody ) ) { // string or json string
+					$body_error = json_decode( $errorBody, true );
+					if ( $body_error && ! empty( $body_error['ErrorMessage'] ) ) { 
+						$message_extra = '[' . sanitize_key( $errorResponse['code'] ) . ']: ' . $body_error['ErrorMessage'];
+					} else {						
+						$message_extra = '[' . sanitize_key( $errorResponse['code'] ) . ']: ' . $errorBody;		
+					}
+				}
 			}
 			
 			if ( $this->use_fallback_smtp ) {
@@ -211,6 +262,13 @@ class MailjetController {
 				$updateData['id']           = $this->log_id;
 				$updateData['date_time']    = current_time( 'mysql', true );
 				$updateData['reason_error'] = $message;
+
+				if ( ! empty( $message_extra ) ) {
+					$extra_info               = Utils::getExtraInfo( $this->log_id );
+					$extra_info['error_mess'] = $message_extra;		
+					$updateData['extra_info'] = wp_json_encode($extra_info);
+				}
+
 				Utils::updateEmailLog( $updateData );
 			}
 

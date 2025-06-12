@@ -146,6 +146,39 @@ class PostmarkController {
 				$this->body = array_merge( $this->body, array( 'ReplyTo' => implode( ',', $dataReplyTo ) ) );
 			}
 		}
+
+		// Set attachments.
+		// $attachments = $phpmailer->getAttachments();
+		// $attachsModify = array();
+		// if ( ! empty( $attachments ) ) {
+		// 	foreach ( $attachments as $file ) {
+		// 		if ( ! empty( $file ) ) {
+		// 			$contentFile = false;
+		// 			try {
+		// 				if ( is_file( $file[0] ) && is_readable( $file[0] ) ) {
+		// 					$contentFile = file_get_contents( $file[0] );
+		// 				}
+		// 			} catch ( \Exception $except ) {
+		// 				$contentFile = false;
+		// 			}
+
+		// 			if ( false === $contentFile ) {
+		// 				continue;
+		// 			}
+
+		// 			$fileType = str_replace( ';', '', trim( $file[4] ) );
+		// 			$attachsModify[] = [
+		// 				'Name'        => $file[2],
+		// 				'Content'     => base64_encode( $contentFile ),
+		// 				'ContentType' => $fileType
+		// 			];
+		// 		}
+		// 	}
+		// }
+				
+        // if( ! empty( $attachsModify ) ) {
+		// 	$this->body = array_merge( $this->body, array( 'Attachments' => $attachsModify) );  
+        // }
 	}
 
 	public function send() {
@@ -195,6 +228,13 @@ class PostmarkController {
 				$updateData['id']           = $this->log_id;
 				$updateData['date_time']    = current_time( 'mysql', true );
 				$updateData['reason_error'] = $message;
+
+				if ( ! empty( $message ) ) {
+					$extra_info               = Utils::getExtraInfo( $this->log_id );
+					$extra_info['error_mess'] = $message;		
+					$updateData['extra_info'] = wp_json_encode($extra_info);
+				}
+
 				Utils::updateEmailLog( $updateData );
 			}
 

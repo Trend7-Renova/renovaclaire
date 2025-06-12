@@ -1,50 +1,51 @@
-=== YaySMTP - Simple WP SMTP Mail ===
+=== YaySMTP and Email Logs: Amazon SES, SendGrid, Outlook, Mailgun, Brevo, Google and Any SMTP Service ===
 Contributors: YayCommerce
-Tags: wp mail smtp, smtp, wordpress smtp, wp smtp, wp mail, easy smtp, wordpress smtp plugin, wordpress mail smtp, easy wp smtp, wp mail, wp smtp, gmail smtp, zoho, sendgrid, sendinblue, gmail, mailgun, amazon ses, postmark
+Tags: wp mail, email log, wp mail smtp, smtp, gmail smtp
 Requires at least: 5.5
 Requires PHP: 5.4
-Tested up to: 6.4.2
-Stable tag: 2.5.6
+Tested up to: 6.8
+Stable tag: 2.6.5
 License: GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
+Send WordPress emails successfully with WP Mail SMTP via your favorite mailer
 
 == Description ==
-**Send WordPress emails successfully with WP Mail SMTP via your favorite Mailer**
 
-[DOCUMENTATION](https://yaycommerce.gitbook.io/yaysmtp/)  
+Easily send emails from your WordPress site using your preferred SMTP server. With YaySMTP, enjoy **unlimited email logging**, effortless migration from your previous SMTP plugin, and **tracking opened and clicked emails**. 
 
-[youtube https://youtu.be/J6crljFKwVA]
-
-[GO PRO](https://yaycommerce.com/yaysmtp-wordpress-mail-smtp/)
-
-Simple WP SMTP Mail - YaySMTP helps you send emails from your WordPress website via your chosen SMTP server. 
+[Documentation](https://yaycommerce.gitbook.io/yaysmtp/) | [**Get YaySMTP Pro**](https://yaycommerce.com/yaysmtp-wordpress-mail-smtp/) 🏆
 
 ###⚡️ FEATURES
 
-YaySMTP is built with powerful options to connect via API of popular sending services including Gmail SMTP, Sendinblue SMTP, Zoho SMTP, SendGrid SMTP, and so on.
+YaySMTP has powerful options to connect via API of popular sending services, including Gmail SMTP, Sendinblue SMTP, Zoho SMTP, SendGrid SMTP, and so on.
 
-3 steps to set up Simple WP SMTP Mail that lets you start sending emails in minutes:
+3 steps to set up YaySMTP that lets you start sending emails in minutes:
 
-- Fill in sender 'From' name and email address
+- Fill in the sender 'From' name and email address
 - Choose an email SMTP service provider as your mailer
 - Config settings with built-in fields
 
-Whether you're selling via your WooCommerce website or not, you should make sure your email notifications make it to your audience inboxes. Communication should not end up in spam folders or get lost on the way. 
+Whether you're selling via your WooCommerce website or not, you should ensure your email notifications make it to your audience inboxes. Communication should not end up in spam folders or get lost on the way. 
 
-Setting up your WordPress site to use a WP SMTP mailer helps you send through without paying for regular technical maintenance.
+Setting up your WordPress site to use a WP SMTP mailer helps you send through without paying for regular technical maintenance. 🙌
 
-MORE BENEFITS
+[youtube https://youtu.be/J6crljFKwVA]
 
-- **Send test email** in a single click
-- **Email log** with saved database in basic or full information
-- Automatically delete email logs after 14 - 150 days
-- One click to migrate/import API key and settings from other WP SMTP plugins including Easy WP SMTP, WP Mail SMTP, SMTP Mailer, WP SMTP, Mail Bank, and Post SMTP Mailer
-- Email SMTP **fallback mailer** with full options
-- **Disable email delivery** and keep email log for staging and development mode
-- Designed with clean UI/UX (our clients 🧡 it)
-- Optimized for WooCommerce transactional email delivery
-- Connect seamlessly with major SMTP service providers
+###🚀 MORE BENEFITS
+
+- **Seamless connection**: YaySMTP works with your hosting's email server and dedicated SMTP service providers.
+- **Send test email**: Quickly send a test email in a single click. Or you can send test and [preview WooCommerce order emails](https://yaycommerce.com/how-to-preview-and-test-your-woocommerce-emails/) as well.
+- **Full email log**: Keep all email logs with email content and metadata in basic or full information. You can filter, show/hide columns, and search by email subject, user email, etc.
+- **Automatically delete email logs**: You can keep logging emails forever or have your email log retained within the latest 7 - 365 days.
+- **Export/Import email log**: Easily save a backup of your sent-out emails as CSV in case you need to refer to it later.
+- **One click to migrate**: Import your server's API key and settings from other WP SMTP plugins, including Easy WP SMTP, WP Mail SMTP Pro, SMTP Mailer, WP SMTP, Mail Bank, and more [upon request](https://yaycommerce.com/support/).
+- **Import email logs**: Migrate email logs from other WP SMTP plugins to ensure a complete record on your new [email logging page](https://docs.yaycommerce.com/yaysmtp/settings-and-tools/view-email-log) of YaySMTP.
+- **Fallback mailer**: Pick an alternative email sender or relay server with full options.
+- **Disable email delivery**: In the development local mode or maintenance stage, you can record email logs as if they are sent. This is helpful for testing purposes without consuming your sending volumes.
+- **Top-notch design**: Built with quality code and clean UI/UX (your clients will love it!).
+- **Ecommerce optimized**: You can send WooCommerce transactional emails and also marketing campaigns.
+
 
 ###🎉 Supported Themes and Plugins
 
@@ -52,35 +53,38 @@ MORE BENEFITS
 - Perfect with [WooCommerce Email Customizer](https://yaycommerce.com/yaymail-woocommerce-email-customizer/) plugin.
 
 ###💪 Mailer
-Simple WP SMTP Mail allows you to freely integrate to the following email SMTP services:
+YaySMTP - WP SMTP Plugin allows you to freely integrate the following email SMTP services:
 
 1. SendGrid 
 2. Gmail SMTP server
 3. Zoho
-4. SendinBlue
+4. Brevo (formerly Sendinblue SMTP)
 5. Mailgun
 6. SMTP.com 
 7. Amazon SES
 8. Postmark
 9. MailJet
-10. SparkPost
+10. MessageBird (formely Sparkpost)
 11. Pepipost
 12. SendPulse
-13. Microsoft/Outlook/Office 365/Exchange
-14. Mandrill by Mailchimp
-15. And more! [Contact us](https://yaycommerce.com/contact/) to suggest your favorite Mailer
+13. Microsoft Outlook, Office 365, Microsoft Exchange Online
+14. Mandrill SMTP by Mailchimp
+15. Yournotify
+16. IONOS
+17. Your hosting's email server
+18. And more! [Contact us](https://yaycommerce.com/contact/) to suggest your favorite mailer
 
-###🎯 Benefits
-When customers buy products from your website, they expect regular updates. That's why timely communication is crucial to your business.
+###🎯 Why use YaySMTP?
+Customers who buy products from your website expect regular updates and follow-ups. That's why timely communication is crucial to your business.
 
 Sending follow-up WordPress emails on time can bring customers back while building trust and brand value.
 
 ###📝 Documentation and Support
-If you're having issues, do let us know and we'll be [happy to help](https://yaycommerce.com/support/).
+If you're having issues, do let us know, and we'll be [happy to help](https://yaycommerce.com/support/).
 
 ###♥️ Like this YaySMTP Plugin?
-- Rate us 5⭐ stars on [WordPress.org](https://wordpress.org/support/plugin/yaysmtp/reviews/#new-post).
-- Check out our best-selling WordPress plugins: 
+👉 Rate us 5 stars on [WordPress.org](https://wordpress.org/support/plugin/yaysmtp/reviews/#new-post).
+✅ Check out our best-selling WordPress plugins: 
 - [YayMail - WooCommerce Email Customizer](https://yaycommerce.com/yaymail-woocommerce-email-customizer/)
 - [Email Customizer Addons](https://yaycommerce.com/yaymail-addons/)
 - [YayCurrency - WooCommerce Multi-Currency Switcher](https://yaycommerce.com/yaycurrency-woocommerce-multi-currency-switcher/)
@@ -94,7 +98,7 @@ If you're having issues, do let us know and we'll be [happy to help](https://yay
 Absolutely! YaySMTP doesn't collect or store any personal information. So please rest assured.
 
 = Is YaySMTP free? =
-Yes, you can use it free of charge. YayCommerce SMTP plugin comes with all features that you can find in the description above.
+Yes, you can use it free of charge. YayCommerce SMTP plugin comes with all the features that you can find in the description above.
 
 = What will I get if I become a premium user? =
 You'll have our priority support for whatever issue you have with sending and receiving emails through WordPress. You can also ask us to develop new options or features. We might not say Yes to all requests, but your feedback definitely gets its place on our desk.
@@ -110,6 +114,43 @@ You'll have our priority support for whatever issue you have with sending and re
 4. Additional Settings for Email Delivery Summary and Fallback Options
 
 == Changelog ==
+
+= May 8, 2025 - Version 2.6.5 =
+- Improved: Delete Email Logs (Reported by ChuongVN)
+
+= Apr 10, 2025 - Version 2.6.4 =
+- Fixed: XSS with special character
+
+= Feb 10, 2025 - Version 2.6.3 =
+- Improved: UI for WooCommerce email preview
+- Fixed: XSS (SMTP Sendinblue/Brevo, SMTP SendGrid, SMTP Amazon SES)
+- Fixed: XSS in body content mails of logs
+
+= Dec 25, 2024 - Version 2.6.2 =
+- Improved: Code for Guzzle HTTP library
+- Fixed: Load large log data
+
+= Dec 24, 2024 - Version 2.6.1 =
+- Added: Error details for email logs
+- Improved: UI
+- Improved: Compatible with other SMTP services
+
+= Oct 3, 2024 - Version 2.6.0 =
+- Added: Data Centers option for Zoho
+- Fixed: Issue with Reply To of Mandrill
+
+= Apr 23, 2024 - Version 2.5.9 =
+- Added: Note for Gmail
+- Updated: Change icon/text Sendinblue to Brevo
+- Fixed: Attachment for Mailjet
+- Fixed: Deprecated issue 
+- Fixed: Logs feature of Mandrill
+
+= Mar 13, 2024 - Version 2.5.7 =
+- Added: Import email logs from previously used plugins (WP Mail SMTP and 4 other WP plugins)
+- Improved: Email log retention logic when changing the retention period
+- Improved: UI of importing SMTP settings 
+- Fixed: Bug with attachments of Mailgun
 
 = Dec 21, 2023 - Version 2.5.6 =
 - Fixed: Deprecated: Return type of YaySMTPAmazonSES

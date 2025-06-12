@@ -517,6 +517,10 @@ if ( 'yaysmtp' === $mainTab && 'additional-setting' === $childTab ) {
 		<?php Utils::getTemplatePart( YAY_SMTP_PLUGIN_PATH . 'includes/Views', 'yaysmtp-settings-other', array()); ?>
 		<!-- Import SMTP settings - end -->
 
+		<!-- Import Email logs - start -->
+		<?php Utils::getTemplatePart( YAY_SMTP_PLUGIN_PATH . 'includes/Views', 'yaysmtp-import-email-logs-other', array()); ?>
+		<!-- Import Email logs - end -->
+
 		<!-- Export email log - start -->
 		<?php Utils::getTemplatePart( $templatePart, 'export-email-log', array() ); ?>
 		<!-- Export email emaillog - end -->

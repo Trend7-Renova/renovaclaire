@@ -181,6 +181,40 @@ class SMTPcomController {
 				$this->body = array_merge( $this->body, array( 'originator' => array( 'reply_to' => $dataReplyTo ) ) );
 			}
 		}
+
+		// Set attachments.
+		// $attachments = $phpmailer->getAttachments();
+		// if ( ! empty( $attachments ) ) {
+		// 	$dataAttachs = [];
+		// 	foreach ( $attachments as $attach ) {
+		// 		$attachFile = false;
+		// 		try {
+		// 			if ( is_file( $attach[0] ) && is_readable( $attach[0] ) ) {
+		// 				$attachFile = file_get_contents( $attach[0] );
+		// 			}
+		// 		} catch ( \Exception $except ) {
+		// 			$attachFile = false;
+		// 		}
+
+		// 		if ( false === $attachFile ) {
+		// 			continue;
+		// 		}
+
+		// 		$filetype = str_replace( ';', '', trim( $attach[4] ) );
+		// 		$dataAttachs[] = [
+		// 			'content'     => base64_encode( $attachFile ), 
+		// 			'type'        => $filetype,
+		// 			'encoding'    => 'base64',
+		// 			'filename'    => $attach[2],
+		// 			'disposition' => in_array( $attach[6], [ 'inline', 'attachment' ], true ) ? $attach[6] : 'attachment', 
+		// 			'cid'         => empty( $attachment[7] ) ? '' : trim( (string) $attachment[7] ),
+		// 		];
+		// 	}
+
+		// 	if ( ! empty( $dataAttachs ) ) {
+		// 		$this->body  = array_merge( $this->body, array( 'body' => array( 'attachments' => $dataAttachs ) ) );
+		// 	}
+		// }
 	}
 
 	public function send() {
@@ -214,8 +248,23 @@ class SMTPcomController {
 			if ( ! in_array( $code, $codeSucArrs ) && ! empty( $resp['response'] ) ) {
 				$error   = $resp['response'];
 				$message = '';
+				$message_extra = [];
 				if ( ! empty( $error ) ) {
 					$message = '[' . sanitize_key( $error['code'] ) . ']: ' . $error['message'];
+
+					if ( ! empty( $resp['body'] ) ) { // string or json string
+						$body_error = json_decode( $resp['body'], true );
+						if ( $body_error && ! empty( $body_error['data'] ) ) { 
+							if ( is_array( $body_error['data'] ) ) {
+								$error_arr = $body_error['data'];
+								if ( $error_arr && is_array( $error_arr ) ) { 
+									foreach ( $error_arr as $key => $value ) {
+										$message_extra[] = '[' . sanitize_key( $error['code'] ) . '] ' . sanitize_text_field( $key ) . ': '. sanitize_text_field( $value );
+									}
+								}
+							} 
+						} 
+					}
 				}
 				
 				if ( $this->use_fallback_smtp ) {
@@ -231,6 +280,13 @@ class SMTPcomController {
 					$updateData['id']           = $this->log_id;
 					$updateData['date_time']    = current_time( 'mysql', true );
 					$updateData['reason_error'] = $message;
+
+					if ( ! empty( $message_extra ) ) {
+						$extra_info               = Utils::getExtraInfo( $this->log_id );
+						$extra_info['error_mess'] = implode(", ", $message_extra);		
+						$updateData['extra_info'] = wp_json_encode($extra_info);
+					}
+
 					Utils::updateEmailLog( $updateData );
 				}
 			} else {

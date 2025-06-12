@@ -25,7 +25,7 @@ class Schedule {
 		if ( 0 !== $deleteDatetimeSetting ) {
 			add_action( 'yaysmtp_delete_email_log_schedule_hook', array( $this, 'delete_email_log_schedule' ) );
 			if ( ! wp_next_scheduled( 'yaysmtp_delete_email_log_schedule_hook' ) ) {
-				wp_schedule_event( time(), 'yaysmtp_specific_delete_time', 'yaysmtp_delete_email_log_schedule_hook' );
+				wp_schedule_event( time() + 86400 * $deleteDatetimeSetting, 'yaysmtp_specific_delete_time', 'yaysmtp_delete_email_log_schedule_hook' );
 			}
 		} else {
 			wp_clear_scheduled_hook( 'yaysmtp_delete_email_log_schedule_hook' );
@@ -60,7 +60,7 @@ class Schedule {
 
 	public function yaysmtp_datetime_custom_cron_schedule( $schedules ) {
 		$emailLogSetting       = Utils::getYaySmtpEmailLogSetting();
-		$deleteDatetimeSetting = isset( $emailLogSetting ) && isset( $emailLogSetting['email_log_delete_time'] ) ? (int) $emailLogSetting['email_log_delete_time'] : 60;
+		$deleteDatetimeSetting = isset( $emailLogSetting ) && isset( $emailLogSetting['email_log_delete_time'] ) ? (int) $emailLogSetting['email_log_delete_time'] : 0;
 		if ( 0 !== $deleteDatetimeSetting ) {
 			$schedules['yaysmtp_specific_delete_time'] = array(
 				'interval' => 86400 * $deleteDatetimeSetting,
@@ -79,8 +79,11 @@ class Schedule {
 		return $schedules;
 	}
 
-	public function delete_email_log_schedule() {
-		Utils::deleteAllEmailLogs();
+	public function delete_email_log_schedule( $days_setting = 0 ) {
+		$days_setting = Utils::getDeleteDatetimeSetting();
+		if ( 0 !== $days_setting ) { // "Forever" Save Logs
+	    	Utils::deleteAllEmailLogs();
+		}
 	}
 
 	public function send_mail_report_weekly() {

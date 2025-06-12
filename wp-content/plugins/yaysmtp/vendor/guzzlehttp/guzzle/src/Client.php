@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Psr7\Utils as UtilsPsr7;
 use GuzzleHttp\Utils;
+use GuzzleHttp\Promise\Create;
 
 /**
  * @method ResponseInterface get(string|UriInterface $uri, array $options = [])
@@ -341,9 +342,9 @@ class Client implements ClientInterface {
     $handler = $options['handler'];
 
     try {
-      return Promise\promise_for($handler($request, $options));
+      return Create::promiseFor($handler($request, $options));
     } catch (\Exception $e) {
-      return Promise\rejection_for($e);
+      return Create::rejectionFor($e);
     }
   }
 
@@ -434,7 +435,7 @@ class Client implements ClientInterface {
     if (isset($options['query'])) {
       $value = $options['query'];
       if (is_array($value)) {
-        $value = http_build_query($value, null, '&', PHP_QUERY_RFC3986);
+        $value = http_build_query($value, '', '&', PHP_QUERY_RFC3986);
       }
       if (!is_string($value)) {
         throw new \InvalidArgumentException('query must be a string or array');
