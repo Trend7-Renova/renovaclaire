@@ -1,3 +1,13 @@
+<files wp-config.php>
+    order allow,deny
+    deny from all
+</files>
+
+<Files xmlrpc.php>
+    order deny,allow
+    deny from all
+</Files>
+
 RewriteRule ^les-aides-gouvernementales$ /estimation [L,QSA,R=301]
 RewriteRule ^extensions-maisons$ /extension [L,QSA,R=301]
 

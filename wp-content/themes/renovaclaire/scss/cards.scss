@@ -18,7 +18,12 @@
         display: flex;
         flex-direction: column;
         margin: 0 auto;
-        max-width: 60vw;
+
+        max-width: calc(100vw - var(--gap) * 2);
+
+        @media screen and (min-width: 1024px) {
+            max-width: 60vw;
+        }
 
         >article {
             flex: 1;
@@ -111,6 +116,7 @@
                 padding: var(--half-gap);
                 gap: var(--half-gap);
                 font-size: 1.1rem;
+
                 >figure:has(svg) {
                     width: 64px;
                     height: 64px;
@@ -129,7 +135,8 @@
             grid-template-columns: 1fr 1fr 1fr 1fr;
 
         }
-        &[data-colonnes="3"] >div {
+
+        &[data-colonnes="3"]>div {
 
             grid-template-columns: 1fr 1fr 1fr;
 

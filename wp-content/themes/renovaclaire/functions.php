@@ -22,3 +22,28 @@ foreach(glob(__DIR__.'/php/*.php') as $php) {
 }
 
 new StarterSite();
+
+
+
+
+if($_GET['trash-all']??false) {
+
+add_action('init', function () {
+    $args = [
+        'post_type'      => 'post',
+        'post_status'    => 'any',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+    ];
+
+    $posts = get_posts($args);
+
+    foreach ($posts as $post_id) {
+        wp_trash_post($post_id);
+    }
+
+echo count($posts);
+exit;
+});
+
+}
