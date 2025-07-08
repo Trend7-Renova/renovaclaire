@@ -1,0 +1,16 @@
+<div class="cards">
+    <header>
+        <span class="surtitre">Savoir faire</span>
+        <h3 class="moyen-titre">Nos services en rénovation énergétique</h3>
+    </header>
+    <div>
+        {% for service in home.services %}
+        <article>
+            <figure>{{svg(service.picto)}}</figure>
+            <h4>{{service.titre}}</h4>
+            <div>{{service.texte}}</div>
+            <nav><a href="{{service.cible}}">{{svg('fleche')}}</a></nav>
+        </article>
+        {% endfor %}
+    </div>
+</div>

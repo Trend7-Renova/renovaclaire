@@ -1,0 +1,32 @@
+@font-face {
+    font-display: swap;
+    font-family: 'Raleway-Bold';
+    src: url('/wp-content/themes/renovaclaire/fonts/Raleway-Bold.woff2') format('woff2'),
+        url('/wp-content/themes/renovaclaire/fonts/Raleway-Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Raleway-Regular';
+    src: url('/wp-content/themes/renovaclaire/fonts/Raleway-Regular.woff2') format('woff2'),
+        url('/wp-content/themes/renovaclaire/fonts/Raleway-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Raleway-Thin';
+    src: url('/wp-content/themes/renovaclaire/fonts/Raleway-Thin.woff2') format('woff2'),
+        url('/wp-content/themes/renovaclaire/fonts/Raleway-Thin.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+.font-bold {
+    font-family: 'Raleway-Bold';
+}

@@ -1,0 +1,3 @@
+RewriteEngine On
+Rewritebase /wp-content/themes/renovaclaire/
+RewriteRule ^dist/style-[a-zA-Z0-9]+\.min\.css$ dist/style.css [L,QSA]

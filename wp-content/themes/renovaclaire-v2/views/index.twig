@@ -1,0 +1,26 @@
+{% extends "base.twig" %}
+{% block blockHero %}
+	{% if hero %}
+		{% include 'partial/hero-large.twig' %}
+	{% endif %}
+{% endblock %}
+{% block content %}
+
+
+
+    {% include 'home/principal.twig' %}
+    
+    {% include 'home/avantages.twig' %}
+
+    {% include 'home/services.twig' %}
+    
+    {% include 'home/video.twig' %}
+    
+    {% include 'home/partenaires.twig' %}
+
+    {% if posts_last_3 | length > 0%}
+       {% include 'home/posts.twig' with {posts : posts_last_3 }%}
+    {% endif %}
+
+
+{% endblock %}

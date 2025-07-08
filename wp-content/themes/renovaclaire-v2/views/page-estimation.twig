@@ -1,0 +1,178 @@
+{% extends "base.twig" %}
+{% block content %}
+<script>
+  const estimation = {{ estimation | json_encode }}
+</script>
+<section class="section">
+  {% if post.title %}
+  <h2 class="grand-titre">
+    {{ post.title }}
+  </h2>
+  {% endif %}
+  <p class="chapo">
+    {{ post.description }}
+  </p>
+  <div>
+    {{ post.content }}
+  </div>
+
+  <form id="estimation">
+    <fieldset data-etape="1" data-active="true">
+
+      <input type="hidden" id="personnes" name="data[personnes]" required value="7">
+      <div>
+        <label for="personnes">Combien de personnes composent votre foyer ?</label>
+        <div>
+          <div class="boutons">
+            {% for i in 1..8 %}
+            <button class="bouton alt" data-personnes="{{i}}" type="button">{{i}}</button>
+            {% endfor %}
+            <!-- <button class="bouton alt" data-personnes="+" type="button">Plus que ça !</button> -->
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset data-etape="2">
+
+      <input type="hidden" id="rfr" name="data[rfr]">
+      <div>
+        <dialog>
+          <div class="content">
+            <h3>Revenu fiscal de référence</h3>
+            <p>Votre revenu fiscal de référence se trouve sur la première page de votre dernier avis d'impôt sur le
+              revenu.</p>
+            <figure>
+              <img
+                src="{{ theme.uri }}/images/comprendre-le-revenu-fiscal-de-reference-2022-determination-et-calcul.png">
+            </figure>
+          </div>
+
+        </dialog>
+        <label for="rfr">Votre revenu fiscal de référence <button type="button"
+            data-action="aide">{{svg('question')}}</button></label>
+        <div>
+          <div class="boutons" id="boutons-rfr"></div>
+          <!-- <select id="rfr" name="data[rfr]" data-required></select> -->
+        </div>
+      </div>
+
+    </fieldset>
+
+    <fieldset data-etape="3">
+      <input type="hidden" id="classe" name="data[classe]">
+
+      <div>
+        <dialog>
+          <div class="content">
+            <h3>Classe énergétique</h3>
+            <p>La classe énergétique d'une maison est fournie dans le cadre d'un diagnostic de performance énergétique
+              (DPE) qui analyse deux aspects d'un logement : la consommation énergétique et les émissions de CO². Ce
+              document est obligatoire en cas de vente ou de location d'un bien.</p>
+
+            <p>Le DPE est réalisé par un diagnostiqueur agréé. </p>
+            <p>On peut obtenir une estimation de la classe énergétique d'une maison à partir de son année de
+              construction, et sous réserve que des travaux de rénovation n'aient pas déjà eu lieu.</p>
+            <figure>
+              <img src="{{ theme.uri }}/images/dpe.jpg" width="500">
+            </figure>
+          </div>
+
+        </dialog>
+
+        <label for="rfr">Classe énergétique de votre maison <button type="button"
+            data-action="aide">{{svg('question')}}</button>
+        </label>
+        <div class="boutons">
+          {% for classe in estimation.classes_energetiques %}
+          <button class="bouton alt" type="button" data-classe="{{classe.lettre}}">{{classe.lettre}}</button>
+          {% endfor %}
+          <button class="bouton alt" type="button" data-classe="nsp">Je ne sais pas</button>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset data-etape="4">
+      <input type="hidden" id="annee" name="data[annee]" value="">
+      <div>
+        <label for="personnes">Année de construction de votre maison</label>
+        <div class="boutons" id="boutons-annees">
+          {% for item in estimation.classes_par_annees %}
+          {% if prec %}
+          {% if item.annee %}
+          <button class="bouton alt" type="button" data-annee="{{item.annee}}">Entre {{item.annee}} et {{prec-1}}
+          </button>
+          {% else %}
+          <button class="bouton alt" type="button" data-annee="{{item.annee}}">Avant {{prec}}</button>
+          {% endif %}
+          {% else %}
+          <button class="bouton alt" type="button" data-annee="{{item.annee}}">{{item.annee}} ou plus récent</button>
+          {% endif %}
+          {% set prec = item.annee %}
+          {% endfor %}
+        </div>
+      </div>
+
+    </fieldset>
+    <div class="resultat hidden">
+      <h3>Découvrez vos résultats !</h3>
+      <div>
+        <div class="montant if-not-aides">
+          <p>Nous pouvons vous faire <strong>profiter d’une solution personnalisée</strong>, sans aide de l’Etat, mais qui pourra vous permettre de <strong>réaliser des économies</strong></p>
+        </div>
+        <div class="montant if-aides">
+          <span data-parse="${Data.montantAides}"></span>
+          <p>Vous pouvez bénéficier de différentes aides à la rénovation pour un montant allant jusque <strong
+              data-parse="${Data.montantAides}"></strong></p>
+        </div>
+        <div class="changer-de-classe if-bonne-classe">
+          <figure>
+            <img src="{{ theme.uri }}/images/classes.png">
+          </figure>
+          <div class="avec-aides">
+            <h4>Votre logement est déjà bien classé !</h4>
+            <p>
+              Selon les informations fournies votre logement est théoriquement en classe <strong
+                data-parse="${Data.classe.toUpperCase()}"></strong>.<br>
+                Des travaux de rénovation peuvent permettre
+              d’augmenter le confort de votre bien et de réaliser des économies d’énergie.
+            </p>
+          </div>
+        </div>
+        <div class="changer-de-classe if-not-bonne-classe">
+          <figure>
+            <img src="{{ theme.uri }}/images/classes.png">
+          </figure>
+          <div class="avec-aides">
+            <h4>Vous pouvez changer de classe !</h4>
+            <p>
+              Selon les informations fournies votre logement est théoriquement en classe <strong
+                data-parse="${Data.classe.toUpperCase()}"></strong>.<br>
+              Des travaux de rénovation peuvent vous permettre d’atteindre la classe <strong>A ou B</strong>.
+            </p>
+            <ul>
+              <li>Jusque 80% d’économies d’énergie</li>
+              <li>La valeur de votre bien accrue de 28%</li>
+            </ul>
+          </div>
+        </div>
+        <div class="recap if-aides">Nos experts peuvent <strong>réaliser votre dossier de demande</strong> et
+          <strong>vous faire
+            profiter de ces aides</strong>. Vous serez accompagné tout au long de votre projet par un <strong>contact
+            unique</strong>.
+        </div>
+        <div class="recap if-not-aides">Vous serez accompagné tout au long de votre projet par un <strong>contact
+            unique</strong>.
+        </div>
+        <div class="boutons">
+          <a href="/contact" class="bouton"><span>Contactez-nous</span>
+            {{svg('fleche')}}
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</section>
+
+{% endblock %}

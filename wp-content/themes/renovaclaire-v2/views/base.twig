@@ -1,0 +1,22 @@
+{% block html_head_container %}
+
+{% include 'head.twig' %}
+{% block head %}{% endblock %}
+</head>{% endblock %}
+
+<body class="{{ body_class }}" data-template="base.twig" data-articles="{{ posts_last_3.length > 0 ? 'true' : 'false'}}">
+    {{ function('wp_body_open') }}
+
+    {% include 'header.twig' %}
+        {% block blockHero %}{% endblock %}
+
+    <div class="container">
+
+        {% block content %}{% endblock %}
+
+    </div>
+    {% include 'footer.twig' %}
+    {{ function('wp_footer') }}
+</body>
+
+</html>

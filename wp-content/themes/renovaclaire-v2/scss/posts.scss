@@ -1,0 +1,107 @@
+[data-articles="false"] {
+    li:has(a[href*="/blog/"]) {
+        display: none !important;
+    }    
+}
+.posts {
+    >header {
+        text-align: center;
+        padding-block: var(--gap);
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+    }
+
+    >div {
+        max-width: var(--largeur-contenu);
+        display: flex;
+        gap: var(--gap);
+        flex-direction: column;
+        margin: 0 auto;
+
+    }
+
+    article {
+        &:not(:last-child):after {
+            display: block;
+            content: '';
+            border: 1px dotted var(--couleur-ter);
+        }
+
+        flex: 1;
+
+        figure {
+            border-radius: var(--radius);
+            aspect-ratio: 16/9;
+        }
+
+        display: flex;
+        flex-direction: column;
+        gap:var(--gap);
+
+        header {
+            display: flex;
+            flex-direction: column;
+            gap: var(--half-gap);
+
+            p {
+                font-size: smaller;
+            }
+        }
+    }
+
+    @media screen and (min-width: 1024px) {
+        >div {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-gap: var(--gap);
+        }
+
+        article {
+            &:after {
+                display: none !important;
+            }
+
+            transform: scale(1);
+            transition: all .2s ease-in-out;
+        }
+
+        &:not(.archive) article {
+            &:hover {
+                transform: scale(1.03);
+            }
+        }
+    }
+
+    &.archive {
+        >div {
+            max-width: var(--largeur-page);
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap);
+
+            article {
+                figure {
+                    box-shadow: var(--ombre);
+                }
+
+                h4 {
+                    font-size: 2rem;
+                }
+
+                &:not(:last-child) {
+                    padding-bottom: var(--gap);
+                    border-bottom: 1px dotted var(--gris-fonce);
+                }
+            }
+        }
+    }
+
+}
+
+.section.post-type-post {
+}
+.post-type-post figure {
+    border-radius: var(--radius);
+    box-shadow: var(--ombre);
+}

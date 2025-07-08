@@ -1,0 +1,30 @@
+{% extends "base.twig" %}
+{% block content %}
+
+<section class="section">
+
+    <h1 class="grand-titre"> {{ post.title }}
+    </h1>
+    <div class="chapo">{{ post.description }}</div>
+
+</section>
+
+<div class="cards line">
+    <div>
+        {% for solution in post.meta('solutions') %}
+        <article>
+            <figure><img src="{{solution.photo}}"></figure>
+            <h4>{{solution.nom}}</h4>
+            <div>{{solution.description}}</div>
+        </article>
+        {% endfor %}
+    </div>
+</div>
+<section class="section">
+    <div class="content">
+        {{post.content}}
+    </div>
+
+    <div align="center"><a href="{{post.meta('cta') | cta}}" class="bouton">{{post.meta('cta').texte}}</a></div>
+</section>
+{% endblock %}

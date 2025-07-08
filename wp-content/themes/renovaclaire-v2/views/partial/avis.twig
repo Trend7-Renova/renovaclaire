@@ -1,0 +1,31 @@
+                        <article class="media box">
+                            {% if item.avis.photo %}
+                            <figure class="media-left">
+                                <p class="image is-64x64">
+                                    <img src="{{item.avis.photo}}">
+                                </p>
+                            </figure>
+                            {% endif %}
+                            <div class="media-content">
+                                <div class="content">
+                                    <p>
+                                        <strong>
+                                            {{item.avis.auteur}}
+                                        </strong>
+                                        <small>
+                                            {{item.avis.date}}
+
+                                        </small>
+                                        <br>
+                                        {{item.avis.texte | truncate(50)}}
+                                    </p>
+                                </div>
+                                <nav class="level is-mobile">
+                                    <div class="level-left">
+                                        <span class="level-item">
+                                            {% for i in 1..item.avis.note %}⭐{% endfor %}
+                                        </span>
+                                    </div>
+                                </nav>
+                            </div>
+                        </article>

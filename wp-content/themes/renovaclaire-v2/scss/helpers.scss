@@ -1,0 +1,26 @@
+@media screen and (max-width: 1024px) {
+    .seulement-sur-desktop {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+
+    .seulement-sur-mobile {
+        display: none !important;
+    }
+}
+
+
+.hidden {
+    display: none !important;
+
+}
+
+.mt {
+    margin-top: var(--half-gap);
+}
+
+.nowrap {
+    white-space: nowrap;
+}

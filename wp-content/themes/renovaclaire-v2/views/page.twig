@@ -1,0 +1,61 @@
+{% extends "base.twig" %}
+{% block blockHero %}
+	{% if hero %}
+		{% include 'partial/hero-large.twig' %}
+	{% endif %}
+{% endblock %}
+
+
+{% block content %}
+	<section class="section">
+
+		{% if not hero %}
+
+			<h1 class="grand-titre">
+				{{ post.title }}
+			</h1>
+			<div class="chapo">{{ post.description }}</div>
+
+		{% endif %}
+	</section>
+
+	<section class="section">
+		<div class="content">
+			{{post.content}}
+		</div>
+	</section>
+	{% if post.meta('solutions') %}
+
+		<div class="cards {{post.meta('solutions')|length < 4 ? 'line' : ''}}" data-colonnes="{{post.meta('solutions')|length == 4 ? 4 : 3}}">
+			<div>
+				{% for solution in post.meta('solutions') %}
+					<article>
+						<figure><img src="{{solution.photo.sizes.large}}"></figure>
+						<h4>{{solution.nom}}</h4>
+						<div>{{solution.description}}</div>
+					</article>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+	<section class="section">
+		{% if block('pageContent')|trim %}
+		</section>
+		{% block pageContent %}{% endblock %}
+		<section class="section">
+		{% endif %}
+		{% if post.meta('cta') %}
+			<div align="center">
+				<a href="{{post.meta('cta') | cta}}" class="bouton">
+					<span>{{post.meta('cta').texte}}</span>
+					{{svg('fleche')}}
+				</a>
+			</div>
+		{% endif %}
+		{% if post.meta('cta2') %}
+			<div align="center">
+				<a href="{{post.meta('cta2') | cta}}" class="bouton alt">{{post.meta('cta2').texte}}</a>
+			</div>
+		{% endif %}
+	</section>
+{% endblock %}

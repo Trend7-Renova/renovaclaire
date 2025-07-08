@@ -1,0 +1,80 @@
+<footer id="footer">
+    <div>
+        <div>
+            <a href="/"><img class="logo" src="{{ theme.uri }}/images/logo-small.png"></a>
+            <p>Un avenir plus durable, plus économe en énergie et plus respectueux de l'environnement.</p>
+            <nav>
+                <ul class="icones">
+                    <li>
+                        <a href="https://www.instagram.com/renovaclaire">{{svg('instagram')}}</a>
+                    </li>
+
+                    <li>
+                        <a href="https://www.linkedin.com/company/r%C3%A9nova-claire/">{{svg('linkedin')}}</a>
+                    </li>
+                    <li>
+                        <a href="https://www.facebook.com/profile.php?id=61551997961449">{{svg('facebook')}}</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div>
+            <h3>
+                {{menu_footer.title}}
+            </h3>
+            <ul>
+                {% for item in menu_footer.items %}
+                <li><a class="{{item.classes|join(' ')}}" href="{{ item.link }}" {{ item.is_target_blank
+                        ? 'target="_blank"' }}>{{ item.title}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h3>
+                {{liens_utiles.title}}
+            </h3>
+            <ul>
+                {% for item in liens_utiles.items %}
+                <li><a class="{{item.classes|join(' ')}}" href="{{ item.link }}" {{ item.is_target_blank
+                        ? 'target="_blank"' }}>{{ item.title}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h3>Informations</h3>
+            <div>
+                {{svg('pin')}}
+                <span style="nowrap">RUE WANGARI MAATHAI,<br>57140, NORROY-LE-VENEUR</span>
+            </div>
+            <div>
+                {{svg('phone')}}
+                <span>03 87 73 48 28
+                </span>
+            </div>
+            <div>
+                {{svg('mail')}}
+                <span><a href="mailto:contact@renovaclaire.fr">contact@renovaclaire.fr</a>
+                </span>
+            </div>
+        </div>
+    </div>
+    <nav>
+        <ul>
+            {% for item in liens_de_bas_de_page.items %}
+            <li><a class="{{item.classes|join(' ')}}" href="{{ item.link }}" {{ item.is_target_blank ? 'target="_blank"'
+                    }}>{{
+                    item.title}}</a></li>
+            {% endfor %}
+            <li><a href="javascript:window.Sddan.cmp.displayUI();">Consentement RGPD</a></li>
+        </ul>
+    </nav>
+</footer>
+{% if annonce.afficher_annonce %}
+<div id="annonce" style="--couleur-fond-annonce:{{annonce.couleur_fond_annonce}};--couleur-texte-annonce:{{annonce.couleur_texte_annonce}};">
+    <div>
+
+        <strong>{{annonce.titre_annonce}}</strong>
+        {{annonce.texte_annonce}}
+    </div>
+</div>
+{% endif %}
