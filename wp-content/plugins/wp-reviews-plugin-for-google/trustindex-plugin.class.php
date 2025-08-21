@@ -411,6 +411,16 @@ return [
 'top-rated-date',
 'show-review-replies',
 'verified-by-trustindex',
+'fomo-open',
+'fomo-link',
+'fomo-border',
+'fomo-arrow',
+'fomo-icon',
+'fomo-color',
+'fomo-margin',
+'fomo-title',
+'fomo-text',
+'fomo-url',
 'cdn-version-control',
 'version-control',
 'preview',
@@ -468,6 +478,9 @@ case 'enable-animation':
 case 'show-arrows':
 case 'show-header-button':
 case 'reviews-load-more':
+case 'fomo-open':
+case 'fomo-border':
+case 'fomo-arrow':
 $default = 1;
 break;
 case 'widget-setted-up':
@@ -475,6 +488,8 @@ case 'disable-font':
 case 'footer-filter-text':
 case 'floating-mobile-open':
 case 'show-review-replies':
+case 'fomo-link':
+case 'fomo-margin':
 $default = 0;
 break;
 case 'align':
@@ -500,6 +515,33 @@ $default = in_array($styleId, [98, 100, 102, 104]) ? 'hide' : '';
 break;
 case 'verified-by-trustindex':
 $default = 0;
+break;
+case 'fomo-icon':
+$default = self::$widget_templates['templates'][$styleId]['params']['fomo-icon'];
+break;
+case 'fomo-color':
+$params = self::$widget_templates['templates'][$styleId]['params'];
+$default = isset($params['fomo-color']) ? $params['fomo-color'] : '#FF552B';
+break;
+case 'fomo-title':
+$default = "";
+$content = $this->getWidgetOption('review-content');
+preg_match('/<div class="ti-title-text">(.+)<\/div>/U', $content, $matches);
+if (isset($matches[1]) && !$returnDefault) {
+$default = $matches[1];
+}
+break;
+case 'fomo-text':
+$default = "";
+$content = $this->getWidgetOption('review-content');
+preg_match('/<div class="ti-subtitle-text">(.+)<\/div>/U', $content, $matches);
+if (isset($matches[1]) && !$returnDefault) {
+$default = $matches[1];
+}
+break;
+case 'fomo-url':
+
+$default = $this->getReviewPageUrl();
 break;
 }
 }
@@ -782,7 +824,7 @@ $className = 'TrustindexPlugin_' . $forcePlatform;
 if (!class_exists($className)) {
 return $this->frontEndErrorForAdmins(ucfirst($forcePlatform) . ' plugin is not active or not found!');
 }
-$chosedPlatform = new $className($forcePlatform, $filePath, "do-not-care-12.8", "do-not-care-Widgets for Google Reviews", "do-not-care-Google");
+$chosedPlatform = new $className($forcePlatform, $filePath, "do-not-care-13.0", "do-not-care-Widgets for Google Reviews", "do-not-care-Google");
 $chosedPlatform->setNotificationParam('not-using-no-widget', 'active', false);
 if (!$chosedPlatform->is_noreg_linked()) {
 return $this->frontEndErrorForAdmins(sprintf(__('You have to connect your business (%s)!', 'trustindex-plugin'), $forcePlatform));
@@ -951,9 +993,32 @@ public static $widget_templates = array (
  'floating' => '17,21,52,53,112,114',
  'popup' => '23,30,32,112,114',
  'top-rated-badge' => '97,98,99,100,101,102,103,104',
+ 'fomo' => '116,117,118,119,120,121,122,123,124,125,126,127',
  ),
  'templates' => 
  array (
+ 45 => 
+ array (
+ 'name' => 'Slider I. - Big picture',
+ 'type' => 'slider',
+ 'is-active' => false,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ ),
+ ),
+ 46 => 
+ array (
+ 'name' => 'Slider II. - Big picture',
+ 'type' => 'slider',
+ 'is-active' => false,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ ),
+ ),
  4 => 
  array (
  'name' => 'Slider I.',
@@ -979,28 +1044,6 @@ public static $widget_templates = array (
  47 => 
  array (
  'name' => 'Slider III. - Big picture',
- 'type' => 'slider',
- 'is-active' => false,
- 'is-popular' => false,
- 'is-top-rated-badge' => false,
- 'params' => 
- array (
- ),
- ),
- 46 => 
- array (
- 'name' => 'Slider II. - Big picture',
- 'type' => 'slider',
- 'is-active' => false,
- 'is-popular' => false,
- 'is-top-rated-badge' => false,
- 'params' => 
- array (
- ),
- ),
- 45 => 
- array (
- 'name' => 'Slider I. - Big picture',
  'type' => 'slider',
  'is-active' => false,
  'is-popular' => false,
@@ -1046,9 +1089,9 @@ public static $widget_templates = array (
  'default-hide-date' => true,
  ),
  ),
- 95 => 
+ 39 => 
  array (
- 'name' => 'Slider I. - with AI summary',
+ 'name' => 'Slider II. - centered',
  'type' => 'slider',
  'is-active' => false,
  'is-popular' => false,
@@ -1057,9 +1100,9 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 39 => 
+ 95 => 
  array (
- 'name' => 'Slider II. - centered',
+ 'name' => 'Slider I. - with AI summary',
  'type' => 'slider',
  'is-active' => false,
  'is-popular' => false,
@@ -1090,22 +1133,22 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 19 => 
+ 34 => 
  array (
  'name' => 'Slider IV.',
  'type' => 'slider',
- 'is-active' => false,
+ 'is-active' => true,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
  array (
  ),
  ),
- 34 => 
+ 19 => 
  array (
  'name' => 'Slider IV.',
  'type' => 'slider',
- 'is-active' => true,
+ 'is-active' => false,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
@@ -1189,23 +1232,23 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 79 => 
- array (
- 'name' => 'Mansonry grid - with header',
- 'type' => 'grid',
- 'is-active' => false,
- 'is-popular' => true,
- 'is-top-rated-badge' => false,
- 'params' => 
- array (
- ),
- ),
  38 => 
  array (
  'name' => 'Grid II.',
  'type' => 'grid',
  'is-active' => false,
  'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ ),
+ ),
+ 79 => 
+ array (
+ 'name' => 'Mansonry grid - with header',
+ 'type' => 'grid',
+ 'is-active' => false,
+ 'is-popular' => true,
  'is-top-rated-badge' => false,
  'params' => 
  array (
@@ -1233,22 +1276,22 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 7 => 
+ 6 => 
  array (
  'name' => 'Sidebar slider II.',
  'type' => 'sidebar',
- 'is-active' => false,
+ 'is-active' => true,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
  array (
  ),
  ),
- 6 => 
+ 7 => 
  array (
  'name' => 'Sidebar slider II.',
  'type' => 'sidebar',
- 'is-active' => true,
+ 'is-active' => false,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
@@ -1656,17 +1699,6 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 109 => 
- array (
- 'name' => 'Button IX.',
- 'type' => 'button',
- 'is-active' => true,
- 'is-popular' => false,
- 'is-top-rated-badge' => false,
- 'params' => 
- array (
- ),
- ),
  61 => 
  array (
  'name' => 'Button X.',
@@ -1678,11 +1710,11 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 62 => 
+ 109 => 
  array (
- 'name' => 'Button XI.',
+ 'name' => 'Button IX.',
  'type' => 'button',
- 'is-active' => false,
+ 'is-active' => true,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
@@ -1694,6 +1726,17 @@ public static $widget_templates = array (
  'name' => 'Button X.',
  'type' => 'button',
  'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ ),
+ ),
+ 62 => 
+ array (
+ 'name' => 'Button XI.',
+ 'type' => 'button',
+ 'is-active' => false,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
@@ -1797,6 +1840,294 @@ public static $widget_templates = array (
  'is-top-rated-badge' => false,
  'params' => 
  array (
+ ),
+ ),
+ 116 => 
+ array (
+ 'name' => 'Fomo Review Widget I.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => true,
+ 'params' => 
+ array (
+ 'is-top-rated-badge' => true,
+ 'fomo-icon' => 'platform',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'profile-images',
+ 1 => 'platform',
+ 2 => 'fire',
+ 3 => 'trophy',
+ ),
+ 'fomo-platform-block' => true,
+ 'top-rated-badge-border' => false,
+ 'default-hide-date' => false,
+ ),
+ ),
+ 117 => 
+ array (
+ 'name' => 'Fomo Review Widget II.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'platform',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'profile-images',
+ 1 => 'platform',
+ 2 => 'fire',
+ 3 => 'trophy',
+ ),
+ 'fomo-title-text' => 'RATING_TEXT_LONG',
+ 'fomo-platform-block' => true,
+ ),
+ ),
+ 120 => 
+ array (
+ 'name' => 'Fomo Review Widget III.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'fire',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'profile-images',
+ 1 => 'platform',
+ 2 => 'fire',
+ 3 => 'trophy',
+ ),
+ 'fomo-title-text' => '5STAR_RATING_NUMBER <u>5-star</u> PLATFORM_NAME reviews',
+ 'fomo-platform-block' => true,
+ ),
+ ),
+ 119 => 
+ array (
+ 'name' => 'Fomo Review Widget IV.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'fire',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'profile-images',
+ 1 => 'platform',
+ 2 => 'fire',
+ 3 => 'trophy',
+ ),
+ 'fomo-title-text' => '5STAR_RATING_NUMBER_LAST <u>5-star</u> PLATFORM_NAME reviews',
+ 'fomo-subtitle-text' => 'in the last 30 days',
+ 'fomo-platform-block' => true,
+ ),
+ ),
+ 118 => 
+ array (
+ 'name' => 'Fomo Review Widget V.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'fire',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'profile-images',
+ 1 => 'platform',
+ 2 => 'fire',
+ 3 => 'trophy',
+ ),
+ 'fomo-title-text' => 'RATING_TEXT_LONG',
+ 'fomo-subtitle-text' => 'based on RATING_NUMBER PLATFORM_NAME reviews',
+ 'fomo-break-after-subtitle' => true,
+ 'fomo-platform-block' => true,
+ ),
+ ),
+ 121 => 
+ array (
+ 'name' => 'Fomo Review Widget VI.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'profile-images',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'profile-images',
+ 1 => 'platform',
+ 2 => 'fire',
+ 3 => 'trophy',
+ ),
+ 'fomo-title-text' => 'RATING_TEXT_LONG',
+ 'fomo-platform-block' => true,
+ 'fomo-color' => '#F6BB06',
+ ),
+ ),
+ 122 => 
+ array (
+ 'name' => 'Fomo Custom Widget I.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'discount-4',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'discount-1',
+ 1 => 'discount-2',
+ 2 => 'discount-3',
+ 3 => 'discount-4',
+ 4 => 'discount-5',
+ 5 => 'shipping-box',
+ 6 => 'shipping-truck',
+ ),
+ 'fomo-title-text' => '<u>20%</u> Discount Code: <u>NWA789</u>',
+ 'fomo-subtitle-text' => '3 days left!',
+ 'fomo-verified-block' => false,
+ 'fomo-custom-text' => true,
+ ),
+ ),
+ 123 => 
+ array (
+ 'name' => 'Fomo Custom Widget II.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'discount-2',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'discount-1',
+ 1 => 'discount-2',
+ 2 => 'discount-3',
+ 3 => 'discount-4',
+ 4 => 'discount-5',
+ 5 => 'shipping-box',
+ 6 => 'shipping-truck',
+ ),
+ 'fomo-title-text' => '<u>20%</u> Discount only for 3 days!',
+ 'fomo-subtitle-text' => 'Code: <u>NWA89</u>',
+ 'fomo-verified-block' => false,
+ 'fomo-custom-text' => true,
+ ),
+ ),
+ 124 => 
+ array (
+ 'name' => 'Fomo Custom Widget III.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'discount-3',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'discount-1',
+ 1 => 'discount-2',
+ 2 => 'discount-3',
+ 3 => 'discount-4',
+ 4 => 'discount-5',
+ 5 => 'shipping-box',
+ 6 => 'shipping-truck',
+ ),
+ 'fomo-title-text' => '<u>20%</u> Discount from first order!',
+ 'fomo-subtitle-text' => 'Limited-time welcome gift - don\'t miss out',
+ 'fomo-verified-block' => false,
+ 'fomo-custom-text' => true,
+ ),
+ ),
+ 125 => 
+ array (
+ 'name' => 'Fomo Custom Widget IV.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'discount-1',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'discount-1',
+ 1 => 'discount-2',
+ 2 => 'discount-3',
+ 3 => 'discount-4',
+ 4 => 'discount-5',
+ 5 => 'shipping-box',
+ 6 => 'shipping-truck',
+ ),
+ 'fomo-title-text' => '<u>€325</u> Discount until %discount-day%.',
+ 'fomo-subtitle-text' => 'Join our 25.000+ happy customers',
+ 'fomo-verified-block' => false,
+ 'fomo-custom-text' => true,
+ ),
+ ),
+ 126 => 
+ array (
+ 'name' => 'Fomo Custom Widget V.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'shipping-truck',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'discount-1',
+ 1 => 'discount-2',
+ 2 => 'discount-3',
+ 3 => 'discount-4',
+ 4 => 'discount-5',
+ 5 => 'shipping-box',
+ 6 => 'shipping-truck',
+ ),
+ 'fomo-title-text' => '<u>FREE</u> Shipping until %discount-day%.',
+ 'fomo-subtitle-text' => 'Limited time offer - act fast!',
+ 'fomo-verified-block' => false,
+ 'fomo-custom-text' => true,
+ ),
+ ),
+ 127 => 
+ array (
+ 'name' => 'Fomo Custom Widget VI.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'shipping-box',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'discount-1',
+ 1 => 'discount-2',
+ 2 => 'discount-3',
+ 3 => 'discount-4',
+ 4 => 'discount-5',
+ 5 => 'shipping-box',
+ 6 => 'shipping-truck',
+ ),
+ 'fomo-title-text' => '<u>FREE</u> Shipping Worldwide over $100',
+ 'fomo-subtitle-text' => 'Try it. Love it. Or get your money back',
+ 'fomo-verified-block' => false,
+ 'fomo-custom-text' => true,
  ),
  ),
  ),
@@ -2004,56 +2335,58 @@ public static $widget_styles = array (
  ),
 );
 public static $widget_languages = [
-'ar' => "العربية",
-'zh' => "汉语",
-'cs' => "Čeština",
-'da' => "Dansk",
-'nl' => "Nederlands",
-'en' => "English",
-'et' => "Eestlane",
-'fi' => "Suomi",
-'fr' => "Français",
-'de' => "Deutsch",
-'el' => "Ελληνικά",
-'hi' => "हिन्दी",
-'hu' => "Magyar",
-'it' => "Italiano",
-'no' => "Norsk",
-'pl' => "Polski",
-'pt' => "Português",
-'ro' => "Română",
-'ru' => "Русский",
-'sk' => "Slovenčina",
-'es' => "Español",
-'sv' => "Svenska",
-'tr' => "Türkçe",
-'gd' => 'Gàidhlig na h-Alba',
-'hr' => 'Hrvatski',
-'id' => 'Bahasa Indonesia',
-'is' => 'Íslensku',
-'he' => 'עִברִית',
-'ja' => '日本',
-'ko' => '한국어',
-'lt' => 'Lietuvių',
-'ms' => 'Bahasa Melayu',
-'sl' => 'Slovenščina',
-'sr' => 'Српски',
-'th' => 'ไทย',
-'uk' => 'Українська',
-'vi' => 'Tiếng Việt',
-'mk' => 'Македонски',
-'bg' => 'български',
-'sq' => 'Shqip',
 'af' => 'Afrikaans',
+'ar' => 'العربية',
 'az' => 'Azərbaycan dili',
+'bg' => 'български',
 'bn' => 'বাংলা',
 'bs' => 'Bosanski',
+'ca' => 'Català',
+'cs' => 'Čeština',
 'cy' => 'Cymraeg',
+'da' => 'Dansk',
+'de' => 'Deutsch',
+'el' => 'Ελληνικά',
+'en' => 'English',
+'es' => 'Español',
+'et' => 'Eestlane',
 'fa' => 'فارسی',
+'fi' => 'Suomi',
+'fr' => 'Français',
+'gd' => 'Gàidhlig na h-Alba',
 'gl' => 'Galego',
+'he' => 'עִברִית',
+'hi' => 'हिन्दी',
+'hr' => 'Hrvatski',
+'hu' => 'Magyar',
 'hy' => 'հայերեն',
+'id' => 'Bahasa Indonesia',
+'is' => 'Íslensku',
+'it' => 'Italiano',
+'ja' => '日本',
 'ka' => 'ქართული',
-'kk' => 'қазақ'
+'kk' => 'қазақ',
+'ko' => '한국어',
+'lt' => 'Lietuvių',
+'lv' => 'Latviešu',
+'mk' => 'Македонски',
+'ms' => 'Bahasa Melayu',
+'nl' => 'Nederlands',
+'no' => 'Norsk',
+'pl' => 'Polski',
+'pt' => 'Português',
+'ro' => 'Română',
+'ru' => 'Русский',
+'sk' => 'Slovenčina',
+'sl' => 'Slovenščina',
+'sq' => 'Shqip',
+'sr' => 'Српски',
+'sv' => 'Svenska',
+'th' => 'ไทย',
+'tr' => 'Türkçe',
+'uk' => 'Українська',
+'vi' => 'Tiếng Việt',
+'zh' => '汉语',
 ];
 public static $widget_dateformats = [ 'modern', 'j F Y', 'j. F, Y', 'F j, Y', 'Y.m.d.', 'Y-m-d', 'd/m/Y', 'hide' ];
 public static $widget_nameformats = array (
@@ -2178,6 +2511,14 @@ private static $widget_rating_texts = array (
  2 => 'prosjek',
  3 => 'dobro',
  4 => 'odličan',
+ ),
+ 'ca' => 
+ array (
+ 0 => 'dolent',
+ 1 => 'per sota de la mitjana',
+ 2 => 'mitjà',
+ 3 => 'bo',
+ 4 => 'excel·lent',
  ),
  'cs' => 
  array (
@@ -2379,6 +2720,14 @@ private static $widget_rating_texts = array (
  3 => 'gerai',
  4 => 'puikus',
  ),
+ 'lv' => 
+ array (
+ 0 => 'slikti',
+ 1 => 'zem vidējā',
+ 2 => 'vidēji',
+ 3 => 'labi',
+ 4 => 'izcili',
+ ),
  'mk' => 
  array (
  0 => 'Сиромашен',
@@ -2400,7 +2749,7 @@ private static $widget_rating_texts = array (
  0 => 'Slecht',
  1 => 'Onder het gemiddelde',
  2 => 'Gemiddeld',
- 3 => 'Goede',
+ 3 => 'Goed',
  4 => 'Uitstekend',
  ),
  'no' => 
@@ -2524,6 +2873,424 @@ private static $widget_rating_texts = array (
  4 => '非常好',
  ),
 );
+private static $widget_rating_texts_long = array (
+ 'en' => 
+ array (
+ 0 => 'Poor rating',
+ 1 => 'Below average rating',
+ 2 => 'Average rating',
+ 3 => 'Good rating',
+ 4 => 'Excellent rating',
+ ),
+ 'af' => 
+ array (
+ 0 => 'Swak gradering',
+ 1 => 'Ondergemiddelde gradering',
+ 2 => 'Gemiddelde gradering',
+ 3 => 'Goeie gradering',
+ 4 => 'Uitstekende gradering',
+ ),
+ 'ar' => 
+ array (
+ 0 => 'تقييم ضعيف',
+ 1 => 'تقييم أقل من المتوسط',
+ 2 => 'متوسط التقييم',
+ 3 => 'تقييم جيد',
+ 4 => 'تقييم ممتاز',
+ ),
+ 'az' => 
+ array (
+ 0 => 'Zəif reytinq',
+ 1 => 'Orta reytinqdən aşağı',
+ 2 => 'Orta reytinq',
+ 3 => 'Yaxşı reytinq',
+ 4 => 'Əla reytinq',
+ ),
+ 'bg' => 
+ array (
+ 0 => 'Слаба оценка',
+ 1 => 'Под средната оценка',
+ 2 => 'Средна оценка',
+ 3 => 'Добра оценка',
+ 4 => 'Отлична оценка',
+ ),
+ 'bn' => 
+ array (
+ 0 => 'খারাপ রেটিং',
+ 1 => 'গড়ের নিচে রেটিং',
+ 2 => 'গড় রেটিং',
+ 3 => 'ভালো রেটিং',
+ 4 => 'চমৎকার রেটিং',
+ ),
+ 'bs' => 
+ array (
+ 0 => 'Loša ocjena',
+ 1 => 'Ocjena ispod prosjeka',
+ 2 => 'Prosječna ocjena',
+ 3 => 'Dobra ocjena',
+ 4 => 'Odlična ocjena',
+ ),
+ 'ca' => 
+ array (
+ 0 => 'Mala puntuació',
+ 1 => 'Valoració per sota de la mitjana',
+ 2 => 'Valoració mitjana',
+ 3 => 'Bona qualificació',
+ 4 => 'Excel·lent qualificació',
+ ),
+ 'cs' => 
+ array (
+ 0 => 'Špatné hodnocení',
+ 1 => 'Podprůměrné hodnocení',
+ 2 => 'Průměrné hodnocení',
+ 3 => 'Dobré hodnocení',
+ 4 => 'Vynikající hodnocení',
+ ),
+ 'cy' => 
+ array (
+ 0 => 'Sgôr gwael',
+ 1 => 'Sgôr is na\'r cyfartaledd',
+ 2 => 'Sgôr gyfartalog',
+ 3 => 'Sgôr dda',
+ 4 => 'Sgôr ardderchog',
+ ),
+ 'da' => 
+ array (
+ 0 => 'Dårlig vurdering',
+ 1 => 'Under gennemsnitlig vurdering',
+ 2 => 'Gennemsnitlig vurdering',
+ 3 => 'God bedømmelse',
+ 4 => 'Fremragende vurdering',
+ ),
+ 'de' => 
+ array (
+ 0 => 'Schlechte Bewertung',
+ 1 => 'Unterdurchschnittliche Bewertung',
+ 2 => 'Durchschnittliche Bewertung',
+ 3 => 'Gute Bewertung',
+ 4 => 'Ausgezeichnete Bewertung',
+ ),
+ 'el' => 
+ array (
+ 0 => 'Κακή βαθμολογία',
+ 1 => 'Κάτω από το μέσο όρο βαθμολογία',
+ 2 => 'Μέση βαθμολογία',
+ 3 => 'Καλή βαθμολογία',
+ 4 => 'Εξαιρετική βαθμολογία',
+ ),
+ 'es' => 
+ array (
+ 0 => 'Mala calificación',
+ 1 => 'Calificación por debajo del promedio',
+ 2 => 'Calificación promedio',
+ 3 => 'Buena calificación',
+ 4 => 'Excelente calificación',
+ ),
+ 'et' => 
+ array (
+ 0 => 'Halb hinnang',
+ 1 => 'Alla keskmise hinnang',
+ 2 => 'Keskmine hinnang',
+ 3 => 'Hea hinnang',
+ 4 => 'Suurepärane hinnang',
+ ),
+ 'fa' => 
+ array (
+ 0 => 'رتبه‌بندی ضعیف',
+ 1 => 'رتبه‌بندی زیر متوسط',
+ 2 => 'میانگین امتیاز',
+ 3 => 'رتبه خوب',
+ 4 => 'رتبه عالی',
+ ),
+ 'fi' => 
+ array (
+ 0 => 'Huono arvio',
+ 1 => 'Keskimääräistä huonompi arvio',
+ 2 => 'Keskimääräinen arvosana',
+ 3 => 'Hyvä arvosana',
+ 4 => 'Erinomainen arvosana',
+ ),
+ 'fr' => 
+ array (
+ 0 => 'Mauvaise note',
+ 1 => 'Note inférieure à la moyenne',
+ 2 => 'Note moyenne',
+ 3 => 'Bonne note',
+ 4 => 'Excellente note',
+ ),
+ 'gd' => 
+ array (
+ 0 => 'Droch rangachadh',
+ 1 => 'Rangachadh fo ìre na cuibheasachd',
+ 2 => 'Rangachadh cuibheasach',
+ 3 => 'Deagh rangachadh',
+ 4 => 'Rangachadh sàr-mhath',
+ ),
+ 'gl' => 
+ array (
+ 0 => 'Mala cualificación',
+ 1 => 'Clasificación por debaixo da media',
+ 2 => 'Valoración media',
+ 3 => 'Boa valoración',
+ 4 => 'Excelente cualificación',
+ ),
+ 'he' => 
+ array (
+ 0 => 'דירוג גרוע',
+ 1 => 'דירוג מתחת לממוצע',
+ 2 => 'דירוג ממוצע',
+ 3 => 'דירוג טוב',
+ 4 => 'דירוג מצוין',
+ ),
+ 'hi' => 
+ array (
+ 0 => 'खराब रेटिंग',
+ 1 => 'औसत से नीचे रेटिंग',
+ 2 => 'औसत श्रेणी',
+ 3 => 'अच्छी रेटिंग',
+ 4 => 'उत्कृष्ट रेटिंग',
+ ),
+ 'hr' => 
+ array (
+ 0 => 'Loša ocjena',
+ 1 => 'Ocjena ispod prosjeka',
+ 2 => 'Prosječna ocjena',
+ 3 => 'Dobra ocjena',
+ 4 => 'Izvrsna ocjena',
+ ),
+ 'hu' => 
+ array (
+ 0 => 'Rossz értékelés',
+ 1 => 'Átlag alatti értékelés',
+ 2 => 'Átlagos értékelés',
+ 3 => 'Jó értékelés',
+ 4 => 'Kiváló értékelés',
+ ),
+ 'hy' => 
+ array (
+ 0 => 'Վատ գնահատական',
+ 1 => 'Միջինից ցածր գնահատական',
+ 2 => 'Միջին գնահատական',
+ 3 => 'Լավ գնահատական',
+ 4 => 'Գերազանց գնահատական',
+ ),
+ 'id' => 
+ array (
+ 0 => 'Peringkat buruk',
+ 1 => 'Peringkat di bawah rata-rata',
+ 2 => 'Peringkat rata-rata',
+ 3 => 'Peringkat bagus',
+ 4 => 'Peringkat sangat baik',
+ ),
+ 'is' => 
+ array (
+ 0 => 'Léleg einkunn',
+ 1 => 'Einkunn undir meðallagi',
+ 2 => 'Meðaleinkunn',
+ 3 => 'Góð einkunn',
+ 4 => 'Frábær einkunn',
+ ),
+ 'it' => 
+ array (
+ 0 => 'Valutazione scarsa',
+ 1 => 'Valutazione inferiore alla media',
+ 2 => 'Valutazione media',
+ 3 => 'Buona valutazione',
+ 4 => 'Valutazione eccellente',
+ ),
+ 'ja' => 
+ array (
+ 0 => '低い評価',
+ 1 => '平均以下の評価',
+ 2 => '平均評価',
+ 3 => '良い評価',
+ 4 => '優れた評価',
+ ),
+ 'ka' => 
+ array (
+ 0 => 'ცუდი რეიტინგი',
+ 1 => 'საშუალოზე დაბალი რეიტინგი',
+ 2 => 'საშუალო რეიტინგი',
+ 3 => 'კარგი რეიტინგი',
+ 4 => 'შესანიშნავი შეფასება',
+ ),
+ 'kk' => 
+ array (
+ 0 => 'Нашар рейтинг',
+ 1 => 'Орташа рейтингтен төмен',
+ 2 => 'Орташа рейтинг',
+ 3 => 'Жақсы рейтинг',
+ 4 => 'Тамаша рейтинг',
+ ),
+ 'ko' => 
+ array (
+ 0 => '낮은 평가',
+ 1 => '평균 이하 평가',
+ 2 => '평균 평점',
+ 3 => '좋은 평가',
+ 4 => '매우 좋음 평가',
+ ),
+ 'lt' => 
+ array (
+ 0 => 'Prastas įvertinimas',
+ 1 => 'Žemesnis nei vidutinis įvertinimas',
+ 2 => 'Vidutinis įvertinimas',
+ 3 => 'Geras įvertinimas',
+ 4 => 'Puikus įvertinimas',
+ ),
+ 'lv' => 
+ array (
+ 0 => 'Slikts vērtējums',
+ 1 => 'Zem vidējā vērtējuma',
+ 2 => 'Vidējais vērtējums',
+ 3 => 'Labs vērtējums',
+ 4 => 'Lielisks vērtējums',
+ ),
+ 'mk' => 
+ array (
+ 0 => 'Лоша оценка',
+ 1 => 'Под просечна оценка',
+ 2 => 'Просечна оценка',
+ 3 => 'Добра оценка',
+ 4 => 'Одлична оценка',
+ ),
+ 'ms' => 
+ array (
+ 0 => 'Penilaian yang buruk',
+ 1 => 'Penilaian di bawah purata',
+ 2 => 'Penilaian purata',
+ 3 => 'Penilaian yang baik',
+ 4 => 'Penilaian yang sangat baik',
+ ),
+ 'nl' => 
+ array (
+ 0 => 'Slechte beoordeling',
+ 1 => 'Beoordeling onder het gemiddelde',
+ 2 => 'Gemiddelde beoordeling',
+ 3 => 'Goede beoordeling',
+ 4 => 'Uitstekende beoordeling',
+ ),
+ 'no' => 
+ array (
+ 0 => 'Dårlig vurdering',
+ 1 => 'Under gjennomsnittlig vurdering',
+ 2 => 'Gjennomsnittlig vurdering',
+ 3 => 'God vurdering',
+ 4 => 'Utmerket vurdering',
+ ),
+ 'pl' => 
+ array (
+ 0 => 'Słaba ocena',
+ 1 => 'Ocena poniżej średniej',
+ 2 => 'Średnia ocena',
+ 3 => 'Dobra ocena',
+ 4 => 'Ocena doskonała',
+ ),
+ 'pt' => 
+ array (
+ 0 => 'Avaliação ruim',
+ 1 => 'Classificação abaixo da média',
+ 2 => 'Classificação média',
+ 3 => 'Boa classificação',
+ 4 => 'Avaliação excelente',
+ ),
+ 'ro' => 
+ array (
+ 0 => 'Evaluare slabă',
+ 1 => 'Evaluare sub medie',
+ 2 => 'Evaluare medie',
+ 3 => 'Evaluare bună',
+ 4 => 'Evaluare excelentă',
+ ),
+ 'ru' => 
+ array (
+ 0 => 'Плохая оценка',
+ 1 => 'Рейтинг ниже среднего',
+ 2 => 'Средний рейтинг',
+ 3 => 'Хорошая оценка',
+ 4 => 'Отличная оценка',
+ ),
+ 'sk' => 
+ array (
+ 0 => 'Slabé hodnotenie',
+ 1 => 'Podpriemerné hodnotenie',
+ 2 => 'Priemerné hodnotenie',
+ 3 => 'Dobré hodnotenie',
+ 4 => 'Vynikajúce hodnotenie',
+ ),
+ 'sl' => 
+ array (
+ 0 => 'Slaba ocena',
+ 1 => 'Podpovprečna ocena',
+ 2 => 'Povprečna ocena',
+ 3 => 'Dobra ocena',
+ 4 => 'Odlična ocena',
+ ),
+ 'sq' => 
+ array (
+ 0 => 'Vlerësim i dobët',
+ 1 => 'Vlerësim nën mesataren',
+ 2 => 'Vlerësimi mesatar',
+ 3 => 'Vlerësim i mirë',
+ 4 => 'Vlerësim i shkëlqyer',
+ ),
+ 'sr' => 
+ array (
+ 0 => 'Лоша оцена',
+ 1 => 'Оцена испод просека',
+ 2 => 'Просечна оцена',
+ 3 => 'Добра оцена',
+ 4 => 'Одлична оцена',
+ ),
+ 'sv' => 
+ array (
+ 0 => 'Dåligt betyg',
+ 1 => 'Under genomsnittligt betyg',
+ 2 => 'Genomsnittligt betyg',
+ 3 => 'Bra betyg',
+ 4 => 'Utmärkt betyg',
+ ),
+ 'th' => 
+ array (
+ 0 => 'คะแนนต่ำ',
+ 1 => 'คะแนนต่ำกว่าค่าเฉลี่ย',
+ 2 => 'คะแนนเฉลี่ย',
+ 3 => 'เรตติ้งดี',
+ 4 => 'เรตติ้งดีเยี่ยม',
+ ),
+ 'tr' => 
+ array (
+ 0 => 'Düşük puan',
+ 1 => 'Ortalamanın altında derecelendirme',
+ 2 => 'Ortalama puan',
+ 3 => 'İyi derecelendirme',
+ 4 => 'Mükemmel puan',
+ ),
+ 'uk' => 
+ array (
+ 0 => 'Поганий рейтинг',
+ 1 => 'Рейтинг нижче середнього',
+ 2 => 'Середній рейтинг',
+ 3 => 'Хороший рейтинг',
+ 4 => 'Відмінний рейтинг',
+ ),
+ 'vi' => 
+ array (
+ 0 => 'Đánh giá kém',
+ 1 => 'Đánh giá dưới mức trung bình',
+ 2 => 'Đánh giá trung bình',
+ 3 => 'Đánh giá tốt',
+ 4 => 'Đánh giá tuyệt vời',
+ ),
+ 'zh' => 
+ array (
+ 0 => '差评',
+ 1 => '低于平均评分',
+ 2 => '平均评分',
+ 3 => '良好评价',
+ 4 => '优秀评级',
+ ),
+);
 private static $widget_verified_texts = array (
  'en' => 'Verified',
  'af' => 'Geverifieer',
@@ -2532,6 +3299,7 @@ private static $widget_verified_texts = array (
  'bg' => 'Проверени',
  'bn' => 'যাচাই',
  'bs' => 'Provjereno',
+ 'ca' => 'Verificat',
  'cs' => 'Ověřená',
  'cy' => 'Wedi\'i ddilysu',
  'da' => 'Bekræftet',
@@ -2557,6 +3325,7 @@ private static $widget_verified_texts = array (
  'kk' => 'тексерілген',
  'ko' => '검증 된',
  'lt' => 'Patvirtinta',
+ 'lv' => 'Pārbaudīts',
  'mk' => 'Потврдена',
  'ms' => 'Disahkan',
  'nl' => 'Geverifieerd',
@@ -2584,6 +3353,7 @@ private static $widget_verified_platform_texts = array (
  'bg' => 'Trustindex проверява дали оригиналният източник на прегледа е %platform%.',
  'bn' => 'Trustindex যাচাই করে যে পর্যালোচনার মূল উৎস হল %platform%।',
  'bs' => 'Trustindex potvrđuje da je izvorni izvor recenzije %platform%.',
+ 'ca' => 'Trustindex verifica que la font original de la ressenya és %platform%.',
  'cs' => 'Trustindex ověřuje, že původní zdroj recenze je %platform%.',
  'cy' => 'Mae Trustindex yn gwirio mai ffynhonnell wreiddiol yr adolygiad yw %platform%.',
  'da' => 'Trustindex verificerer, at den oprindelige kilde til anmeldelsen er %platform%.',
@@ -2609,6 +3379,7 @@ private static $widget_verified_platform_texts = array (
  'kk' => 'Trustindex шолудың бастапқы көзі %platform% екенін тексереді.',
  'ko' => 'Trustindex는 리뷰의 원본 소스가 %platform% 인지 확인합니다.',
  'lt' => 'Trustindex patikrina, ar pirminis apžvalgos šaltinis yra %platform%.',
+ 'lv' => 'Trustindex apstiprina, ka atsauksmes sākotnējais avots ir %platform%.',
  'mk' => 'Trustindex потврдува дека оригиналниот извор на прегледот е %platform%.',
  'ms' => 'Trustindex mengesahkan bahawa sumber asal semakan adalah %platform%.',
  'nl' => 'Trustindex verifieert dat de oorspronkelijke bron van de recensie %platform% is.',
@@ -2663,6 +3434,11 @@ private static $widget_footer_filter_texts = array (
  array (
  'star' => 'Prikazuju se samo recenzije sa RATING_STAR_FILTER zvjezdicama',
  'latest' => 'Prikazujemo naše najnovije recenzije',
+ ),
+ 'ca' => 
+ array (
+ 'star' => 'Es mostren només les ressenyes de RATING_STAR_FILTER estrelles',
+ 'latest' => 'Es mostren les nostres ressenyes més recents',
  ),
  'cs' => 
  array (
@@ -2788,6 +3564,11 @@ private static $widget_footer_filter_texts = array (
  array (
  'star' => 'Rodomi tik RATING_STAR_FILTER žvaigždučių atsiliepimais',
  'latest' => 'Rodomi mūsų naujausios atsiliepimais',
+ ),
+ 'lv' => 
+ array (
+ 'star' => 'Tiek rādītas tikai RATING_STAR_FILTER zvaigžņu atsauksmes',
+ 'latest' => 'Tiek rādītas mūsu jaunākās atsauksmes',
  ),
  'mk' => 
  array (
@@ -3045,6 +3826,21 @@ private static $widget_month_names = array (
  9 => 'Oktobar',
  10 => 'Novembar',
  11 => 'Decembar',
+ ),
+ 'ca' => 
+ array (
+ 0 => 'Gener',
+ 1 => 'Febrer',
+ 2 => 'Març',
+ 3 => 'Abril',
+ 4 => 'Maig',
+ 5 => 'Juny',
+ 6 => 'Juliol',
+ 7 => 'Agost',
+ 8 => 'Setembre',
+ 9 => 'Octubre',
+ 10 => 'Novembre',
+ 11 => 'Desembre',
  ),
  'cs' => 
  array (
@@ -3421,6 +4217,21 @@ private static $widget_month_names = array (
  10 => 'Lapkritis',
  11 => 'Gruodis',
  ),
+ 'lv' => 
+ array (
+ 0 => 'Janvāris',
+ 1 => 'Februāris',
+ 2 => 'Marts',
+ 3 => 'Aprīlis',
+ 4 => 'Maijs',
+ 5 => 'Jūnijs',
+ 6 => 'Jūlijs',
+ 7 => 'Augusts',
+ 8 => 'Septembris',
+ 9 => 'Oktobris',
+ 10 => 'Novembris',
+ 11 => 'Decembris',
+ ),
  'mk' => 
  array (
  0 => 'Jануари',
@@ -3719,6 +4530,7 @@ public static $widget_date_format_locales = array (
  'bg' => 'преди %d %s|днес|ден|дни|седмица|седмици|месец|месеца|година|години',
  'bn' => '%d %s আগে|আজ|দিন|দিন|সপ্তাহ|সপ্তাহ|মাস|মাস|বছর|বছর',
  'bs' => 'prije %d %s|danas|dan|dana|sedmicu|sedmica|mjesec|mjeseci|godinu|godina',
+ 'ca' => 'fa %d %s|avui|dia|dies|setmana|setmanes|mes|mesos|any|anys',
  'cs' => 'před %d %s|dnes|dnem|dny|týdnem|týdny|měsícem|měsíci|rokem|roky',
  'cy' => '%d %s yn ôl|heddiw|diwrnod|diwrnod|wythnos|wythnosau|mis|mis|flwyddyn|flynyddoedd',
  'da' => '%d %s siden|i dag|dag|dage|uge|uger|måned|måneder|år|år',
@@ -3744,6 +4556,7 @@ public static $widget_date_format_locales = array (
  'kk' => '%d %s бұрын|бүгін|күн|күн|апта|апта|ай|ай|жыл|жыл',
  'ko' => '%d %s 전|오늘|일|일|주|주|월|월|년|년',
  'lt' => 'prieš %d %s|šiandien|dieną|dienų|savaitę|savaites|mėnesį|mėnesių|metų|metų',
+ 'lv' => '%d pirms %s|šodien|dienā|dienās|nedēļā|nedēļās|mēnesī|mēnešos|gadā|gados',
  'mk' => 'пред %d %s|денес|ден|дена|недела|недели|месец|месеци|година|години',
  'ms' => '%d %s lalu|hari ini|hari|hari|minggu|minggu|bulan|bulan|tahun|tahun',
  'nl' => '%d %s geleden|vandaag|dag|dagen|week|weken|maand|maanden|jaar|jaar',
@@ -3773,6 +4586,7 @@ public static $widget_top_rated_titles = array (
  'bg' => 'Най-високо оценен <br /> апартамент %date%',
  'bn' => 'শীর্ষ রেটেড <br /> অ্যাপার্টমেন্ট %date%',
  'bs' => 'Najbolje ocijenjen <br /> stan %date%',
+ 'ca' => 'Millor valorat <br /> Apartament %date%',
  'cs' => 'Nejlépe hodnocený <br /> apartmán %date%',
  'cy' => 'Fflat â\'r <br /> sgôr uchaf %date%',
  'da' => 'Bedst bedømte <br /> lejlighed %date%',
@@ -3798,6 +4612,7 @@ public static $widget_top_rated_titles = array (
  'kk' => 'Ең жоғары <br /> бағаланған пәтер %date%',
  'ko' => '%date%년 최고 <br /> 등급 아파트',
  'lt' => 'Geriausiai įvertintas <br /> %date% m. butas',
+ 'lv' => 'Augstāk novērtēts <br /> Dzīvoklis %date%',
  'mk' => 'Највисоко оценет <br /> стан за %date% година',
  'ms' => 'Pangsapuri <br /> Tertinggi %date%',
  'nl' => 'Best beoordeelde <br /> appartement %date%',
@@ -3826,6 +4641,7 @@ public static $widget_top_rated_titles = array (
  'bg' => 'Най-високо оценен <br /> бар %date%',
  'bn' => 'শীর্ষ রেটযুক্ত <br /> বার %date%',
  'bs' => 'Najbolje ocijenjeni <br /> bar %date%',
+ 'ca' => 'Millor valorat <br /> Bar %date%',
  'cs' => 'Nejlépe hodnocený <br /> bar %date%',
  'cy' => 'Bar â\'r <br /> sgôr uchaf %date%',
  'da' => 'Bedst bedømte <br /> bar %date%',
@@ -3851,6 +4667,7 @@ public static $widget_top_rated_titles = array (
  'kk' => 'Ең жоғары <br /> бағаланған жолақ %date%',
  'ko' => '%date%년 최고 <br /> 등급 바',
  'lt' => 'Geriausiai įvertintas <br /> %date% m. baras',
+ 'lv' => 'Augstāk novērtēts <br /> Bārs %date%',
  'mk' => 'Најдобро оценет <br /> бар %date% година',
  'ms' => 'Bar Penilaian <br /> Tertinggi %date%',
  'nl' => 'Best beoordeelde <br /> staaf %date%',
@@ -3879,6 +4696,7 @@ public static $widget_top_rated_titles = array (
  'bg' => 'Най-високо оценено <br /> кафене %date% г',
  'bn' => 'শীর্ষ রেটেড <br /> ক্যাফে %date%',
  'bs' => 'Najbolje ocijenjen <br /> kafić %date%',
+ 'ca' => 'Millor valorat <br /> Cafeteria %date%',
  'cs' => 'Nejlépe hodnocená <br /> kavárna %date%',
  'cy' => 'Caffi o\'r <br /> Radd Flaenaf %date%',
  'da' => 'Bedst bedømte <br /> cafe %date%',
@@ -3904,6 +4722,7 @@ public static $widget_top_rated_titles = array (
  'kk' => 'Ең жоғары <br /> бағаланған кафе %date%',
  'ko' => '%date%년 최고 <br /> 평점 카페',
  'lt' => 'Geriausiai įvertinta <br /> %date% m. kavinė',
+ 'lv' => 'Augstāk novērtēts <br /> Kafejnīca %date%',
  'mk' => 'Најдобро оценет <br /> Кафе %date% година',
  'ms' => 'Kafe <br /> Tertinggi %date%',
  'nl' => 'Best beoordeeld <br /> café %date%',
@@ -3932,6 +4751,7 @@ public static $widget_top_rated_titles = array (
  'bg' => 'Най-високо оценена <br /> клиника %date% г',
  'bn' => 'শীর্ষ রেটেড <br /> ক্লিনিক %date%',
  'bs' => 'Najbolje ocijenjena <br /> klinika %date%',
+ 'ca' => 'Millor valorat <br /> Clínica %date%',
  'cs' => 'Nejlépe hodnocená <br /> klinika %date%',
  'cy' => 'Clinig â\'r <br /> sgôr uchaf %date%',
  'da' => 'Bedst bedømte <br /> klinik %date%',
@@ -3957,6 +4777,7 @@ public static $widget_top_rated_titles = array (
  'kk' => 'Ең жоғары <br /> бағаланған клиника %date%',
  'ko' => '%date%년 최고 <br /> 등급 클리닉',
  'lt' => 'Geriausiai įvertinta <br /> klinika %date% m',
+ 'lv' => 'Augstāk novērtēts <br /> Klīnika %date%',
  'mk' => 'Најдобро оценета <br /> клиника %date% година',
  'ms' => 'Klinik <br /> Tertinggi %date%',
  'nl' => 'Best beoordeelde <br /> kliniek %date%',
@@ -3985,6 +4806,7 @@ public static $widget_top_rated_titles = array (
  'bg' => 'Най-високо оценен <br /> хотел %date% г',
  'bn' => 'শীর্ষ রেটেড <br /> হোটেল %date%',
  'bs' => 'Najbolje ocijenjeni <br /> hotel %date%',
+ 'ca' => 'Millor valorat <br /> Hotel %date%',
  'cs' => 'Nejlépe hodnocený <br /> hotel %date%',
  'cy' => 'Gwesty â\'r <br /> sgôr uchaf %date%',
  'da' => 'Bedst bedømte <br /> hotel %date%',
@@ -4010,6 +4832,7 @@ public static $widget_top_rated_titles = array (
  'kk' => 'Ең жоғары <br /> бағаланған қонақ үй %date%',
  'ko' => '%date%년 최고 <br /> 등급 호텔',
  'lt' => 'Geriausiai įvertintas <br /> viešbutis %date% m',
+ 'lv' => 'Augstāk novērtēts <br /> Viesnīca %date%',
  'mk' => 'Највисоко оценет <br /> хотел за %date% година',
  'ms' => 'Hotel Penilaian <br /> Teratas %date%',
  'nl' => 'Best beoordeelde <br /> hotel %date%',
@@ -4038,6 +4861,7 @@ public static $widget_top_rated_titles = array (
  'bg' => 'Най-високо оценен <br /> доставчик %date% г',
  'bn' => 'শীর্ষ রেট <br /> প্রদানকারী %date%',
  'bs' => 'Najbolje ocijenjeni <br /> provajder %date%',
+ 'ca' => 'Millor valorat <br /> Proveïdor %date%',
  'cs' => 'Nejlépe hodnocený <br /> poskytovatel %date%',
  'cy' => 'Darparwr â\'r <br /> sgôr uchaf %date%',
  'da' => 'Bedst bedømte <br /> udbyder %date%',
@@ -4063,6 +4887,7 @@ public static $widget_top_rated_titles = array (
  'kk' => 'Ең жоғары <br /> бағаланған провайдер %date%',
  'ko' => '%date%년 최고 <br /> 등급 제공업체',
  'lt' => 'Geriausiai įvertintas <br /> teikėjas %date% m',
+ 'lv' => 'Augstāk novērtēts <br /> Pakalpojumu sniedzējs %date%',
  'mk' => 'Најдобро оценет <br /> провајдер за %date% година',
  'ms' => 'Penyedia Penilaian <br /> Tertinggi %date%',
  'nl' => 'Best beoordeelde <br /> aanbieder %date%',
@@ -4091,6 +4916,7 @@ public static $widget_top_rated_titles = array (
  'bg' => 'Най-високо оценен <br /> ресторант %date% г',
  'bn' => 'শীর্ষ রেটিং <br /> রেস্তোরাঁ %date%',
  'bs' => 'Najbolje ocijenjen <br /> restoran %date%',
+ 'ca' => 'Millor valorat <br /> Restaurant %date%',
  'cs' => 'Nejlépe hodnocená <br /> restaurace %date%',
  'cy' => 'Bwyty â\'r <br /> sgôr uchaf %date%',
  'da' => 'Bedst bedømte <br /> restaurant %date%',
@@ -4116,6 +4942,7 @@ public static $widget_top_rated_titles = array (
  'kk' => 'Ең жоғары <br /> бағаланған мейрамхана %date%',
  'ko' => '%date%년 최고 <br /> 평점 레스토랑',
  'lt' => 'Geriausiai įvertintas <br /> %date% m. restoranas',
+ 'lv' => 'Augstāk novērtēts <br /> Restorāns %date%',
  'mk' => 'Најдобро оценет <br /> ресторан %date% година',
  'ms' => 'Restoran Penarafan <br /> Tertinggi %date%',
  'nl' => 'Best beoordeelde <br /> restaurant %date%',
@@ -4144,6 +4971,7 @@ public static $widget_top_rated_titles = array (
  'bg' => 'Най-високо оценена <br /> услуга %date% г',
  'bn' => 'সেরা রেটেড <br /> পরিষেবা %date%',
  'bs' => 'Najbolje ocijenjena <br /> usluga %date%',
+ 'ca' => 'Millor valorat <br /> Servei %date%',
  'cs' => 'Nejlépe hodnocená <br /> služba %date%',
  'cy' => 'Gwasanaeth o\'r <br /> Radd Flaenaf %date%',
  'da' => 'Bedst bedømte <br /> service %date%',
@@ -4169,6 +4997,7 @@ public static $widget_top_rated_titles = array (
  'kk' => 'Ең жоғары <br /> бағаланған қызмет %date%',
  'ko' => '%date%년 최고 <br /> 평점 서비스',
  'lt' => 'Geriausiai įvertinta <br /> %date% m. paslauga',
+ 'lv' => 'Augstāk novērtēts <br /> Apkalpošana %date%',
  'mk' => 'Најдобро оценет <br /> сервис за %date% година',
  'ms' => 'Perkhidmatan <br /> Tertinggi %date%',
  'nl' => 'Best beoordeelde <br /> service %date%',
@@ -4197,6 +5026,7 @@ public static $widget_top_rated_titles = array (
  'bg' => 'Най-високо оценен <br /> уеб магазин %date% г',
  'bn' => 'সেরা রেটেড <br /> ওয়েবশপ %date%',
  'bs' => 'Najbolje ocijenjena <br /> web trgovina %date%',
+ 'ca' => 'Millor valorat <br /> Botiga en línia %date%',
  'cs' => 'Nejlépe hodnocený <br /> internetový obchod roku %date%',
  'cy' => 'Gwefan â\'r <br /> sgôr uchaf %date%',
  'da' => 'Bedst bedømte <br /> webshop %date%',
@@ -4222,6 +5052,7 @@ public static $widget_top_rated_titles = array (
  'kk' => 'Ең жоғары <br /> бағаланған веб-дүкен %date%',
  'ko' => '%date%년 최고 <br /> 평점 웹숍',
  'lt' => 'Geriausiai įvertinta <br /> internetinė parduotuvė %date% m',
+ 'lv' => 'Augstāk novērtēts <br /> Interneta veikals %date%',
  'mk' => 'Најдобро оценет <br /> веб-продавница %date% година',
  'ms' => 'Kedai Web Penilaian <br /> Tertinggi %date%',
  'nl' => 'Best beoordeelde <br /> webshop %date%',
@@ -4250,6 +5081,7 @@ public static $widget_reply_by_texts = array (
  'bg' => 'Отговор от собственика',
  'bn' => 'মালিক দ্বারা উত্তর',
  'bs' => 'Odgovor vlasnika',
+ 'ca' => 'Resposta del propietari',
  'cs' => 'Odpověď majitele',
  'cy' => 'Ateb gan y perchennog',
  'da' => 'Svar fra ejer',
@@ -4275,6 +5107,7 @@ public static $widget_reply_by_texts = array (
  'kk' => 'Иесінің жауабы',
  'ko' => '소유자의 답변',
  'lt' => 'Atsakymas iš savininko',
+ 'lv' => 'Īpašnieka atbilde',
  'mk' => 'Одговор од сопственикот',
  'ms' => 'Balas oleh pemilik',
  'nl' => 'Antwoord van eigenaar',
@@ -4354,9 +5187,8 @@ return "";
 $pageId = $pageDetails['id'];
 if ($this->getGoogleType($pageId) === 'shop') {
 return 'https://customerreviews.google.com/v/merchant?q=' . $pageId;
-}
-else {
-return 'http://search.google.com/local/reviews?placeid=' . $pageId;
+} else {
+return 'https://admin.trustindex.io/api/googleReview?place-id=' . $pageId;
 }
 }
 private function getReviewWriteUrl()
@@ -4368,8 +5200,7 @@ return "";
 $pageId = $pageDetails['id'];
 if ($this->getGoogleType($pageId) === 'shop') {
 return 'https://customerreviews.google.com/v/merchant?q=' . $pageId;
-}
-else {
+} else {
 return 'https://admin.trustindex.io/api/googleWriteReview?place-id=' . $pageId;
 }
 }
@@ -4445,7 +5276,7 @@ $templateId = 'trustindex-'.$this->getShortName().'-widget-html';
 $attributes['data-src'] .= 'wp-widget';
 $attributes['data-template-id'] = $templateId;
 $preContent = '<pre class="ti-widget" style="display: none"><template id="'.esc_attr($templateId).'">'.$this->getWidgetHtml($reviews);
-$preContent = preg_replace('/<img (.*)src="([^"]+)"(.*)\/>/U', '<trustindex-image $1data-imgurl="$2"$3></trustindex-image>', $preContent);
+$preContent = preg_replace('/<img (.*)src="([^"]+)"(.*)\/?>/U', '<trustindex-image $1data-imgurl="$2"$3></trustindex-image>', $preContent);
 $preContent = str_replace('srcset="', 'data-imgurlset="', $preContent);
 if (is_file($this->getCssFile()) && !get_option($this->get_option_name('load-css-inline'), 0)) {
 $attributes['data-css-url'] = $this->getCssUrl().'?'.filemtime($this->getCssFile());
@@ -4567,11 +5398,21 @@ $classAppends []= 'ti-disable-nav';
 if (!$this->getWidgetOption('enable-animation', false, $isPreview)) {
 $classAppends []= 'ti-disable-animation';
 }
+if ($this->isFomoWidget()) {
+$classAppends []= 'ti-fomo-align-'.$this->getWidgetOption('align', false, $isPreview);
+if (!$this->getWidgetOption('fomo-border', false, $isPreview)) {
+$classAppends []= 'ti-hide-fomo-border';
+}
+if (!$this->getWidgetOption('fomo-arrow', false, $isPreview)) {
+$classAppends []= 'ti-hide-fomo-arrow';
+}
+} else {
 if (!$this->getWidgetOption('no-rating-text', false, $isPreview)) {
 $classAppends []= 'ti-show-rating-text';
 }
 $classAppends []= 'ti-review-text-mode-'.$this->getWidgetOption('review-text-mode', false, $isPreview);
 $classAppends []= 'ti-'.(in_array($styleId, [36, 37, 38, 39]) ? 'content' : 'text').'-align-'.$this->getWidgetOption('align', false, $isPreview);
+}
 $content = str_replace('" data-layout-id=', ' '. implode(' ', $classAppends) .'" data-no-translation="true" data-layout-id=', $content);
 if ($this->isRtlLanguage()) {
 $content = str_replace('" data-layout-id=', '" data-rotate-to="left" data-layout-id=', $content);
@@ -4579,6 +5420,15 @@ $content = str_replace('" data-layout-id=', '" data-rotate-to="left" data-layout
 if ($this->getWidgetOption('dateformat', false, $isPreview) === 'modern') {
 $language = $this->getWidgetOption('lang', false, $isPreview);
 $content = str_replace('" data-layout-id=', '" data-time-locale="'. self::$widget_date_format_locales[$language] .'" data-layout-id=', $content);
+}
+if ($this->isFomoWidget()) {
+$styleText = '--fomo-color:'.$this->getWidgetOption('fomo-color', false, $isPreview).';';
+if ('right' === $this->getWidgetOption('align', false, $isPreview)) {
+$styleText .= 'left: auto;right: '.$this->getWidgetOption('fomo-margin', false, $isPreview).'px;';
+} else {
+$styleText .= 'left: '.$this->getWidgetOption('fomo-margin', false, $isPreview).'px;';
+}
+$content = str_replace('" data-layout-id=', '" style="'.$styleText.'" data-layout-id=', $content);
 }
 return $content;
 }
@@ -4744,7 +5594,8 @@ $size *= 2;
 $image2xUrl = preg_replace('/([=-])(s\d+|w\d+-h\d+)/', "$1w$size-h$size", $imageUrl);
 $profileImageListForButton = "";
 if ($reviews) {
-for ($i = 0; $i < min(count($reviews), 5); $i++) {
+$max = $widgetTemplate['type'] === 'fomo' ? 3 : 5;
+for ($i = 0; $i < min(count($reviews), $max); $i++) {
 $profileImageListForButton .= '
 <div class="ti-profile-img">
 <img
@@ -4756,12 +5607,26 @@ loading="lazy"
 </div>';
 }
 }
+if ($widgetTemplate['type'] === 'fomo') {
+$ratingText = $ratingTextUcfirst;
+}
+$fiveStarRatingNumber = 0;
+if (isset($pageDetails['rating_numbers'])) {
+$fiveStarRatingNumber = $pageDetails['rating_numbers'][5];
+}
+$fiveStarRatingNumberLast = 0;
+if (isset($pageDetails['rating_numbers_last'])) {
+$fiveStarRatingNumberLast = $pageDetails['rating_numbers_last'][5];
+}
 $content = str_replace([
 '%platform%',
 '%site_name%',
+"5STAR_RATING_NUMBER_LAST",
+"5STAR_RATING_NUMBER",
 "RATING_NUMBER",
 "RATING_SCORE",
 "RATING_SCALE",
+"RATING_TEXT<!--_LONG-->",
 "RATING_TEXT",
 "Rating_Text",
 "PLATFORM_URL_LOGO 2x",
@@ -4774,9 +5639,12 @@ $content = str_replace([
 ], [
 ucfirst($this->getShortName()),
 $pageDetails['name'],
+$fiveStarRatingNumberLast,
+$fiveStarRatingNumber,
 $ratingCount,
 number_format((float)$ratingScore, 1),
 $this->is_ten_scale_rating_platform() ? 10 : 5,
+$this->get_rating_text_long($ratingScore, $language),
 $ratingText,
 $ratingTextUcfirst,
 $image2xUrl.' 2x',
@@ -4787,21 +5655,65 @@ $this->get_rating_stars($this->is_ten_scale_rating_platform() ? $ratingScore / 2
 '<img class="ti-platform-icon" src="https://cdn.trustindex.io/assets/platform/'.ucfirst($this->getShortName()).'/icon.svg" alt="'.ucfirst($this->getShortName()).'" width="20" height="20" loading="lazy" />',
 '<div class="ti-profile-images">'.$profileImageListForButton.'</div>',
 ], $content);
-if (!in_array($widgetTemplate['type'], [ 'button', 'badge', 'top-rated-badge' ]) && !$this->getWidgetOption('show-logos', false, $isPreview)) {
+if (!in_array($widgetTemplate['type'], [ 'button', 'badge', 'top-rated-badge', 'fomo' ]) && !$this->getWidgetOption('show-logos', false, $isPreview)) {
 $content = preg_replace('/<img class="ti-platform-icon".+>/U', '', $content);
 }
 if ($this->is_ten_scale_rating_platform() && $styleId === 11) {
 $content = str_replace('<span class="ti-rating">'. $ratingScore .'</span> ', '', $content);
 }
-if (in_array($styleId, [8, 10, 11, 12, 13, 20, 22, 24, 25, 26, 27, 28, 29, 35, 55, 56, 57, 58, 59, 60, 61, 62, 106, 107, 109, 110, 111, 113, 115])) {
+if (in_array($styleId, [8, 10, 11, 12, 13, 20, 22, 24, 25, 26, 27, 28, 29, 35, 55, 56, 57, 58, 59, 60, 61, 62, 106, 107, 109, 110, 111, 113, 115]) || $widgetTemplate['type'] === 'fomo') {
+if ($widgetTemplate['type'] === 'fomo' && !$this->getWidgetOption('fomo-link', false, $isPreview)) {
+$content = preg_replace('/<a href=[\'"]%footer_link%[\'"][^>]*>(.+)<\/a>/mU', '<div class="ti-header">$1</div>', $content);
+} else {
 if (!$this->getWidgetOption('show-header-button', false, $isPreview)) {
 $content = preg_replace('/<!-- HEADER-BUTTON-START.+HEADER-BUTTON-END -->/s', '', $content);
 }
 $content = str_replace(['<!-- HEADER-BUTTON-START', 'HEADER-BUTTON-END -->'], '', $content);
+$footerUrl = $this->getPageUrl();
 
-$content = str_replace('%footer_link%', in_array($styleId, [8, 13, 26]) ? $this->getReviewWriteUrl() : $this->getReviewPageUrl(), $content);
+$footerUrl = in_array($styleId, [8, 13, 26]) ? $this->getReviewWriteUrl() : $this->getReviewPageUrl();
+if ($widgetTemplate['type'] === 'fomo') {
+$footerUrl = $this->getWidgetOption('fomo-url', false, $isPreview);
+}
+$content = str_replace('%footer_link%', $footerUrl, $content);
+}
 } else {
 $content = preg_replace('/<a href=[\'"]%footer_link%[\'"][^>]*>(.+)<\/a>/mU', '$1', $content);
+}
+if ($widgetTemplate['type'] === 'fomo') {
+if (!$this->getWidgetOption('fomo-open', false, $isPreview)) {
+$content = str_replace('class="ti-widget-container"', 'class="ti-widget-container ti-header-closed"', $content);
+}
+$iconType = $this->getWidgetOption('fomo-icon', false, $isPreview);
+$iconHtml = '<div class="ti-fomo-icon" data-type="'.$iconType.'"></div>';
+$platformIconHtml = '<img class="ti-platform-icon" src="https://cdn.trustindex.io/assets/platform/'.ucfirst($this->getShortName()).'/icon.svg" alt="'.ucfirst($this->getShortName()).'" width="20" height="20" loading="lazy">';
+if ('profile-images' === $iconType) {
+$iconHtml = '<div class="ti-profile-images">'.$profileImageListForButton.'</div>';
+} else if ('platform' === $iconType) {
+$iconHtml = $platformIconHtml;
+}
+$content = preg_replace('/<div class="ti-icon">\s*<\/div>/', '<div class="ti-icon">'.$iconHtml.'</div>', $content);
+$platformBlockText = '';
+if (isset($widgetTemplate['params']['fomo-platform-block']) && $widgetTemplate['params']['fomo-platform-block'] && 'platform' !== $iconType) {
+$platformBlockText = $platformIconHtml;
+}
+$content = str_replace('<!-- PLATFORM-ICON -->', $platformBlockText, $content);
+if ($this->isFomoCustomWidget()) {
+if ($text = $this->getWidgetOption('fomo-title', false, $isPreview)) {
+$content = preg_replace(
+'/<div class="ti-title-text">(.+)<\/div>/U',
+'<div class="ti-title-text">'.html_entity_decode($text).'</div>',
+$content
+);
+}
+if ($text = $this->getWidgetOption('fomo-text', false, $isPreview)) {
+$content = preg_replace(
+'/<div class="ti-subtitle-text">(.+)<\/div>/U',
+'<div class="ti-subtitle-text">'.html_entity_decode($text).'</div>',
+$content
+);
+}
+}
 }
 if (!$this->getWidgetOption('reviews-load-more', false, $isPreview)) {
 $content = preg_replace('/<div class="ti-load-more-reviews-container"[^>]*>.+<\/div>\s*<\/div>/U', '', $content);
@@ -4816,7 +5728,7 @@ $content = preg_replace('/<div class="ti-rating-text">.*<\/div>/mU', '', $conten
 $content = preg_replace('/<div class="ti-footer">\s*<\/div>/m', '', $content);
 }
 }
-if ($this->getWidgetOption('footer-filter-text', false, $isPreview) && (!in_array($widgetTemplate['type'], ['button', 'badge', 'floating', 'top-rated-badge']) || in_array($styleId, [23, 30, 32, 53]))) {
+if ($this->getWidgetOption('footer-filter-text', false, $isPreview) && (!in_array($widgetTemplate['type'], ['button', 'badge', 'floating', 'top-rated-badge', 'fomo']) || in_array($styleId, [23, 30, 32, 53]))) {
 $filterText = $this->get_footer_filter_text($language);
 if (!in_array($styleId, [5, 8, 9, 10, 13, 18, 23, 30, 31, 32, 33, 34, 53, 54]) && !$this->getWidgetOption('no-rating-text', false, $isPreview)) {
 $content = str_replace('</span><!-- FOOTER FILTER TEXT -->', ',</span><span class="nowrap"><!-- FOOTER FILTER TEXT --></span>', $content);
@@ -4850,14 +5762,20 @@ $topRatedType = $this->getWidgetOption('top-rated-type', false, $isPreview);
 $date = date('Y');
 if ($topRatedDate === 'last-year') {
 $date = date('Y') - 1;
-} else if ($topRatedDate === 'hide') {
+} else if ($topRatedDate === 'hide' || $widgetTemplate['type'] === 'fomo') {
 $date = '';
 }
 $title = trim(str_replace('%date%', $date, self::$widget_top_rated_titles[$topRatedType][$language]));
-if (in_array($styleId, [97, 98, 104])) {
+if (in_array($styleId, [97, 98, 104]) || $widgetTemplate['type'] === 'fomo') {
 $title = str_replace('<br />', '', $title);
 }
-$content = preg_replace('/<div class="ti-top-rated-title">.*<\/div>/mU', '<div class="ti-top-rated-title">'. $title .'</div>', $content);
+$title = '<div class="ti-top-rated-title">'.$title.'</div>';
+$regex = '/<div class="ti-top-rated-title">.*<\/div>/mU';
+if ($widgetTemplate['type'] === 'fomo') {
+$title = '<div class="ti-title-text">'.$title.'</div>';
+$regex = '/<div class="ti-title-text">.*<\/div>/mU';
+}
+$content = preg_replace($regex, $title, $content);
 $content = str_replace('a=sys&c=top-rated-badge', 'a=sys&c=wp-top-rated-badge', $content);
 }
 return $content;
@@ -4872,7 +5790,17 @@ return $this->isLayoutHasReviews() && !in_array($widgetTemplate['type'], ['float
 public function isLayoutHasReviews()
 {
 $styleId = (int)$this->getWidgetOption('style-id');
-return !in_array(self::$widget_templates['templates'][$styleId]['type'], ['button', 'badge', 'top-rated-badge']) || in_array($styleId, [23, 30, 32]);
+return !in_array(self::$widget_templates['templates'][$styleId]['type'], ['button', 'badge', 'top-rated-badge', 'fomo']) || in_array($styleId, [23, 30, 32]);
+}
+public function isFomoWidget()
+{
+$styleId = (int)$this->getWidgetOption('style-id');
+return self::$widget_templates['templates'][$styleId]['type'] === 'fomo';
+}
+public function isFomoCustomWidget()
+{
+$styleId = (int)$this->getWidgetOption('style-id');
+return isset(self::$widget_templates['templates'][$styleId]['params']['fomo-custom-text']) && self::$widget_templates['templates'][$styleId]['params']['fomo-custom-text'];
 }
 public function isRtlLanguage()
 {
@@ -4952,6 +5880,18 @@ return mb_strtoupper($texts[ $rating - 1 ]);
 else {
 return strtoupper($texts[ $rating - 1 ]);
 }
+}
+public function get_rating_text_long($rating, $lang = "en")
+{
+$texts = self::$widget_rating_texts_long[ $lang ];
+$rating = round($rating);
+if ($rating < 1) {
+$rating = 1;
+}
+else if($rating > 5) {
+$rating = 5;
+}
+return $texts[ $rating - 1 ];
 }
 public function get_rating_stars($ratingScore, $platformStars = true)
 {
@@ -5177,6 +6117,12 @@ wp_enqueue_script('trustindex_settings_script_common_'. $this->getShortName(), $
 }
 if(file_exists($this->get_plugin_dir() . 'static' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'admin-page-settings-connect.js')) {
 wp_enqueue_script('trustindex_settings_script_connect_'. $this->getShortName(), $this->get_plugin_file_url('static/js/admin-page-settings-connect.js'), [], $this->getVersion());
+}
+if (file_exists($this->get_plugin_dir() . 'static' . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'spectrum.css')) {
+wp_enqueue_style('trustindex_settings_spectrum_'. $this->getShortName(), $this->get_plugin_file_url('static/css/spectrum.css'), [], $this->getVersion());
+}
+if (file_exists($this->get_plugin_dir() . 'static' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'spectrum.js')) {
+wp_enqueue_script('trustindex_settings_spectrum_'. $this->getShortName(), $this->get_plugin_file_url('static/js/spectrum.js'), [], $this->getVersion());
 }
 }
 }
