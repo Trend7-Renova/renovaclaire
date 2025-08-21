@@ -1,6 +1,6 @@
 @media screen and (max-width: 1024px) {
 
-    body.menu-mobile-ouvert #header>nav {
+    body.menu-mobile-ouvert #header>div>nav {
         transform: translateX(0);
     }
 }
@@ -8,14 +8,37 @@
 body:has(.hero-large) #header {
     position: relative;
     z-index: 4;
+    transition: background .5s ease;
+    background-color: rgba(255, 255, 255, 0);
 
-    >nav a {
+    >div>nav a {
         --couleur-principale: var(--couleur-texte-inv);
         --couleur-texte: var(--couleur-texte-inv);
     }
+}
 
+body:has(.hero-large):not([data-scrolled="true"]) #header {
     img[src*="logo-small.png"] {
         display: none !important;
+    }
+}
+
+body:has(.hero-large)[data-scrolled="true"] {
+    #header {
+        img[src*="logo-small-white.png"] {
+            display: none !important;
+        }
+
+        /* From https://css.glass */
+        background: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+
+        div>nav a {
+            --couleur-principale: var(--couleur-texte);
+            --couleur-texte: var(--couleur-texte);
+        }
     }
 }
 
@@ -25,13 +48,13 @@ body:not(:has(.hero-large)) #header {
     }
 }
 
-#header {
+#header>div {
+    margin-inline: auto;
+    padding-block: var(--micro-gap);
+
     display: flex;
     flex-wrap: nowrap;
-    margin-inline: var(--micro-gap);
     gap: var(--micro-gap);
-    margin-top: var(--micro-gap);
-    margin-bottom: var(--gap);
 
     >.burger {
         display: none;
@@ -162,9 +185,10 @@ body:not(:has(.hero-large)) #header {
 
 
     @media screen and (min-width: 800px) {
+        max-width: var(--largeur-site);
         margin-inline: var(--micro-gap);
-        margin-inline: auto;
-        max-width: calc(100vw - var(--large-gap));
+        // margin-inline: auto;
+        // max-width: calc(100vw - var(--large-gap));
 
         gap: var(--gap);
     }
@@ -219,14 +243,4 @@ body:not(:has(.hero-large)) #header {
 
     }
 
-    @media screen and (min-width: 1550px) {
-
-        padding-inline: 0;
-        margin-inline: auto;
-        max-width: var(--largeur-site);
-
-        >nav {
-            font-size: 1rem;
-        }
-    }
 }

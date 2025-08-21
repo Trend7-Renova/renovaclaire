@@ -1,0 +1,20 @@
+<div class="groupe">
+	<article>
+		<header>
+			<span class="surtitre">{{data.surtitre}}</span>
+			<h2>{{data.titre}}</h2>
+		</header>
+		<div>
+			<div class="p">
+				{{data.texte}}
+			</div>
+			<ul style="--_nb_columns:{{data.sites|length}}">
+				{% for site in data.sites %}
+					<li>
+						<a href="{{site.url}}"><img src="{{site.image.sizes.large}}"></a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</article>
+</div>

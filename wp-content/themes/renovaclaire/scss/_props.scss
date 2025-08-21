@@ -1,6 +1,7 @@
 body {
     --vert-clair:#d2f8d1;
     --vert: #77a85f;
+    --or: #c1aa81;
     --beige: #cebfa8;
     --orange: #d0701c;
     --rouge: #b44c49;
@@ -16,12 +17,13 @@ body {
 
     --couleur-texte: var(--gris-fonce-alt);
     --couleur-texte-inv: white;
-    --couleur-liens: var(--vert);
-    --couleur-principale: var(--vert);
+    --couleur-liens: var(--or);
+    --couleur-principale: var(--or);
     --couleur-alt: var(--gris-fonce);
     --couleur-ter: var(--gris-fonce);
 
     --ombre : 0px 14px 24px 0px rgba(0, 0, 0, 0.15);
+    --ombre-hover : 0px 5px 10px 0px rgba(0, 0, 0, 0.05);
     --couleur-footer: var(--gris-clair);
 
     --largeur-site: 1600px;

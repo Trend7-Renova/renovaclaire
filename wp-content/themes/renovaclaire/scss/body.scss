@@ -10,12 +10,12 @@ body {
   scroll-behavior: smooth;
 }
 
-p {
-  line-height: 1.5;
+.p, p {
+  line-height: 1.6;
   margin: 0;
 }
 
-p+p {
+p+p, .p+p, p+.p, .p+.p {
   margin-top: var(--half-gap);
 }
 
@@ -23,11 +23,11 @@ p+p {
   display: flex;
   flex-direction: column;
   gap: var(--large-gap);
-  margin-block: var(--small-gap);
+  margin-top: var(--small-gap);
   margin-inline: var(--small-gap);
 
   @media screen and (min-width: 1024px) {
-    margin-block: var(--gap);
+    margin-top: var(--gap);
     margin-inline: var(--gap);
   }
 

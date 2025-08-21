@@ -2,13 +2,15 @@
 
 register_nav_menus([
     'menu-principal' => 'Menu principal',
+    'menu-footer' => 'Menu footer',
     'liens-utiles' => 'Liens utiles',
 ]);
 
 add_filter('timber/context', function ($context) {
 
     $context['liens_de_bas_de_page'] = Timber::get_menu(4);
-    $context['menu_principal'] = Timber::get_menu(2);
+    $context['menu_footer'] = Timber::get_menu(2);
+    $context['menu_principal'] = Timber::get_menu(5);
     $context['liens_utiles'] = Timber::get_menu(3);
 
     $donnees = get_field('donnees', 'option');

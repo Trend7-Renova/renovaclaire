@@ -60,13 +60,27 @@
             flex-direction: row;
             gap: var(--large-gap);
 
-            >header {
-            }
+            >header {}
 
             >div {
 
                 height: initial;
                 flex: 0 0 40%;
+            }
+
+
+        }
+    }
+
+    &.flip {
+        >article {
+            >header {
+                order: 1;
+            }
+
+            >div {
+                order: 2;
+
             }
         }
     }

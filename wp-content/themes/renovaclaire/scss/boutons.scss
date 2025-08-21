@@ -10,14 +10,17 @@ button[data-action] {
     border: 0;
     display: inline-flex;
     padding-inline: var(--half-gap);
+
     @media screen and (min-width: 800px) {
         padding-inline: var(--gap);
     }
+
     min-height: var(--hauteur-bouton);
     border-radius: var(--radius);
     color: white;
     text-decoration: none;
-    font-family: "Raleway-Bold", Sans-serif;
+    font-family: "Raleway-Bold",
+    Sans-serif;
     letter-spacing: 0.05rem;
     align-items: center;
     justify-content: center;
@@ -81,24 +84,36 @@ button[data-action] {
             fill: currentColor;
         }
 
-        @media screen and (min-width: 1024px) {
-            &:hover>svg {
-                background-color: var(--couleur-principale);
-                fill: white;
-                transform: translateX(25%);
+        &.icone-carre {
+            >svg {
+                width: 20px;
+                height: 30px;
+
+            }
+
+        }
+        &:not(.icone-carre) {
+            @media screen and (min-width: 1024px) {
+                &:hover>svg {
+                    background-color: var(--couleur-principale);
+                    fill: white;
+                    transform: translateX(25%);
+                }
             }
         }
     }
 
-    @media screen and (min-width: 1024px) {
-        &:hover {
-            &:before {
-                opacity: 1;
-                width: 100%;
-                background-color: var(--gris-clair);
-            }
+    &:not(.icone-carre) {
+        @media screen and (min-width: 1024px) {
+            &:hover {
+                &:before {
+                    opacity: 1;
+                    width: 100%;
+                    background-color: var(--gris-clair);
+                }
 
-            color: var(--gris-fonce);
+                color: var(--gris-fonce);
+            }
         }
     }
 

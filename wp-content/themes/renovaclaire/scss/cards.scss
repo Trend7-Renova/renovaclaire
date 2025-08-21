@@ -1,4 +1,11 @@
 .cards {
+    display: grid;
+    place-items: center;
+
+    >* {
+        max-width: var(--largeur-contenu);
+    }
+
     >header {
         display: flex;
         gap: var(--gap);
@@ -11,7 +18,7 @@
         display: grid;
         grid-template-columns: 1fr;
         grid-gap: var(--small-gap);
-        margin-inline: var(--small-gap);
+        // margin-inline: var(--small-gap);
     }
 
     &.line>div {
@@ -54,6 +61,7 @@
             }
 
             >figure:has(svg) {
+                margin: var(--gap) auto;
                 width: 48px;
                 height: 48px;
                 border-radius: 50%;
@@ -127,7 +135,7 @@
     }
 
     @media screen and (min-width: 1200px) {
-        margin-inline: var(--large-gap);
+        // margin-inline: var(--large-gap);
         padding: 0;
 
         >div {

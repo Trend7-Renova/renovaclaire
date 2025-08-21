@@ -9,7 +9,12 @@
 		</div>
 		<header>
 			<h2 class="grand-titre">{{hero.titre}}</h2>
-			<div>{{hero.texte}}</div>
+			<div class="p">
+			{{hero.texte}}
+			{% if hero.texte_final %}
+			<br><br><strong>{{hero.texte_final}}</strong>
+			{% endif %}
+			</div>
 		</header>
 	</article>
 </div>

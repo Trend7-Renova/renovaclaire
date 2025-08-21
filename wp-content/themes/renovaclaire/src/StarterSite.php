@@ -23,18 +23,12 @@ class StarterSite extends Site
     /**
      * This is where you can register custom post types.
      */
-    public function register_post_types()
-    {
-
-    }
+    public function register_post_types() {}
 
     /**
      * This is where you can register custom taxonomies.
      */
-    public function register_taxonomies()
-    {
-
-    }
+    public function register_taxonomies() {}
 
     /**
      * This is where you add some context
@@ -104,11 +98,10 @@ class StarterSite extends Site
 
         add_theme_support('menus');
 
-		/**
-		 * Register Menus
-		 */
-        add_action('after_setup_theme', function () {
-        });
+        /**
+         * Register Menus
+         */
+        add_action('after_setup_theme', function () {});
     }
 
     /**
@@ -136,6 +129,56 @@ class StarterSite extends Site
         // $twig->addExtension( new Twig\Extension\StringLoaderExtension() );
 
         $twig->addFilter(new Twig\TwigFilter('myfoo', [$this, 'myfoo']));
+
+
+        // Ajoute une fonction Twig "svgTag"
+        $twig->addFunction(new \Twig\TwigFunction('svgTag', function ($url, $attributes = []) {
+            if (empty($url)) {
+                return '';
+            }
+
+            $key = 'svg_tag_' . md5($url . serialize($attributes));
+            $cached = get_transient($key);
+
+            if ($cached !== false) {
+                return $cached;
+            }
+
+            $path = str_replace(wp_get_upload_dir()['baseurl'], wp_get_upload_dir()['basedir'], $url);
+
+            if ($path && file_exists($path) && strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'svg') {
+                $svg = file_get_contents($path);
+                if ($svg !== false) {
+                    // Supprime width et height
+                    $svg = preg_replace('/\s(width|height)="[^"]*"/i', '', $svg);
+
+                    // Ajoute les attributs passés en paramètre
+                    if (!empty($attributes) && preg_match('/<svg\b([^>]*)>/', $svg, $matches)) {
+                        $extra = '';
+                        foreach ($attributes as $k => $v) {
+                            $extra .= ' ' . esc_attr($k) . '="' . esc_attr($v) . '"';
+                        }
+                        $svg = preg_replace('/<svg\b([^>]*)>/', '<svg$1' . $extra . '>', $svg, 1);
+                    }
+
+                    set_transient($key, $svg, MONTH_IN_SECONDS);
+                    return $svg;
+                }
+            }
+
+            return '';
+        }));
+
+
+
+        $twig->addFunction(new \Twig\TwigFunction('shuffle', function ($array) {
+            if (!is_array($array)) {
+                return $array;
+            }
+            $shuffled = $array;
+            shuffle($shuffled);
+            return $shuffled;
+        }));
 
         return $twig;
     }

@@ -1,0 +1,42 @@
+<div class="fairy flip">
+    <article>
+        <header>
+            <span class="surtitre">{{data.surtitre}}</span>
+            <h2 class="moyen-titre">{{data.titre}}</h2>
+            <div class="chapo">{{data.intro}}</div>
+            <div class="p">{{data.texte}}
+            </div>
+            {% if data.afficher_cta %}
+            <nav><a href="{{data.cta.cible}}" class="bouton"><span>{{data.cta.texte}}</span>
+                    {{svg('fleche')}}
+                </a></nav>
+            {% endif %}
+        </header>
+        <div>
+            {% for photo in shuffle(data.photos) %}
+            <figure>
+                <img src="{{photo.sizes.large}}">
+            </figure>
+            {% endfor %}
+        </div>
+    </article>
+</div>
+
+
+{#
+<div class="genie">
+    <article>
+        <figure>
+            <img src="{{home.genie.photo.sizes.large}}">
+        </figure>
+        <header>
+            <span class="surtitre">{{home.genie.surtitre}}</span>
+            <h2 class="moyen-titre">{{home.genie.titre}}</h2>
+            <div>
+                {{home.genie.texte}}
+            </div>
+            <nav><a href="{{home.genie.cible_du_cta}}" class="bouton">{{home.genie.cta}}</a></nav>
+        </header>
+    </article>
+</div>
+#}

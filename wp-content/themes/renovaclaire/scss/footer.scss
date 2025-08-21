@@ -2,7 +2,9 @@
     background-color: var(--couleur-footer);
     padding: var(--gap);
     font-size: smaller;
-
+    .logo {
+        width: 120px;
+    }
     >nav {
         margin-top: var(--gap);
         display: flex;

@@ -1,8 +1,14 @@
 body:has(.hero-large) #header {
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 4;
     --couleur-texte: var(--couleur-texte-inv);
 }
+
+body:has(#wpadminbar):has(.hero-large) #header {
+    top:32px;
+}
+
 
 .hero-large {
     --marge-top: 120px;
@@ -13,7 +19,13 @@ body:has(.hero-large) #header {
     align-items: center;
     margin-top: calc(var(--marge-top) * -1);
 
+    article {
+        display: grid;
+        place-items: center;
+    }
+
     header {
+        margin-top: var(--gap);
         position: relative;
         z-index: 3;
         color: var(--couleur-texte-inv);
@@ -21,9 +33,15 @@ body:has(.hero-large) #header {
         h2,
         div {
             color: inherit;
+
+            >strong {
+                font-family: 'Raleway-Bold';
+            }
         }
 
-        width: calc(100% - var(--gap) * 2);
+        // width: calc(100% - var(--gap) * 2);
+        max-width: var(--largeur-contenu);
+
         margin-inline: var(--gap);
 
         h2 {
@@ -31,8 +49,8 @@ body:has(.hero-large) #header {
         }
 
         @media screen and (min-width: 1024px) {
-            max-width: 800px;
-            margin-left: 10vw;
+            // max-width: 800px;
+            // margin-left: 10vw;
 
             h2 {
                 margin-bottom: var(--gap);

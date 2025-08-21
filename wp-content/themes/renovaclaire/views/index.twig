@@ -1,21 +1,39 @@
 {% extends "base.twig" %}
+{% block blockHero %}
+	{% if hero %}
+		{% include 'partial/hero-large.twig' %}
+	{% endif %}
+{% endblock %}
 {% block content %}
 
 
+	{% include 'home/cards.twig' with {data:home.metier} %}
 
-    {% include 'home/principal.twig' %}
-    
-    {% include 'home/avantages.twig' %}
+	{% include 'home/cards.twig' with {data:home.valeurs} %}
 
-    {% include 'home/services.twig' %}
-    
-    {% include 'home/video.twig' %}
-    
-    {% include 'home/partenaires.twig' %}
+	{% include 'home/fairy.twig' with {data:home.equipe} %}
 
-    {% if posts_last_3 | length > 0%}
-       {% include 'home/posts.twig' with {posts : posts_last_3 }%}
-    {% endif %}
+	{{ fn('do_shortcode', '[trustindex no-registration=google]') }}
+
+	{% include 'home/text-wide.twig' with {data:home.rendez_vous} %}
+
+	{% include 'home/partenaires.twig' %}
+
+	{# 
+		{% include 'home/principal.twig' %}
+	
+		{% include 'home/avantages.twig' %}
+	
+		{% include 'home/services.twig' %}
+	
+		{% include 'home/video.twig' %}
+	
+		{% include 'home/partenaires.twig' %} #}
+
+	{% if posts_last_3 | length > 0%}
+		{% include 'home/posts.twig' with {posts : posts_last_3 }%}
+	{% endif %}
+	{% include 'home/groupe.twig' with {data:home.groupe} %}
 
 
 {% endblock %}

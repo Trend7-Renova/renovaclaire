@@ -1,0 +1,20 @@
+<div class="text-wide">
+	<article>
+		<h2>{{data.titre}}</h2>
+		<div class="p">
+			{{data.texte}}
+		</div>
+		<div>
+            {% if data.afficher_cta %}
+			<a href="{{data.cta.texte}}" class="bouton">
+				<span>{{data.cta.texte}}</span>
+				{% if data.cta.icone.subtype == 'svg+xml' %}
+					{{ svgTag(data.cta.icone.url, {width:30, height:30}) }}
+				{% else %}
+					{{svg('fleche')}}
+				{% endif %}
+			</a>
+            {% endif %}
+		</div>
+	</article>
+</div>

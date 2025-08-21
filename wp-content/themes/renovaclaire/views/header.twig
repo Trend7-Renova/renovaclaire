@@ -1,34 +1,35 @@
 <header id="header">
-   <button class="burger" data-action="ouvrir-menu">{{svg('burger')}}</button>
-   <a href="/" class="logo">
-      <img src="{{ theme.uri }}/images/logo-small.png">
-      <img src="{{ theme.uri }}/images/logo-small-white.png">
-   </a>
-   <div>
-      <a class="bouton" href="{{menu.cible_du_cta}}">
-         <span class="seulement-sur-mobile">
-            {{menu.cta_mobile}}
-         </span>
-         <span class="seulement-sur-desktop">
-            {{menu.cta}}
-         </span>
-      </a>
-   </div>
+	<div>
+		<button class="burger" data-action="ouvrir-menu">{{svg('burger')}}</button>
+		<a href="/" class="logo">
+			<img src="{{ theme.uri }}/images/logo-small.png">
+			<img src="{{ theme.uri }}/images/logo-small-white.png">
+		</a>
+		<div>
+			<a class="bouton icone-carre" href="{{menu.cible_du_cta_url ? menu.cible_du_cta_url : menu.cible_du_cta}}">
+				<span class="seulement-sur-mobile">
+					{{menu.cta_mobile}}
+				</span>
+				<span class="seulement-sur-desktop">
+					{{menu.cta}}
+				</span>
+				{{svg('phone-ring')}}
+			</a>
+		</div>
 
-   <nav id="menu">
-      <figure class="seulement-sur-mobile">
-         <img src="{{ theme.uri }}/images/logo-small.png">
-      </figure>
-      {% for item in menu_principal.items %}
-      <a class="{{item.classes|join(' ')}} {{item.mobile_only ? 'seulement-sur-mobile' : ''}}" href="{{ item.link }}" {{
-         item.is_target_blank ? 'target="_blank"' }}>{{
+		<nav id="menu">
+			<figure class="seulement-sur-mobile">
+				<img src="{{ theme.uri }}/images/logo-small.png">
+			</figure>
+			{% for item in menu_principal.items %}
+				<a class="{{item.classes|join(' ')}} {{item.mobile_only ? 'seulement-sur-mobile' : ''}}" href="{{ item.link }}" {{ item.is_target_blank ? 'target="_blank"' }}>{{
          item.title}}</a>
-      {% endfor %}
-      <a href="tel:+33387734828">
-         <figure>{{svg('phone')}}</figure>
-         <span><span class="font-bold">03 87 73 48 28</span>
-         <small>Appel non surtaxé</small></span>  
-      </a>
-   </nav>
-
+			{% endfor %}
+			{# <a href="tel:+33387734828">
+			         <figure>{{svg('phone')}}</figure>
+			         <span><span class="font-bold">03 87 73 48 28</span>
+			         <small>Appel non surtaxé</small></span>  
+			      </a> #}
+		</nav>
+	</div>
 </header>

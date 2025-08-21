@@ -1,0 +1,23 @@
+<div class="cards" data-colonnes="{{data.cards|length}}">
+	<header>
+		<span class="surtitre">{{data.surtitre}}</span>
+		<h3 class="moyen-titre">{{data.titre}}</h3>
+	</header>
+	<div>
+		{% for card in data.cards %}
+			<article>
+				{% if card.photo %}
+					<figure>
+						{% if card.photo.subtype == 'svg+xml' %}
+							{{ svgTag(card.photo.url) }}
+						{% else %}
+							<img src="{{ card.photo.sizes.large }}" alt="">
+						{% endif %}
+					</figure>
+				{% endif %}
+				<h4>{{card.titre}}</h4>
+				<div class="p">{{card.texte}}</div>
+			</article>
+		{% endfor %}
+	</div>
+</div>

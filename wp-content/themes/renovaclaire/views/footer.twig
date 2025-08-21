@@ -20,10 +20,10 @@
         </div>
         <div>
             <h3>
-                {{menu_principal.title}}
+                {{menu_footer.title}}
             </h3>
             <ul>
-                {% for item in menu_principal.items %}
+                {% for item in menu_footer.items %}
                 <li><a class="{{item.classes|join(' ')}}" href="{{ item.link }}" {{ item.is_target_blank
                         ? 'target="_blank"' }}>{{ item.title}}</a></li>
                 {% endfor %}

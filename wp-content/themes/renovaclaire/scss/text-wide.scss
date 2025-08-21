@@ -1,0 +1,22 @@
+.text-wide {
+    background-color: #f6f6f6;
+
+    margin-inline: calc(-1 * var(--small-gap));
+
+    padding: var(--gap);
+
+    @media screen and (min-width: 1024px) {
+        margin-inline: calc(-1 * var(--gap));
+        padding-block: var(--large-gap);
+    }
+
+    display: grid;
+    place-items: center;
+
+    >article {
+        max-width: var(--largeur-contenu);
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+    }
+}
