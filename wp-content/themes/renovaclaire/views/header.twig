@@ -6,14 +6,20 @@
 			<img src="{{ theme.uri }}/images/logo-small-white.png">
 		</a>
 		<div>
-			<a class="bouton icone-carre" href="{{menu.cible_du_cta_url ? menu.cible_du_cta_url : menu.cible_du_cta}}">
+			<a class="appel" href="tel:+33387734828">
+				<figure>{{svg('phone')}}</figure>
+				<span>
+					<span class="font-bold">03 87 73 48 28</span>
+					<small>Appel non surtaxé</small>
+				</span>
+			</a>
+			<a class="bouton seulement-sur-desktop" target="_blank" href="{{menu.cible_du_cta_url ? menu.cible_du_cta_url : menu.cible_du_cta}}">
 				<span class="seulement-sur-mobile">
 					{{menu.cta_mobile}}
 				</span>
 				<span class="seulement-sur-desktop">
 					{{menu.cta}}
 				</span>
-				{{svg('phone-ring')}}
 			</a>
 		</div>
 
@@ -25,11 +31,6 @@
 				<a class="{{item.classes|join(' ')}} {{item.mobile_only ? 'seulement-sur-mobile' : ''}}" href="{{ item.link }}" {{ item.is_target_blank ? 'target="_blank"' }}>{{
          item.title}}</a>
 			{% endfor %}
-			{# <a href="tel:+33387734828">
-			         <figure>{{svg('phone')}}</figure>
-			         <span><span class="font-bold">03 87 73 48 28</span>
-			         <small>Appel non surtaxé</small></span>  
-			      </a> #}
 		</nav>
 	</div>
 </header>

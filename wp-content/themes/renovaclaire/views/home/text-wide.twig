@@ -6,7 +6,7 @@
 		</div>
 		<div>
             {% if data.afficher_cta %}
-			<a href="{{data.cta.texte}}" class="bouton">
+			<a href="{{data.cta.cible}}" target="_blank" class="bouton">
 				<span>{{data.cta.texte}}</span>
 				{% if data.cta.icone.subtype == 'svg+xml' %}
 					{{ svgTag(data.cta.icone.url, {width:30, height:30}) }}

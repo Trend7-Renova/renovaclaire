@@ -1,0 +1,33 @@
+{% extends "base.twig" %}
+{% block blockHero %}
+	{% if hero %}
+		{% include 'partial/hero-large.twig' %}
+	{% endif %}
+{% endblock %}
+
+
+{% block content %}
+	<section class="section">
+
+		{% if not hero %}
+
+			<h1 class="grand-titre">
+				{{ post.title }}
+			</h1>
+			<div class="chapo">{{ post.description }}</div>
+
+		{% endif %}
+	</section>
+
+	{% include 'home/profile.twig' with {data:post.meta('profile')} %}
+
+
+
+	{% if post.meta('solutions') %}
+		{% include 'home/cards.twig' with {colonnes:2,data:{surtitre:'NOS SOLUTIONS CLEFS EN MAIN ET SUR-MESURE',cards:post.meta('solutions')}} %}
+	{% endif %}
+<br>
+
+	{% include 'home/text-wide.twig' with {data:home.rendez_vous} %}
+
+{% endblock %}

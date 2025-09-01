@@ -6,12 +6,12 @@ body:has(.hero-large) #header {
 }
 
 body:has(#wpadminbar):has(.hero-large) #header {
-    top:32px;
+    top: 32px;
 }
 
 
 .hero-large {
-    --marge-top: 120px;
+    --marge-top: 15vh;
     height: calc(var(--hero-height) + var(--marge-top));
     background-color: black;
     position: relative;
@@ -22,6 +22,7 @@ body:has(#wpadminbar):has(.hero-large) #header {
     article {
         display: grid;
         place-items: center;
+        padding-inline: var(--small-gap);
     }
 
     header {
@@ -41,16 +42,26 @@ body:has(#wpadminbar):has(.hero-large) #header {
 
         // width: calc(100% - var(--gap) * 2);
         max-width: var(--largeur-contenu);
-
+        width: 100%;
         margin-inline: var(--gap);
 
         h2 {
             margin-bottom: var(--small-gap);
         }
+        div {
+            font-size:0.95rem
+            ;
+            line-height: 1.3;
+        }
 
         @media screen and (min-width: 1024px) {
             // max-width: 800px;
             // margin-left: 10vw;
+            width: var(--largeur-contenu);
+
+            >* {
+                max-width: 70vw;
+            }
 
             h2 {
                 margin-bottom: var(--gap);

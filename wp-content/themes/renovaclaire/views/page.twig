@@ -37,6 +37,7 @@
 				{% endfor %}
 			</div>
 		</div>
+		<br>
 	{% endif %}
 	<section class="section">
 		{% if block('pageContent')|trim %}
@@ -58,4 +59,6 @@
 			</div>
 		{% endif %}
 	</section>
+	{% include 'home/text-wide.twig' with {data:home.rendez_vous} %}
+
 {% endblock %}

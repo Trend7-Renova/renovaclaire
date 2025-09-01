@@ -1,0 +1,101 @@
+.etapes {
+    display: grid;
+    place-items: center;
+    margin-block: var(--gap);
+
+    >* {
+        max-width: var(--largeur-contenu);
+    }
+
+    >header {
+        width: 100%;
+        --margin: 0;
+
+        @media screen and (min-width: 800px) {
+            --margin: 64px;
+        }
+
+        max-width: calc(var(--largeur-contenu) - var(--margin) - var(--gap));
+        margin-left: calc(var(--margin) + var(--gap));
+        display: flex;
+        gap: var(--gap);
+        flex-direction: column;
+        padding-block: var(--gap);
+    }
+
+    >div {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: var(--gap);
+
+        // margin-inline: var(--gap);
+        ul {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap);
+
+            >li {
+                display: grid;
+                grid-template-columns: 64px 1fr;
+                gap: var(--gap);
+                align-items: center;
+
+                >.p {
+                    transition: .5s opacity ease-in-out;
+
+                    @media screen and (min-width: 800px) {
+                        opacity: 0.5;
+                    }
+
+                    @media screen and (max-width: 800px) {
+                        font-size: smaller;
+                    }
+                }
+
+                >span {
+                    font-family: "Raleway-Bold";
+                    border: 1px solid #ddd;
+                    border-radius: 50%;
+                    width: 64px;
+                    height: 64px;
+                    display: grid;
+                    place-items: center;
+                    cursor: default;
+                    position: relative;
+                    z-index: 2;
+                    background-color: white;
+                }
+
+                &:not(:last-child)>span:after {
+                    content: '';
+                    border-left: 1px solid #ddd;
+                    position: absolute;
+                    width: 0;
+                    height: 225%;
+
+                    @media screen and (min-width: 800px) {
+                        height: 100%;
+                    }
+
+                    z-index: 1;
+                    top: 100%;
+                    left: 50%;
+
+                }
+            }
+
+            &:not(:hover) li.selected,
+            &:hover li:hover {
+                >span {
+                    background-color: var(--couleur-principale);
+                    color: white;
+                }
+
+                >.p {
+                    cursor: pointer;
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}

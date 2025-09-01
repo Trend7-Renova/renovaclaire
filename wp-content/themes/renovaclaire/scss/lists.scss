@@ -1,6 +1,11 @@
-ul,
-ul>li {
+.p ul,
+.p ul > li {
+    // all: unset;
+}
+ul:not(.p ul),
+ul:not(.p ul) > li {
     margin: 0;
     padding: 0;
     list-style: none;
+    line-height: 1.3;
 }

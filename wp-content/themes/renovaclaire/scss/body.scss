@@ -11,7 +11,7 @@ body {
 }
 
 .p, p {
-  line-height: 1.6;
+  line-height: 1.3;
   margin: 0;
 }
 
@@ -34,9 +34,9 @@ p+p, .p+p, p+.p, .p+.p {
 }
 
 @media screen and (max-width: 1024px) {
-  .container:has(>.section) {
-    margin-inline: 0;
-  }
+  // .container:has(>.section) {
+  //   margin-inline: 0;
+  // }
 }
 
 body.page {

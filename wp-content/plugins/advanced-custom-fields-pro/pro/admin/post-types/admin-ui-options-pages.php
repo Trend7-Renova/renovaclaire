@@ -9,13 +9,11 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 	/**
 	 * The ACF Post Types admin controller class
 	 */
-	#[AllowDynamicProperties]
 	class ACF_Admin_UI_Options_Pages extends ACF_Admin_Internal_Post_Type_List {
 
 		/**
 		 * The slug for the internal post type.
 		 *
-		 * @since 6.1
 		 * @var string
 		 */
 		public $post_type = 'acf-ui-options-page';
@@ -23,7 +21,6 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		/**
 		 * The admin body class used for the post type.
 		 *
-		 * @since 6.1
 		 * @var string
 		 */
 		public $admin_body_class = 'acf-admin-options-pages';
@@ -38,7 +35,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		/**
 		 * If this is a pro feature or not.
 		 *
-		 * @var bool
+		 * @var boolean
 		 */
 		public $is_pro_feature = true;
 
@@ -46,8 +43,6 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		 * Constructor.
 		 *
 		 * @since   6.2
-		 *
-		 * @return  void
 		 */
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
@@ -58,8 +53,6 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		 * Current screen actions for the post types list admin page.
 		 *
 		 * @since   6.1
-		 *
-		 * @return  void
 		 */
 		public function current_screen() {
 			// Bail early if not post types admin page.
@@ -111,7 +104,6 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 			// Set the "no found" label to be our custom HTML for no results.
 			if ( empty( acf_request_arg( 's' ) ) ) {
 				global $wp_post_types;
-				$this->not_found_label                                = $wp_post_types[ $this->post_type ]->labels->not_found;
 				$wp_post_types[ $this->post_type ]->labels->not_found = $this->get_not_found_html();
 			}
 
@@ -148,7 +140,7 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 
 				// Description.
 				case 'acf-description':
-					if ( ! empty( $post['description'] ) && is_string( $post['description'] ) ) {
+					if ( ! empty( $post['description'] ) && ( is_string( $post['description'] ) || is_numeric( $post['description'] ) ) ) {
 						echo '<span class="acf-description">' . acf_esc_html( $post['description'] ) . '</span>';
 					} else {
 						echo '<span class="acf-emdash" aria-hidden="true">—</span>';
@@ -168,8 +160,8 @@ if ( ! class_exists( 'ACF_Admin_UI_Options_Pages' ) ) :
 		 *
 		 * @since 6.1
 		 *
-		 * @param string $action The action being performed.
-		 * @param int    $count  The number of items the action was performed on.
+		 * @param string  $action The action being performed.
+		 * @param integer $count  The number of items the action was performed on.
 		 * @return string
 		 */
 		public function get_action_notice_text( $action, $count = 1 ) {

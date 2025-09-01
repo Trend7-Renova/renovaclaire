@@ -1,9 +1,14 @@
-<div class="cards" data-colonnes="{{data.cards|length}}">
+{% set colonnnes = colonnes is defined and colonnes ? colonnes : null %}
+
+<div class="cards" data-colonnes="{{ colonnes ?: data.cards|length }}">
 	<header>
-		<span class="surtitre">{{data.surtitre}}</span>
-		<h3 class="moyen-titre">{{data.titre}}</h3>
+		<span class="surtitre">{{ data.surtitre }}</span>
+		<h3 class="moyen-titre">{{ data.titre }}</h3>
 	</header>
+
 	<div>
+
+
 		{% for card in data.cards %}
 			<article>
 				{% if card.photo %}
@@ -15,9 +20,14 @@
 						{% endif %}
 					</figure>
 				{% endif %}
-				<h4>{{card.titre}}</h4>
-				<div class="p">{{card.texte}}</div>
+				<h4>{{ card.titre ?? card.nom }}</h4>
+				<div class="p">{{ card.texte ?? card.description }}</div>
 			</article>
+			{% if colonnnes and not loop.last and (loop.index % colonnnes == 0) %}
+				</div><div>
+			{% endif %}
 		{% endfor %}
+
+
 	</div>
 </div>
