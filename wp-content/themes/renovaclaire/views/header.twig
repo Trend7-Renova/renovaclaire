@@ -13,7 +13,7 @@
 					<small>Appel non surtaxé</small>
 				</span>
 			</a>
-			<a class="bouton seulement-sur-desktop" target="_blank" href="{{menu.cible_du_cta_url ? menu.cible_du_cta_url : menu.cible_du_cta}}">
+			<a class="bouton seulement-sur-desktop" target="{{menu.cible_du_cta_url ? '_blank' : '_self'}}" href="{{menu.cible_du_cta_url ? menu.cible_du_cta_url : menu.cible_du_cta}}">
 				<span class="seulement-sur-mobile">
 					{{menu.cta_mobile}}
 				</span>

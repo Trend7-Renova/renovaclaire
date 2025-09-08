@@ -11,6 +11,7 @@
 
 		{% for card in data.cards %}
 			<article>
+			<a href="{{card.cible}}"></a>
 				{% if card.photo %}
 					<figure>
 						{% if card.photo.subtype == 'svg+xml' %}

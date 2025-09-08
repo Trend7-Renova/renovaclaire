@@ -11,6 +11,7 @@ body:has(#wpadminbar):has(.hero-large) #header {
 
 
 .hero-large {
+    overflow-x: hidden;
     --marge-top: 15vh;
     height: calc(var(--hero-height) + var(--marge-top));
     background-color: black;

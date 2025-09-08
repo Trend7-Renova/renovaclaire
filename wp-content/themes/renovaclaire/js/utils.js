@@ -67,3 +67,48 @@ function formatToEuro(number, decimal = true) {
     }
     return ret;
 }
+/**
+ * Animate shuffle of the direct children of a container.
+ * Children will "shuffle" visually for 2s (fast reorder every 0.5s) before settling into a final random order.
+ *
+ * @param {Element|string} container  DOM element or a CSS selector string.
+ * @returns {Promise<Element[]>}      Resolves with the children in their final order.
+ */
+ function animatedShuffleChildren(container) {
+  const root = typeof container === 'string' ? document.querySelector(container) : container;
+  if (!root) return Promise.resolve([]);
+
+  const children = Array.from(root.children);
+  const n = children.length;
+  if (n < 2) return Promise.resolve(children);
+
+  // Set CSS for smooth transitions
+  root.style.display = 'grid';
+  root.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+  children.forEach(c => {
+    c.style.transition = 'transform 0.2s';
+  });
+
+  function shuffleOnce() {
+    const arr = [...children];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    arr.forEach(el => root.appendChild(el));
+  }
+
+  return new Promise(resolve => {
+    let count = 0;
+    const interval = setInterval(() => {
+      shuffleOnce();
+      count++;
+    }, 100); // 2 times per second
+
+    setTimeout(() => {
+      clearInterval(interval);
+      shuffleOnce();
+      resolve(Array.from(root.children));
+    }, 1000); // 2s total
+  });
+}

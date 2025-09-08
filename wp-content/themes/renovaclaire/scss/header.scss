@@ -16,6 +16,7 @@ body:has(.hero-large) #header {
         place-items: center;
     }
 
+    >div .appel,
     >div .burger,
     >div>nav a {
         --couleur-principale: var(--couleur-texte-inv);
@@ -51,6 +52,7 @@ body:has(.hero-large):not(.menu-mobile-ouvert)[data-scrolled="true"] {
         // -webkit-backdrop-filter: blur(5px);
 
 
+        >div .appel,
         >div .burger,
         >div>nav a {
             --couleur-principale: var(--couleur-texte);
@@ -178,8 +180,6 @@ body:not(:has(.hero-large)) #header {
                     }
                 }
 
-
-
                 a {
                     text-decoration: none;
                     font-size: 0.85rem;
@@ -211,14 +211,13 @@ body:not(:has(.hero-large)) #header {
             text-align: center;
             color: var(--couleur-texte);
             white-space: nowrap;
-            color: var(--couleur-principale);
 
             >figure {
                 width: 20px;
                 height: 20px;
 
                 svg {
-                    fill: var(--couleur-principale);
+                    fill: currentColor;
                     width: 20px;
                     height: 20px;
                 }

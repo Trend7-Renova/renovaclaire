@@ -33,6 +33,7 @@
         }
 
         >article {
+
             flex: 1;
 
             >figure {
@@ -45,6 +46,7 @@
         +div {
             margin-top: var(--gap);
         }
+
         >article {
             overflow: hidden;
             padding: var(--small-gap);
@@ -56,6 +58,27 @@
             background: white;
             background-size: cover;
             border-radius: var(--radius);
+            position: relative;
+            z-index: 1;
+            box-shadow: var(--ombre);
+            transition: all .3s ease;
+
+            &:hover:has(>a:not([href=""])){
+                box-shadow: var(--ombre-hover);
+
+            }
+
+            >a {
+                z-index: 2;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+
+                [href=""] {
+                    display: none !important;
+                }
+
+            }
 
             >figure:has(img) {
                 margin: calc(var(--gap) * -1);

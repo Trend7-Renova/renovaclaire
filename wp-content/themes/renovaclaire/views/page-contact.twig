@@ -1,77 +1,82 @@
 {% extends "base.twig" %}
 {% block content %}
-<section class="section">
-  {% if post.title %}
-  <h2 class="grand-titre">
-    {{ post.title }}
-  </h2>
-  {% endif %}
-  <p class="chapo">
-    {{ post.description }}
-  </p>
-  <div>
-    {{ post.content }}
-  </div>
+		{% include 'home/text-wide.twig' with {data:home.rendez_vous} %}
 
-  <form id="contact">
-    <fieldset>
+	<section class="section">
+		{% if post.title %}
+			<h2 class="grand-titre">
+				{{ post.title }}
+			</h2>
+		{% endif %}
+		<p class="chapo">
+			{{ post.description }}
+		</p>
+		<div>
+			{{ post.content }}
+		</div>
 
-      <div class="fields">
-        <div>
-          <label for="nom">Nom</label>
-          <div><input data-autosave type="text" id="nom" required value=""></div>
-        </div>
-        <div>
-          <label for="nom">Prénom</label>
-          <div><input data-autosave type="text" id="prenom" value=""></div>
-        </div>
-      </div>
-      <div class="fields">
-        <div>
-          <label for="email">Adresse e-mail</label>
-          <div><input data-autosave type="email" id="email" required value=""></div>
-        </div>
-        <div>
-          <label for="telephone">Numéro de téléphone</label>
-          <div><input data-autosave type="text" id="telephone" value=""></div>
-        </div>
-      </div>
-      <div class="fields">
-        <div>
-          <label for="email">Code postal du projet</label>
-          <div><input data-autosave type="text" id="code_postal" required value=""></div>
-        </div>
-      <div>
-        <label for="objet">Objet de votre prise de contact</label>
-        <div><select data-autosave id="objet" required>
-            <option disbaled selected hidden>Vous nous contactez pour ...</option>
-            <option value="devis" {{get.objet=='devis' ? 'selected' : '' }}>Demander un devis gratuit</option>
-            <option value="etude" {{get.objet=='etude' ? 'selected' : '' }}>Demander une étude personnalisée</option>
-            <option value="question">Poser une question sur un autre sujet</option>
-          </select>
-        </div>
-      </div>
-      </div>
+		<form id="contact">
+			<fieldset>
 
-      <div>
-        <label for="message">Message</label>
-        <div><textarea data-autosave id="message" rows="10"></textarea></div>
-      </div>
+				<div class="fields">
+					<div>
+						<label for="nom">Nom</label>
+						<div><input data-autosave type="text" id="nom" required value=""></div>
+					</div>
+					<div>
+						<label for="nom">Prénom</label>
+						<div><input data-autosave type="text" id="prenom" value=""></div>
+					</div>
+				</div>
+				<div class="fields">
+					<div>
+						<label for="email">Adresse e-mail</label>
+						<div><input data-autosave type="email" id="email" required value=""></div>
+					</div>
+					<div>
+						<label for="telephone">Numéro de téléphone</label>
+						<div><input data-autosave type="text" id="telephone" value=""></div>
+					</div>
+				</div>
+				<div class="fields">
+					<div>
+						<label for="email">Code postal du projet</label>
+						<div><input data-autosave type="text" id="code_postal" required value=""></div>
+					</div>
+					<div>
+						<label for="objet">Objet de votre prise de contact</label>
+						<div>
+							<select data-autosave id="objet" required>
+								<option disbaled selected hidden>Vous nous contactez pour ...</option>
+								<option value="devis" {{get.objet=='devis' ? 'selected' : '' }}>Demander un devis gratuit</option>
+								<option value="etude" {{get.objet=='etude' ? 'selected' : '' }}>Demander une étude personnalisée</option>
+								<option value="question">Poser une question sur un autre sujet</option>
+							</select>
+						</div>
+					</div>
+				</div>
 
-    </fieldset>
+				<div>
+					<label for="message">Message</label>
+					<div>
+						<textarea data-autosave id="message" rows="10"></textarea>
+					</div>
+				</div>
+
+			</fieldset>
 
 
-    <fieldset>
-      <div>
-        <label for="optin"><input type="checkbox" required id="optin">{{post.meta.mention_optin}}</label>
-      </div>
-      <div class="boutons">
-        <button type="submit" class="bouton">Envoyer</button>
-        <a href="/contact" class="bouton alt">Annuler</a>
-      </div>
-    </fieldset>
-    <div>{{post.meta.texte_sous_le_formulaire}}</div>
-  </form>
-</section>
+			<fieldset>
+				<div>
+					<label for="optin"><input type="checkbox" required id="optin">{{post.meta.mention_optin}}</label>
+				</div>
+				<div class="boutons">
+					<button type="submit" class="bouton">Envoyer</button>
+					<a href="/contact" class="bouton alt">Annuler</a>
+				</div>
+			</fieldset>
+			<div>{{post.meta.texte_sous_le_formulaire}}</div>
+		</form>
+	</section>
 
 {% endblock %}
