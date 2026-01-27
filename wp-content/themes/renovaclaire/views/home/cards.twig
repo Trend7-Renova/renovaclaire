@@ -11,7 +11,9 @@
 
 		{% for card in data.cards %}
 			<article>
+			{% if card.cible %}
 			<a href="{{card.cible}}"></a>
+			{% endif %}
 				{% if card.photo %}
 					<figure>
 						{% if card.photo.subtype == 'svg+xml' %}
