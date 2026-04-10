@@ -42,6 +42,8 @@ use Google\Site_Kit\Core\Storage\Post_Meta;
 use Google\Site_Kit\Core\Storage\User_Options;
 use Google\Site_Kit\Core\Tags\Guards\Tag_Environment_Type_Guard;
 use Google\Site_Kit\Core\Tags\Guards\Tag_Verify_Guard;
+use Google\Site_Kit\Core\Tracking\Feature_Metrics_Trait;
+use Google\Site_Kit\Core\Tracking\Provides_Feature_Metrics;
 use Google\Site_Kit\Core\Util\Block_Support;
 use Google\Site_Kit\Core\Util\Method_Proxy_Trait;
 use Google\Site_Kit\Core\Util\URL;
@@ -65,13 +67,14 @@ use WP_Error;
  * @access private
  * @ignore
  */
-final class Reader_Revenue_Manager extends Module implements Module_With_Scopes, Module_With_Assets, Module_With_Service_Entity, Module_With_Deactivation, Module_With_Owner, Module_With_Settings, Module_With_Tag, Module_With_Debug_Fields {
+final class Reader_Revenue_Manager extends Module implements Module_With_Scopes, Module_With_Assets, Module_With_Service_Entity, Module_With_Deactivation, Module_With_Owner, Module_With_Settings, Module_With_Tag, Module_With_Debug_Fields, Provides_Feature_Metrics {
 	use Module_With_Assets_Trait;
 	use Module_With_Owner_Trait;
 	use Module_With_Scopes_Trait;
 	use Module_With_Settings_Trait;
 	use Module_With_Tag_Trait;
 	use Method_Proxy_Trait;
+	use Feature_Metrics_Trait;
 
 	/**
 	 * Module slug name.
@@ -119,6 +122,11 @@ final class Reader_Revenue_Manager extends Module implements Module_With_Scopes,
 		'rrm-product-id-subscriptions-notification',
 	);
 
+	const POLICY_VIOLATION_NOTIFICATIONS = array(
+		'rrm-policy-violation-moderate-high-notification',
+		'rrm-policy-violation-extreme-notification',
+	);
+
 	/**
 	 * Constructor.
 	 *
@@ -155,6 +163,7 @@ final class Reader_Revenue_Manager extends Module implements Module_With_Scopes,
 	 */
 	public function register() {
 		$this->register_scopes_hook();
+		$this->register_feature_metrics();
 
 		$synchronize_publication = new Synchronize_Publication(
 			$this,
@@ -199,13 +208,17 @@ final class Reader_Revenue_Manager extends Module implements Module_With_Scopes,
 		// Reader Revenue Manager tag placement logic.
 		add_action( 'template_redirect', array( $this, 'register_tag' ) );
 
-		// If the publication ID changes, clear the dismissed state for product ID notifications.
+		// If the publication ID changes, clear the dismissed state for notifications.
 		$this->get_settings()->on_change(
 			function ( $old_value, $new_value ) {
 				if ( $old_value['publicationID'] !== $new_value['publicationID'] ) {
 					$dismissed_items = new Dismissed_Items( $this->user_options );
 
 					foreach ( self::PRODUCT_ID_NOTIFICATIONS as $notification ) {
+						$dismissed_items->remove( $notification );
+					}
+
+					foreach ( self::POLICY_VIOLATION_NOTIFICATIONS as $notification ) {
 						$dismissed_items->remove( $notification );
 					}
 				}
@@ -800,6 +813,33 @@ final class Reader_Revenue_Manager extends Module implements Module_With_Scopes,
 			);
 		}
 
+		if ( isset( $settings['contentPolicyStatus'] ) ) {
+			$content_policy_status = (array) $settings['contentPolicyStatus'];
+			$content_policy_state  = $content_policy_status['contentPolicyState'] ?? '';
+
+			$debug_fields['reader_revenue_manager_content_policy_state'] = array(
+				'label' => __( 'Reader Revenue Manager: Content policy state', 'google-site-kit' ),
+				'value' => $content_policy_state,
+				'debug' => $content_policy_state,
+			);
+		}
+
 		return $debug_fields;
+	}
+
+
+	/**
+	 * Gets an array of internal feature metrics.
+	 *
+	 * @since 1.163.0
+	 *
+	 * @return array
+	 */
+	public function get_feature_metrics() {
+		$settings = $this->get_settings()->get();
+
+		return array(
+			'rrm_publication_onboarding_state' => $settings['publicationOnboardingState'],
+		);
 	}
 }

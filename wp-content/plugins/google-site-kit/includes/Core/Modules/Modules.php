@@ -16,7 +16,8 @@ use Google\Site_Kit\Core\Permissions\Permissions;
 use Google\Site_Kit\Core\Storage\Options;
 use Google\Site_Kit\Core\Storage\User_Options;
 use Google\Site_Kit\Core\Authentication\Authentication;
-use Google\Site_Kit\Core\Util\Feature_Flags;
+use Google\Site_Kit\Core\Tracking\Feature_Metrics_Trait;
+use Google\Site_Kit\Core\Tracking\Provides_Feature_Metrics;
 use Google\Site_Kit\Core\Util\Method_Proxy_Trait;
 use Google\Site_Kit\Modules\Ads;
 use Google\Site_Kit\Modules\AdSense;
@@ -36,9 +37,10 @@ use Exception;
  * @access private
  * @ignore
  */
-final class Modules {
+final class Modules implements Provides_Feature_Metrics {
 
 	use Method_Proxy_Trait;
+	use Feature_Metrics_Trait;
 
 	const OPTION_ACTIVE_MODULES = 'googlesitekit_active_modules';
 
@@ -139,6 +141,14 @@ final class Modules {
 	private $dashboard_sharing_controller;
 
 	/**
+	 * Disconnected_Modules setting instance.
+	 *
+	 * @since 1.172.0
+	 * @var Disconnected_Modules
+	 */
+	private $disconnected_modules;
+
+	/**
 	 * Core module class names.
 	 *
 	 * @since 1.21.0
@@ -174,12 +184,13 @@ final class Modules {
 		?Authentication $authentication = null,
 		?Assets $assets = null
 	) {
-		$this->context          = $context;
-		$this->options          = $options ?: new Options( $this->context );
-		$this->sharing_settings = new Module_Sharing_Settings( $this->options );
-		$this->user_options     = $user_options ?: new User_Options( $this->context );
-		$this->authentication   = $authentication ?: new Authentication( $this->context, $this->options, $this->user_options );
-		$this->assets           = $assets ?: new Assets( $this->context );
+		$this->context              = $context;
+		$this->options              = $options ?: new Options( $this->context );
+		$this->sharing_settings     = new Module_Sharing_Settings( $this->options );
+		$this->user_options         = $user_options ?: new User_Options( $this->context );
+		$this->authentication       = $authentication ?: new Authentication( $this->context, $this->options, $this->user_options );
+		$this->assets               = $assets ?: new Assets( $this->context );
+		$this->disconnected_modules = new Disconnected_Modules( $this->options );
 
 		$this->rest_controller              = new REST_Modules_Controller( $this );
 		$this->dashboard_sharing_controller = new REST_Dashboard_Sharing_Controller( $this );
@@ -207,6 +218,8 @@ final class Modules {
 				return $body;
 			}
 		);
+
+		$this->register_feature_metrics();
 
 		$available_modules = $this->get_available_modules();
 		array_walk(
@@ -623,6 +636,21 @@ final class Modules {
 	}
 
 	/**
+	 * Checks whether the module identified by the given slug is disconnected
+	 * and returns the timestamp of disconnection.
+	 *
+	 * @since 1.172.0
+	 *
+	 * @param string $slug Unique module slug.
+	 * @return null|int Null if module is not disconnected, timestamp of disconnection otherwise.
+	 */
+	public function get_module_disconnected_at( $slug ) {
+		$disconnected_modules = $this->disconnected_modules->get();
+
+		return isset( $disconnected_modules[ $slug ] ) ? $disconnected_modules[ $slug ] : null;
+	}
+
+	/**
 	 * Checks whether the module identified by the given slug is shareable.
 	 *
 	 * @since 1.105.0
@@ -660,6 +688,8 @@ final class Modules {
 		$option[] = $slug;
 
 		$this->set_active_modules_option( $option );
+
+		$this->disconnected_modules->remove( $slug );
 
 		if ( $module instanceof Module_With_Activation ) {
 			$module->on_activation();
@@ -717,6 +747,8 @@ final class Modules {
 		}
 
 		$this->sharing_settings->unset_module( $slug );
+
+		$this->disconnected_modules->add( $slug );
 
 		return true;
 	}
@@ -834,6 +866,29 @@ final class Modules {
 				return $module->is_shareable();
 			}
 		);
+	}
+
+	/**
+	 * Lists connected modules that have a shared role.
+	 *
+	 * @since 1.163.0
+	 *
+	 * @return array Array of module slugs.
+	 */
+	public function list_shared_modules() {
+		$connected_modules = $this->get_connected_modules();
+		$sharing_settings  = $this->get_module_sharing_settings();
+
+		$shared_slugs = array();
+
+		foreach ( $connected_modules as $slug => $module ) {
+			$shared_roles = $sharing_settings->get_shared_roles( $slug );
+			if ( ! empty( $shared_roles ) ) {
+				$shared_slugs[] = $slug;
+			}
+		}
+
+		return $shared_slugs;
 	}
 
 	/**
@@ -970,5 +1025,18 @@ final class Modules {
 	 */
 	public function delete_dashboard_sharing_settings() {
 		return $this->options->delete( Module_Sharing_Settings::OPTION );
+	}
+
+	/**
+	 * Gets feature metrics for the modules.
+	 *
+	 * @since 1.163.0
+	 *
+	 * @return array Feature metrics data.
+	 */
+	public function get_feature_metrics() {
+		return array(
+			'shared_modules' => $this->list_shared_modules(),
+		);
 	}
 }

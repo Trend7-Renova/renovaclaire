@@ -2,9 +2,9 @@
 
 Contributors:      google
 Requires at least: 5.2
-Tested up to:      6.8
+Tested up to:      6.9
 Requires PHP:      7.4
-Stable tag:        1.161.0
+Stable tag:        1.174.0
 License:           Apache License 2.0
 License URI:       https://www.apache.org/licenses/LICENSE-2.0
 Tags:              google, search-console, analytics, adsense, pagespeed-insights
@@ -109,28 +109,33 @@ Please create a new topic on our [WordPress.org support forum](https://wordpress
 
 == Changelog ==
 
-= 1.161.0 =
+= 1.174.0 =
 
 **Enhanced**
 
-* Add GTG key metrics tracking. See [#11412](https://github.com/google/site-kit-wp/issues/11412).
-* Update Partner Ads Experience to `1.1.10` and add `'site-kit'` identifier. See [#11399](https://github.com/google/site-kit-wp/issues/11399).
-* Add logo and GA events tracking to the AdSense server notifications. See [#11214](https://github.com/google/site-kit-wp/issues/11214).
-* Add integration for WooCommerce with Enhanced Conversions. See [#11006](https://github.com/google/site-kit-wp/issues/11006).
-* Update background colors of various UI elements to use a consistent, lighter gray. Props 10upsimon. See [#5579](https://github.com/google/site-kit-wp/issues/5579).
-
-**Changed**
-
-* Remove support for Analytics Pivot reports. Props 10upsimon. See [#10298](https://github.com/google/site-kit-wp/issues/10298).
+* Improve dismissal behavior for RRM policy violation notifications by delaying them for 24 hours after setup and allowing extreme notifications to reappear up to 5 times before permanent dismissal. See [#12247](https://github.com/google/site-kit-wp/issues/12247).
+* Improve UX of Reader Revenue Manager module setup success notification when setting it up with a publication that has an extreme policy violation. See [#12245](https://github.com/google/site-kit-wp/issues/12245).
+* Remove the `rrmPolicyViolations` feature flag. Props fresh3nough. See [#12232](https://github.com/google/site-kit-wp/issues/12232).
+* Add error tracking for Site Kit modules to Email Reporting. See [#12110](https://github.com/google/site-kit-wp/issues/12110).
+* Remove "New" badges from several modules/settings that are no longer new. See [#12096](https://github.com/google/site-kit-wp/issues/12096).
+* Ensure the correct GA events are tracked for the dashboard tour. See [#12030](https://github.com/google/site-kit-wp/issues/12030).
+* Add GA event tracking for user interactions with the "activate Analytics" notification. See [#12028](https://github.com/google/site-kit-wp/issues/12028).
+* Add GA event tracking for user interaction with the Welcome modal. See [#12027](https://github.com/google/site-kit-wp/issues/12027).
+* Enhance the reauthentication admin notice to continue an interrupted module setup flow after the user grants the required scopes. See [#11989](https://github.com/google/site-kit-wp/issues/11989).
+* Adjust desktop layout on email reporting email-report template. See [#11898](https://github.com/google/site-kit-wp/issues/11898).
+* Ensure query params persist during email subscription flow. See [#11890](https://github.com/google/site-kit-wp/issues/11890).
+* Include the AdSense menu item in the updated help menu. See [#11877](https://github.com/google/site-kit-wp/issues/11877).
+* Add component to allow subscription invitations. See [#11857](https://github.com/google/site-kit-wp/issues/11857).
+* Add error email template. See [#11852](https://github.com/google/site-kit-wp/issues/11852).
+* Add support for stable deep links to dashboard and email subscription management. See [#11849](https://github.com/google/site-kit-wp/issues/11849).
+* Implement Email Reporting subscription confirmation email. See [#11842](https://github.com/google/site-kit-wp/issues/11842).
+* Allow users to start the dashboard feature tour from the "Start a feature tour" item in the help menu. See [#11820](https://github.com/google/site-kit-wp/issues/11820).
+* Add a notification that prompts users to connect more services after completing Site Kit setup. See [#11818](https://github.com/google/site-kit-wp/issues/11818).
 
 **Fixed**
 
-* Update the Google tag gateway for advertisers `measurement.php` proxy script to the latest version. See [#11389](https://github.com/google/site-kit-wp/issues/11389).
-* Update notification priorities to have more important permission-related notifications have higher priority. See [#11206](https://github.com/google/site-kit-wp/issues/11206).
-* Fix color issues for hX tags created by the `Typography` component. See [#11159](https://github.com/google/site-kit-wp/issues/11159).
-* Fix bug that caused the "Grant permission" button not to appear during failed plugin setup. See [#11063](https://github.com/google/site-kit-wp/issues/11063).
-* Fix a regression that caused the font size of the admin bar data block to appear too small. Props sudhanshugaikwad. See [#11041](https://github.com/google/site-kit-wp/issues/11041).
-* Fix bug that could cause odd error state when answering Key Metrics question about site goals. See [#10645](https://github.com/google/site-kit-wp/issues/10645).
-* Improve/consolidate permissions errors UI when setting up Site Kit. See [#10118](https://github.com/google/site-kit-wp/issues/10118).
+* Fix bug that caused the Key Metrics banner not to be dismissed. See [#12158](https://github.com/google/site-kit-wp/issues/12158).
+* Optimize requests for view-only users of Dashboard Sharing when Analytics module is not shared. See [#11994](https://github.com/google/site-kit-wp/issues/11994).
+* Fix bug that caused text on some notification banners to change/flicker when clicked. See [#11188](https://github.com/google/site-kit-wp/issues/11188).
 
 [See changelog for all versions](https://raw.githubusercontent.com/google/site-kit-wp/main/changelog.txt).
