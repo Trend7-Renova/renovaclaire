@@ -5,6 +5,9 @@ add_action('rest_api_init', function () {
         'callback' => function ($request) {
             header("Access-Control-Allow-Origin: " . get_home_url());
             $data = json_decode(file_get_contents('php://input'), true);
+
+            if ($data['email_pro']) return 'vrai'; //champ caché anti-spam
+
             $nom = trim($data['prenom'] . ' ' . $data['nom']);
             $mail = [];
             if ($data['objet'] == 'devis') {
@@ -37,6 +40,7 @@ add_action('rest_api_init', function () {
                 'Content-Type: text/html; charset=UTF-8',
                 'From: ' . $nom . ' <' . $mail['replyTo'] . '>',
                 'Reply-To: ' . $mail['replyToName'] . ' <' . $mail['replyTo'] . '>',
+                'Cc: marinereato@renovaclaire.fr',
             );
 
             $ret = wp_mail($mail['to'], $mail['subject'], $mail['message'], $headers);

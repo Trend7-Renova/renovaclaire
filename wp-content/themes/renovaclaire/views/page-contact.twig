@@ -1,6 +1,6 @@
 {% extends "base.twig" %}
 {% block content %}
-		{% include 'home/text-wide.twig' with {data:home.rendez_vous} %}
+	{% include 'home/text-wide.twig' with {data:home.rendez_vous} %}
 
 	<section class="section">
 		{% if post.title %}
@@ -29,6 +29,10 @@
 					</div>
 				</div>
 				<div class="fields">
+					<div>
+						<label for="email">Adresse e-mail pro</label>
+						<div><input data-autosave type="email" id="email_pro" value=""></div>
+					</div>
 					<div>
 						<label for="email">Adresse e-mail</label>
 						<div><input data-autosave type="email" id="email" required value=""></div>
@@ -59,7 +63,7 @@
 				<div>
 					<label for="message">Message</label>
 					<div>
-						<textarea data-autosave id="message" rows="10"></textarea>
+						<textarea data-autosave id="message" required rows="10"></textarea>
 					</div>
 				</div>
 
@@ -79,4 +83,9 @@
 		</form>
 	</section>
 
+	<style>
+		.fields>div:has(#email_pro) {
+			display: none !important;
+		}
+	</style>
 {% endblock %}

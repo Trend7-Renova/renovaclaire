@@ -1,0 +1,164 @@
+{
+  "categories": [
+    {
+      "nom": "Animaux",
+      "slug": "animaux",
+      "items": [
+        "Chien",
+        "Chat",
+        "Cheval",
+        "Oiseau",
+        "Poisson",
+        "Lapin",
+        "Vache",
+        "Mouton",
+        "Cochon",
+        "Poule"
+      ]
+    },
+    {
+      "nom": "Véhicules",
+      "slug": "vehicules",
+      "items": [
+        "Voiture",
+        "Vélo",
+        "Moto",
+        "Bus",
+        "Camion",
+        "Train",
+        "Tramway",
+        "Avion",
+        "Bateau",
+        "Trottinette"
+      ]
+    },
+    {
+      "nom": "Paysages",
+      "slug": "paysages",
+      "items": [
+        "Montagne",
+        "Forêt",
+        "Plage",
+        "Désert",
+        "Campagne",
+        "Ville",
+        "Lac",
+        "Rivière",
+        "Plaine",
+        "Colline"
+      ]
+    },
+    {
+      "nom": "Objets du quotidien",
+      "slug": "objets-du-quotidien",
+      "items": [
+        "Table",
+        "Chaise",
+        "Lit",
+        "Lampe",
+        "Télévision",
+        "Téléphone",
+        "Horloge",
+        "Miroir",
+        "Tapis",
+        "Armoire"
+      ]
+    },
+    {
+      "nom": "Aliments",
+      "slug": "aliments",
+      "items": [
+        "Pomme",
+        "Pain",
+        "Fromage",
+        "Riz",
+        "Pâtes",
+        "Lait",
+        "Œuf",
+        "Banane",
+        "Tomate",
+        "Yaourt"
+      ]
+    },
+    {
+      "nom": "Vêtements",
+      "slug": "vetements",
+      "items": [
+        "T-shirt",
+        "Pantalon",
+        "Chemise",
+        "Pull",
+        "Veste",
+        "Manteau",
+        "Robe",
+        "Jupe",
+        "Chaussettes",
+        "Chaussures"
+      ]
+    },
+    {
+      "nom": "Objets scolaires",
+      "slug": "objets-scolaires",
+      "items": [
+        "Cahier",
+        "Livre",
+        "Stylo",
+        "Crayon",
+        "Gomme",
+        "Règle",
+        "Trousse",
+        "Sac à dos",
+        "Feutre",
+        "Calculatrice"
+      ]
+    },
+    {
+      "nom": "Ustensiles de cuisine",
+      "slug": "ustensiles-de-cuisine",
+      "items": [
+        "Assiette",
+        "Verre",
+        "Fourchette",
+        "Couteau",
+        "Cuillère",
+        "Casserole",
+        "Poêle",
+        "Bol",
+        "Tasse",
+        "Passoire"
+      ]
+    },
+    {
+      "nom": "Loisirs",
+      "slug": "loisirs",
+      "items": [
+        "Ballon",
+        "Jeu de société",
+        "Puzzle",
+        "Console",
+        "Manette",
+        "Livre",
+        "Carte",
+        "Poupée",
+        "Figurine",
+        "Cerf-volant"
+      ]
+    },
+    {
+      "nom": "Éléments de la nature",
+      "slug": "elements-de-la-nature",
+      "items": [
+        "Arbre",
+        "Fleur",
+        "Feuille",
+        "Pierre",
+        "Soleil",
+        "Nuage",
+        "Pluie",
+        "Neige",
+        "Vent",
+        "Herbe"
+      ]
+    }
+  ]
+}
