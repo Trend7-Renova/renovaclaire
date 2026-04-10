@@ -8,7 +8,7 @@
 namespace TLA_Media\GTM_Kit\Admin;
 
 use TLA_Media\GTM_Kit\Common\Util;
-use TLA_Media\GTM_Kit\Options;
+use TLA_Media\GTM_Kit\Options\Options;
 
 /**
  * Analytics
@@ -108,7 +108,7 @@ final class Analytics {
 		];
 
 		\wp_remote_post(
-			'https://api.mixpanel.com/track',
+			'https://api-eu.mixpanel.com/track',
 			[
 				'headers'     => [
 					'Content-Type' => 'application/json',

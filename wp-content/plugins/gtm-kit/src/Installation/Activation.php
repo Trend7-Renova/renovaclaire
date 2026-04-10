@@ -7,7 +7,8 @@
 
 namespace TLA_Media\GTM_Kit\Installation;
 
-use TLA_Media\GTM_Kit\Options;
+use TLA_Media\GTM_Kit\Options\Options;
+use TLA_Media\GTM_Kit\Options\OptionSchema;
 
 /**
  * Activation
@@ -15,9 +16,20 @@ use TLA_Media\GTM_Kit\Options;
 final class Activation {
 
 	/**
-	 * Checks if GTM Kit is installed for the first time.
+	 * Plugin options.
+	 *
+	 * @var Options
 	 */
-	public function __construct() {
+	protected Options $options;
+
+	/**
+	 * Checks if GTM Kit is installed for the first time.
+	 *
+	 * @param Options $options An instance of Options.
+	 */
+	public function __construct( Options $options ) {
+		$this->options = $options;
+
 		if ( $this->is_first_install() ) {
 			\add_action( 'gtmkit_activate', [ $this, 'set_first_install_options' ] );
 		} else {
@@ -41,7 +53,7 @@ final class Activation {
 		\add_option( 'gtmkit_initial_version', GTMKIT_VERSION, '', false );
 		\update_option( 'gtmkit_version', GTMKIT_VERSION, false );
 
-		$map      = Options::get_defaults();
+		$map      = OptionSchema::get_schema();
 		$defaults = [];
 		foreach ( $map as $group => $settings ) {
 			foreach ( $settings as $key => $option ) {
@@ -49,7 +61,7 @@ final class Activation {
 			}
 		}
 
-		Options::init()->set( $defaults, true );
+		$this->options->set( $defaults, true );
 
 		// Add transient to trigger redirect to the Setup Wizard.
 		\set_transient( 'gtmkit_activation_redirect', true, 30 );

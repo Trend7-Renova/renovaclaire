@@ -2,8 +2,8 @@
 Contributors: tlamedia, torbenlundsgaard, gtmkit
 Donate link: https://github.com/tlamedia/gtm-kit
 Tags: google tag manager, gtm, woocommerce, analytics, ga4
-Tested up to: 6.8
-Stable tag: 2.5.1
+Tested up to: 6.9
+Stable tag: 2.8.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -96,129 +96,73 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
-= 2.5.1 =
+= 2.8.3 =
 
-Release date: 2025-08-22
-
-#### Bugfixes:
-* Force rounding values to 2 decimal places to fix rounding issues in edge cases.
-* In some cases the GTM container would not load after activating and deactivating settings in 'Server-side Tagging (sGTM)'.
-
-#### Other:
-* Tested up to WooCommerce 10.1.
-
-= 2.5.0 =
-
-Release date: 2025-08-05
+Release date: 2026-03-18
 
 #### Bugfixes:
-* The add_to_cart event did not fire in the all-products block.
+* Fix: Add error handling to WooCommerce blocks action handlers to prevent tracking errors from breaking checkout functionality or interfering with third-party plugins.
 
 #### Other:
-* Require WooCommerce 9.0.
-* Tested up to WooCommerce 10.0.
+* Tested up to WooCommerce 10.6.
 
-= 2.4.4 =
+= 2.8.2 =
 
-Release date: 2025-04-30
+Release date: 2026-02-17
 
 #### Bugfixes:
-* The $hook type hint in enqueue_page_assets was removed to avoid conflicts with plugins passing non-standard data types.
+* Fix undefined array key warning for order-received query var in edge cases like certain payment gateway redirects or bot traffic.
 
-#### Other:
-* Introduced the gtmkit_options_set action and the gtmkit_process_options filter.
-* Fixed deprecation in Easy Digital Downloads.
+= 2.8.1 =
 
-= 2.4.3 =
-
-Release date: 2025-04-15
+Release date: 2026-01-30
 
 #### Bugfixes:
-* Fix conflict with GTM Kit Woo in admin settings.
+* Fixes correct detection of the premium plugin.
 
-= 2.4.2 =
+= 2.8.0 =
 
-Release date: 2025-04-09
-
-#### Bugfixes:
-* Fix fatal error when used together with MC4WP: Mailchimp for WordPress.
-
-#### Other:
-* Tested up to WordPress 6.8.
-* Tested up to WooCommerce 9.8.
-
-= 2.4.1 =
-
-Release date: 2025-04-02
-
-#### Security:
-* When debug logging is enabled, the Easy Digital Downloads integration was activaed sensitive customer information was logged to server error logs. If debug logging remains active in a production environment or if logs are not properly secured, it could lead to unauthorized access to personal data. - [CVE-2025-31001](https://www.cve.org/CVERecord?id=CVE-2025-31001).
-
-= 2.4.0 =
-
-Release date: 2025-04-03
-
-#### Feature Removed:
-* The Event Inspector has been removed and is only available the premium version. It was often used in an inappropriate way where end-users unintentionally were shown debug data.
-
-= 2.3.2 =
-
-Release date: 2025-04-02
-
-#### Security:
-* Permissions were not checked correct on the admin API.
-
-= 2.3.1 =
-
-Release date: 2025-03-12
-
-#### Bugfixes:
-* Fix a rare case of divisionByZero in calculation of discount.
-
-#### Other:
-* Tested up to WooCommerce 9.7.
-
-= 2.3 =
-
-Release date: 2025-01-28
-
-#### Bugfixes:
-* Fix an edge case fatal error in admin if $hook for some reason is missing,
-
-#### Other:
-* Require WordPress 6.4.
-* Require WooCommerce 8.4.
-* Tested up to WooCommerce 9.6.
-
-= 2.2.2 =
-
-Release date: 2024-12-03
-
-#### Other:
-* Tested up to WooCommerce 9.4.
-* Tested up to PHP 8.4.
-
-= 2.2.1 =
-
-Release date: 2024-10-29
-
-#### Bugfixes:
-* If the cart and checkout endpoints were set to the same page in order to skip the cart the 'checkout' and 'purchase' events would not fire.
-
-#### Other:
-* Tested up to WordPress 6.7.
-
-= 2.2.0 =
-
-Release date: 2024-10-16
-
-Find out about what's new in our [our release post](https://gtmkit.com/gtm-kit-2-2/).
+Release date: 2026-01-29
 
 #### Enhancements:
-* Added notifications and warnings for missing GTM container, debug log usage, auto-update and event inspector usage. These improvements aim to ensure smooth production operations.
+* Improved internal handling of plugin settings to make GTM Kit more reliable and easier to maintain, while ensuring full backward compatibility with existing configurations.
 
 #### Other:
-* Minor refactoring
+* Tested up to WooCommerce 10.5.
+* Require WooCommerce 9.5.
+
+= 2.7.0 =
+
+Release date: 2026-01-06
+
+Find out about what's new in our [our release post](https://gtmkit.com/gtm-kit-2-7/).
+
+#### Enhancements:
+* We have added a new template assistant to help you create your own custom templates for Google Tag Manager.
+* Add option to define a custom page that should be detected as the order-received page.
+* The debug info now includes a check to determine if WooCommerce purchase events have been recorded in the logs. This information is included in the debug data to assist with troubleshooting and support.
+
+#### Bugfixes:
+* Fix edge case where quantity in the Datalayer was 0. Set a default quantity of 1 when the quantity element is missing.
+
+#### Other:
+* Tested up to WooCommerce 10.4.
+* Tested up to WordPress 6.9.
+* Require WooCommerce 9.4.
+* Require WordPress 6.7.
+
+= 2.6.0 =
+
+Release date: 2025-09-24
+
+#### Enhancements:
+* Add tracking on the product collection block.
+
+#### Other:
+* Tested up to WooCommerce 10.4.
+* Require WooCommerce 9.2.
+
 
 = Earlier versions =
 For the changelog of earlier versions, please refer to [the changelog on gtmkit.com](https://gtmkit.com/changelog/).
+

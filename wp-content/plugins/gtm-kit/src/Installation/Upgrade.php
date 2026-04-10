@@ -8,7 +8,7 @@
 namespace TLA_Media\GTM_Kit\Installation;
 
 use TLA_Media\GTM_Kit\Common\Conditionals\WooCommerceConditional;
-use TLA_Media\GTM_Kit\Options;
+use TLA_Media\GTM_Kit\Options\Options;
 
 /**
  * Upgrade
@@ -16,9 +16,19 @@ use TLA_Media\GTM_Kit\Options;
 final class Upgrade {
 
 	/**
-	 * Constructor
+	 * Plugin options.
+	 *
+	 * @var Options
 	 */
-	public function __construct() {
+	protected Options $options;
+
+	/**
+	 * Constructor
+	 *
+	 * @param Options $options An instance of Options.
+	 */
+	public function __construct( Options $options ) {
+		$this->options = $options;
 
 		$upgrades = $this->get_upgrades();
 
@@ -40,13 +50,15 @@ final class Upgrade {
 	protected function get_upgrades(): array {
 
 		$available_upgrades = [
-			'1.11' => 'v111_upgrade',
-			'1.14' => 'v114_upgrade',
-			'1.15' => 'v115_upgrade',
-			'1.20' => 'v120_upgrade',
-			'1.22' => 'v122_upgrade',
-			'2.2'  => 'v22_upgrade',
-			'2.4'  => 'v24_upgrade',
+			'1.11'  => 'v111_upgrade',
+			'1.14'  => 'v114_upgrade',
+			'1.15'  => 'v115_upgrade',
+			'1.20'  => 'v120_upgrade',
+			'1.22'  => 'v122_upgrade',
+			'2.2'   => 'v22_upgrade',
+			'2.4'   => 'v24_upgrade',
+			'2.7'   => 'v27_upgrade',
+			'2.8.0' => 'v280_upgrade',
 		];
 
 		$current_version = \get_option( 'gtmkit_version' );
@@ -66,7 +78,7 @@ final class Upgrade {
 	 */
 	protected function v111_upgrade(): void {
 
-		$script_implementation = Options::init()->get( 'general', 'script_implementation' );
+		$script_implementation = $this->options->get( 'general', 'script_implementation' );
 
 		if ( $script_implementation === 2 ) {
 			$values = [
@@ -75,7 +87,7 @@ final class Upgrade {
 				],
 			];
 
-			Options::init()->set( $values, false, false );
+			$this->options->set( $values, false, false );
 		}
 	}
 
@@ -97,7 +109,7 @@ final class Upgrade {
 			],
 		];
 
-		$options = Options::init()->get_all_raw();
+		$options = $this->options->get_all_raw();
 
 		if ( ! isset( $options['integrations']['cf7_load_js'] ) ) {
 			$values['integrations']['cf7_load_js'] = 1;
@@ -112,7 +124,7 @@ final class Upgrade {
 			$values['integrations']['woocommerce_variable_product_tracking'] = 0;
 		}
 
-		Options::init()->set( $values, false, false );
+		$this->options->set( $values, false, false );
 	}
 
 	/**
@@ -126,7 +138,7 @@ final class Upgrade {
 			],
 		];
 
-		Options::init()->set( $values, false, false );
+		$this->options->set( $values, false, false );
 	}
 
 	/**
@@ -140,7 +152,7 @@ final class Upgrade {
 			],
 		];
 
-		Options::init()->set( $values, false, false );
+		$this->options->set( $values, false, false );
 	}
 
 	/**
@@ -154,7 +166,7 @@ final class Upgrade {
 			],
 		];
 
-		Options::init()->set( $values, false, false );
+		$this->options->set( $values, false, false );
 	}
 
 	/**
@@ -171,7 +183,7 @@ final class Upgrade {
 			],
 		];
 
-		Options::init()->set( $values, false, false );
+		$this->options->set( $values, false, false );
 	}
 
 	/**
@@ -184,6 +196,51 @@ final class Upgrade {
 			],
 		];
 
-		Options::init()->set( $values, false, false );
+		$this->options->set( $values, false, false );
+	}
+
+	/**
+	 * Upgrade routine for v2.7
+	 */
+	protected function v27_upgrade(): void {
+		delete_transient( 'gtmkit_templates' );
+	}
+
+	/**
+	 * Upgrade routine for v2.8.0
+	 *
+	 * Convert legacy string 'on' values to proper boolean true or integer 1.
+	 * Legacy data from earlier versions stored toggle values as 'on' strings
+	 * instead of proper booleans, causing integration settings to appear disabled.
+	 */
+	protected function v280_upgrade(): void {
+		$options = $this->options->get_all_raw();
+		$updated = false;
+
+		// Settings groups to check for 'on' string values.
+		$groups_to_check = [ 'general', 'integrations', 'premium', 'misc' ];
+
+		foreach ( $groups_to_check as $group ) {
+			if ( ! isset( $options[ $group ] ) || ! is_array( $options[ $group ] ) ) {
+				continue;
+			}
+
+			foreach ( $options[ $group ] as $key => $value ) {
+				// Convert string 'on' to boolean true.
+				if ( $value === 'on' || $value === '1' ) {
+					$options[ $group ][ $key ] = true;
+					$updated                   = true;
+				} elseif ( $value === 'off' || $value === '0' ) {
+					// Convert string 'off' to boolean false.
+					$options[ $group ][ $key ] = false;
+					$updated                   = true;
+				}
+			}
+		}
+
+		// Only update if changes were made.
+		if ( $updated ) {
+			$this->options->set( $options, false, true );
+		}
 	}
 }

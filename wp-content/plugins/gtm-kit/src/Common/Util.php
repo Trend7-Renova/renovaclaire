@@ -8,7 +8,7 @@
 namespace TLA_Media\GTM_Kit\Common;
 
 use TLA_Media\GTM_Kit\Integration\WooCommerce;
-use TLA_Media\GTM_Kit\Options;
+use TLA_Media\GTM_Kit\Options\Options;
 
 /**
  * Class for common utilities.
@@ -100,21 +100,39 @@ final class Util {
 		$data = [];
 		$data = $this->set_site_data( $data, $options, $wp_version, $anonymize );
 
-		$plugins = [
-			'gtm-kit/gtm-kit.php'         => 'gtmkit_version',
+		$data = $this->add_active_plugin_and_version( 'gtm-kit/gtm-kit.php', 'gtmkit_version', $data, $anonymize );
+
+		$data['ecommerce'] = false;
+
+		$ecommerce_plugins = [
 			'woocommerce/woocommerce.php' => 'woocommerce_version',
 			'easy-digital-downloads/easy-digital-downloads.php' => 'edd_version',
 			'easy-digital-downloads-pro/easy-digital-downloads.php' => 'edd-pro_version',
 		];
 
-		foreach ( $plugins as $plugin => $key ) {
-			$data = $this->add_active_plugin_and_version( $plugin, $key, $data, $anonymize );
+		foreach ( $ecommerce_plugins as $plugin => $key ) {
+			$data = $this->add_active_plugin_and_version( $plugin, $key, $data, $anonymize, true );
 		}
 		$data['locale'] = explode( '_', get_locale() )[0];
+
 		if ( $anonymize ) {
 			$data = $this->add_shared_data( $data, $wp_version );
 		} else {
-			$data['support_data']['site_url'] = site_url();
+			$purchase_event_recorded = false;
+
+			// Check if WooCommerce logs contain GTM Kit purchase events.
+			if ( class_exists( 'WC_Log_Handler_File' ) ) {
+				$log_files = \WC_Log_Handler_File::get_log_files();
+				// Check if any log file starts with 'gtmkit-purchase'.
+				foreach ( $log_files as $log_file ) {
+					if ( strpos( $log_file, 'gtmkit-purchase' ) === 0 ) {
+						$purchase_event_recorded = true;
+						break;
+					}
+				}
+			}
+			$data['support_data']['purchase_event_recorded'] = $purchase_event_recorded;
+			$data['support_data']['site_url']                = site_url();
 			if ( function_exists( 'WC' ) ) {
 				$data['support_data']['pages'] = WooCommerce::instance()->get_pages_property( [] )['pages'];
 			}
@@ -208,7 +226,6 @@ final class Util {
 	public function get_active_plugins(): array {
 
 		if ( ! function_exists( 'get_plugins' ) ) {
-			// @phpstan-ignore-next-line
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
@@ -229,14 +246,18 @@ final class Util {
 	 * @param string               $key The key.
 	 * @param array<string, mixed> $data The data.
 	 * @param bool                 $shorten Shorten the version number or not.
+	 * @param bool                 $is_ecommerce Whether this is an ecommerce plugin.
 	 *
 	 * @return array<string, mixed> An array of active plugins names.
 	 */
-	public function add_active_plugin_and_version( string $plugin, string $key, array $data, bool $shorten = true ): array {
+	public function add_active_plugin_and_version( string $plugin, string $key, array $data, bool $shorten = true, bool $is_ecommerce = false ): array {
 
 		if ( \is_plugin_active( $plugin ) ) {
 			$version      = \get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin )['Version'];
 			$data[ $key ] = ( $shorten ) ? $this->shorten_version( $version ) : $version;
+			if ( $is_ecommerce ) {
+				$data['ecommerce'] = true;
+			}
 		}
 
 		return $data;
@@ -272,7 +293,7 @@ final class Util {
 	 * @return string
 	 */
 	public function shorten_version( string $version ): string {
-		return preg_replace( '@^(\d\.\d+).*@', '\1', $version );
+		return preg_replace( '@^(\d+\.\d+).*@', '\1', $version );
 	}
 
 	/**

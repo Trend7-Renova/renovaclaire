@@ -9,7 +9,7 @@ namespace TLA_Media\GTM_Kit\Admin;
 
 use TLA_Media\GTM_Kit\Common\Util;
 use TLA_Media\GTM_Kit\Installation\PluginDataImport;
-use TLA_Media\GTM_Kit\Options;
+use TLA_Media\GTM_Kit\Options\Options;
 use WP_Error;
 
 /**
@@ -146,6 +146,7 @@ final class SetupWizard {
 				'currentPage'  => 'wizard',
 				'root'         => esc_url_raw( rest_url() ),
 				'nonce'        => wp_create_nonce( 'wp_rest' ),
+				'pluginUrl'    => GTMKIT_URL,
 				'adminPageUrl' => $this->util->get_admin_page_url(),
 				'settings'     => $this->options->get_all_raw(),
 				'site_data'    => $this->util->get_site_data( $this->options->get_all_raw() ),
