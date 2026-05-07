@@ -50,6 +50,22 @@
             flex: 1;
             gap: var(--gap);
 
+            h3 {
+                color: var(--or);
+            }
+
+            a {
+                color: black;
+                text-decoration: underline;
+
+                @media screen and (min-width: 1024px) {
+                    &:hover {
+                        color: var(--or);
+                        text-decoration: none;
+                    }
+                }
+            }
+
             >ul {
                 display: flex;
                 flex-direction: column;

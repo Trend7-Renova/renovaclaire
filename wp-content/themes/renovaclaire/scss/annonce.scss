@@ -1,6 +1,6 @@
 #annonce {
-    position: fixed;
-    bottom: 0;
+    position: sticky;
+    top: calc(var(--hauteur-header) + 2 * var(--micro-gap));
     left: 0;
     width: 100%;
     background-color: var(--couleur-fond-annonce);
@@ -9,7 +9,7 @@
     justify-content: center;
     align-items: center;
     height: var(--hauteur-header);
-    z-index: 1000000;
+    z-index: 4;
 
     padding: var(--half-gap);
 
@@ -32,9 +32,6 @@
     }
 }
 
-body:has(#annonce) #brevo-conversations {
-    transform: translateY(calc((var(--hauteur-header) + var(--gap)) * -1)) !important;
-    @media screen and (min-width: 800px) {
-        transform: translateY(calc(var(--hauteur-header) * -1)) !important;
-    }
+body:has(#wpadminbar) #annonce {
+    top: calc(var(--hauteur-header) + 2 * var(--micro-gap) + 32px);
 }

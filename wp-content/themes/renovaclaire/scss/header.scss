@@ -6,8 +6,6 @@
 }
 
 body:has(.hero-large) #header {
-    position: relative;
-    z-index: 4;
     transition: background .5s ease;
     background-color: rgba(255, 255, 255, 0);
 
@@ -24,7 +22,7 @@ body:has(.hero-large) #header {
     }
 }
 
-body:has(.hero-large):not(.menu-mobile-ouvert):not([data-scrolled="true"]) #header {
+body:has(.hero-large):not(.menu-mobile-ouvert):not([data-scrolled="true"]):not(:has(#annonce)) #header {
     img[src*="logo-small.png"] {
         display: none !important;
     }
@@ -38,7 +36,8 @@ body:has(.hero-large).menu-mobile-ouvert {
     }
 }
 
-body:has(.hero-large):not(.menu-mobile-ouvert)[data-scrolled="true"] {
+body:has(.hero-large):not(.menu-mobile-ouvert)[data-scrolled="true"],
+body:has(.hero-large):not(.menu-mobile-ouvert):has(#annonce) {
     #header {
         img[src*="logo-small-white.png"] {
             display: none !important;
@@ -72,6 +71,10 @@ body:not(:has(.hero-large)) #header {
 #header {
     display: grid;
     place-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background-color: white;
 
     >div {
         margin-inline: auto;

@@ -8,8 +8,10 @@
     // display: grid;
     // place-items: center;
 
+    max-width: var(--largeur-contenu);
+    margin-inline: auto;
+
     >div {
-        max-width: var(--largeur-contenu);
         >figure {
             display: grid;
             grid-template-columns: var(--photo-size) 1fr;
@@ -32,8 +34,6 @@
                 height: var(--photo-size);
             }
         }
-
-        max-width: var(--largeur-contenu);
 
         display: flex;
         flex-direction: column;

@@ -1,11 +1,8 @@
 body:has(.hero-large) #header {
-    position: sticky;
-    top: 0;
-    z-index: 4;
     --couleur-texte: var(--couleur-texte-inv);
 }
 
-body:has(#wpadminbar):has(.hero-large) #header {
+body:has(#wpadminbar) #header {
     top: 32px;
 }
 
