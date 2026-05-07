@@ -10,13 +10,19 @@ add_action('rest_api_init', function () {
 
             $nom = trim($data['prenom'] . ' ' . $data['nom']);
             $mail = [];
-            if ($data['objet'] == 'devis') {
-                $sujet = 'Demande de devis';
-            } else if ($data['objet'] == 'etude') {
+            if ($data['objet'] == 'etude') {
                 $sujet = 'Demande d\'étude personnalisée';
             } else {
                 $sujet = 'Question';
             }
+            $libellesConnaissance = [
+                'recherche' => 'Recherche internet',
+                'reseaux' => 'Réseaux sociaux',
+                'bouche-a-oreille' => 'Bouche à oreille',
+                'parrainage' => 'Parrainage',
+                'autre' => 'Autre',
+            ];
+            $connaissance = $libellesConnaissance[$data['connaissance']] ?? $data['connaissance'];
             $message = '<br><b>Nom</b><br>';
             $message .= $nom;
             $message .= '<br><b>Code postal du projet</b><br>';
@@ -25,6 +31,8 @@ add_action('rest_api_init', function () {
             $message .= $data['email'];
             $message .= '<br><b>Téléphone</b><br>';
             $message .= $data['telephone'];
+            $message .= '<br><b>Comment nous avez-vous connu ?</b><br>';
+            $message .= $connaissance;
             $message .= '<br><br>';
             $message .= '<div style="border:1px solid black;padding:1rem;margin:1rem">' . nl2br($data['message']) . '</div>';
             $mail['to'] = get_field('contact', 'option')['destinataire'];

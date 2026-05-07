@@ -52,9 +52,23 @@
 						<div>
 							<select data-autosave id="objet" required>
 								<option disbaled selected hidden>Vous nous contactez pour ...</option>
-								<option value="devis" {{get.objet=='devis' ? 'selected' : '' }}>Demander un devis gratuit</option>
 								<option value="etude" {{get.objet=='etude' ? 'selected' : '' }}>Demander une étude personnalisée</option>
 								<option value="question">Poser une question sur un autre sujet</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="fields">
+					<div>
+						<label for="connaissance">Comment nous avez-vous connu ?</label>
+						<div>
+							<select data-autosave id="connaissance" required>
+								<option disabled selected hidden value="">Choisissez une réponse ...</option>
+								<option value="recherche">Recherche internet</option>
+								<option value="reseaux">Réseaux sociaux</option>
+								<option value="bouche-a-oreille">Bouche à oreille</option>
+								<option value="parrainage">Parrainage</option>
+								<option value="autre">Autre</option>
 							</select>
 						</div>
 					</div>
