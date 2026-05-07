@@ -1,14 +1,15 @@
 .profile {
-    --photo-size: 150px;
+    // --photo-size: 150px;
 
-    @media screen and (min-width: 800px) {
-        --photo-size: 200px
-    }
+    // @media screen and (min-width: 800px) {
+    //     --photo-size: 200px
+    // }
 
-    display: grid;
-    place-items: center;
+    // display: grid;
+    // place-items: center;
 
     >div {
+        max-width: var(--largeur-contenu);
         >figure {
             display: grid;
             grid-template-columns: var(--photo-size) 1fr;
