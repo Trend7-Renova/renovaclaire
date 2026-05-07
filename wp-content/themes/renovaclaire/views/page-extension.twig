@@ -29,6 +29,9 @@
 		{% include 'home/etapes.twig' with {data:post.meta('etapes')} %}
 	{% endif %}
 
+	<div class="content">
+		{{post.content}}
+	</div>
 
 	{% include 'home/text-wide.twig' with {data:home.rendez_vous} %}
 
