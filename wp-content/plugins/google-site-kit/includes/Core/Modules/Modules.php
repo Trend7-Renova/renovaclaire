@@ -6,6 +6,8 @@
  * @copyright 2021 Google LLC
  * @license   https://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://sitekit.withgoogle.com
+ *
+ * phpcs:disable PHPCS.Commenting.RequireDocTagDescription -- Pre-existing violations; tracked for follow-up cleanup.
  */
 
 namespace Google\Site_Kit\Core\Modules;
@@ -318,7 +320,7 @@ final class Modules implements Provides_Feature_Metrics {
 
 							if ( ! $module instanceof Module_With_Service_Entity ) {
 								// If the option was just added, set the ownerID directly and bail.
-								if ( empty( $old_values ) ) {
+								if ( empty( $old_values ) && $module instanceof Module_With_Settings ) {
 									$module->get_settings()->merge(
 										array(
 											'ownerID' => get_current_user_id(),
@@ -357,7 +359,7 @@ final class Modules implements Provides_Feature_Metrics {
 									);
 								}
 
-								if ( $changed_settings ) {
+								if ( $changed_settings && $module instanceof Module_With_Settings ) {
 									$module->get_settings()->merge(
 										array(
 											'ownerID' => get_current_user_id(),
@@ -399,6 +401,7 @@ final class Modules implements Provides_Feature_Metrics {
 	 * Populates modules data to pass to JS.
 	 *
 	 * @since 1.96.0
+	 * @since 1.181.0 Directly register data from modules with inline data.
 	 *
 	 * @param array $modules_data Inline modules data.
 	 * @return array Inline modules data.
@@ -409,6 +412,19 @@ final class Modules implements Provides_Feature_Metrics {
 		foreach ( $available_modules as $module ) {
 			if ( $module instanceof Module_With_Data_Available_State ) {
 				$modules_data[ 'data_available_' . $module->slug ] = $this->is_module_active( $module->slug ) && $module->is_connected() && $module->is_data_available();
+			}
+		}
+
+		$active_modules = $this->get_active_modules();
+
+		foreach ( $active_modules as $module ) {
+			if ( $module instanceof Module_With_Inline_Data ) {
+				$module_data = $modules_data[ $module->slug ] ?? array();
+				$inline_data = $module->get_inline_data();
+
+				if ( ! empty( $inline_data ) ) {
+					$modules_data[ $module->slug ] = array_merge( $module_data, $inline_data );
+				}
 			}
 		}
 
@@ -432,7 +448,7 @@ final class Modules implements Provides_Feature_Metrics {
 	 * @since 1.0.0
 	 * @since 1.85.0 Filter out modules which are missing any of the dependencies specified in `depends_on`.
 	 *
-	 * @return array Available modules as $slug => $module pairs.
+	 * @return Module[] Available modules as $slug => $module pairs.
 	 */
 	public function get_available_modules() {
 		if ( empty( $this->modules ) ) {
@@ -490,7 +506,7 @@ final class Modules implements Provides_Feature_Metrics {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Active modules as $slug => $module pairs.
+	 * @return Module[] Active modules as $slug => $module pairs.
 	 */
 	public function get_active_modules() {
 		$modules = $this->get_available_modules();
@@ -503,6 +519,21 @@ final class Modules implements Provides_Feature_Metrics {
 				return $module->force_active || in_array( $module->slug, $option, true );
 			}
 		);
+	}
+
+	/**
+	 * Resets runtime caches for authentication and module clients.
+	 *
+	 * Recreate authentication and clear the module registry arrays so subsequent
+	 * module lookups build fresh instances bound to the current user context.
+	 *
+	 * @since 1.175.0
+	 */
+	public function reset_runtime_caches() {
+		$this->authentication = new Authentication( $this->context, $this->options, $this->user_options );
+		$this->modules        = array();
+		$this->dependencies   = array();
+		$this->dependants     = array();
 	}
 
 	/**
@@ -898,7 +929,7 @@ final class Modules implements Provides_Feature_Metrics {
 	 * - No user is identified by its owner ID
 	 * - the owner lacks the capability to authenticate
 	 * - the owner is no longer authenticated
-	 * - no user exists for the owner ID
+	 * - no user exists for the owner ID.
 	 *
 	 * @since 1.69.0
 	 *

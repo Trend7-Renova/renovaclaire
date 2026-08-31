@@ -34,6 +34,8 @@ class Normalizer
     private static $D;
     private static $KD;
     private static $cC;
+    private static $rawD;
+    private static $rawKD;
     private static $ulenMask = ["\xc0" => 2, "\xd0" => 2, "\xe0" => 3, "\xf0" => 4];
     private static $ASCII = " eiasntrolud][cmp'\ng|hv.fb,:=-q10C2*yx)(L9AS/P\"EjMIk3>5T<D4}B{8FwR67UGN;JzV#HOW_&!K?XQ%Y\\\tZ+~^\$@`\x00\x01\x02\x03\x04\x05\x06\x07\x08\v\f\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f";
     public static function isNormalized(string $s, int $form = self::FORM_C)
@@ -41,17 +43,55 @@ class Normalizer
         if (!\in_array($form, [self::NFD, self::NFKD, self::NFC, self::NFKC])) {
             return \false;
         }
-        if (!isset($s[\strspn($s, self::$ASCII)])) {
+        if (!isset($s[strspn($s, self::$ASCII)])) {
             return \true;
         }
-        if (self::NFC == $form && \preg_match('//u', $s) && !\preg_match('/[^\\x00-\\x{2FF}]/u', $s)) {
+        if (self::NFC == $form && preg_match('//u', $s) && !preg_match('/[^\x00-\x{2FF}]/u', $s)) {
             return \true;
         }
         return self::normalize($s, $form) === $s;
     }
+    public static function getRawDecomposition(string $s, int $form = self::FORM_C)
+    {
+        if ('' === $s || !preg_match('//u', $s)) {
+            return null;
+        }
+        $ulen = $s[0] < "\x80" ? 1 : self::$ulenMask[$s[0] & "\xf0"] ?? 0;
+        if (!$ulen || \strlen($s) !== $ulen) {
+            return null;
+        }
+        if (self::NFC !== $form && self::NFD !== $form && self::NFKC !== $form && self::NFKD !== $form) {
+            return '';
+        }
+        if ($s >= "가" && $s <= "힣") {
+            $u = unpack('C*', $s);
+            $j = ($u[1] - 224 << 12) + ($u[2] - 128 << 6) + $u[3] - 0xac80;
+            if ($t = $j % 28) {
+                $j -= $t;
+                $lv = 0xac00 + $j;
+                $r = \chr(0xe0 | $lv >> 12) . \chr(0x80 | $lv >> 6 & 0x3f) . \chr(0x80 | $lv & 0x3f);
+                $r .= $t < 25 ? "\xe1\x86" . \chr(0xa7 + $t) : "\xe1\x87" . \chr(0x67 + $t);
+                return $r;
+            }
+            return "\xe1\x84" . \chr(0x80 + (int) ($j / 588)) . "\xe1\x85" . \chr(0xa1 + (int) ($j % 588 / 28));
+        }
+        if (null === self::$rawD) {
+            self::$rawD = self::getData('rawCanonicalDecomposition');
+        }
+        if (isset(self::$rawD[$s])) {
+            return self::$rawD[$s];
+        }
+        if (self::NFKC === $form || self::NFKD === $form) {
+            if (null === self::$rawKD) {
+                self::$rawKD = self::getData('rawCompatibilityDecomposition');
+            }
+            return self::$rawKD[$s] ?? null;
+        }
+        return null;
+    }
     public static function normalize(string $s, int $form = self::FORM_C)
     {
-        if (!\preg_match('//u', $s)) {
+        if (!preg_match('//u', $s)) {
             return \false;
         }
         switch ($form) {
@@ -72,7 +112,7 @@ class Normalizer
                 $K = \true;
                 break;
             default:
-                if (\defined('Normalizer::NONE') && \Normalizer::NONE == $form) {
+                if (\defined('Google\Site_Kit_Dependencies\Normalizer::NONE') && \Normalizer::NONE == $form) {
                     return $s;
                 }
                 if (80000 > \PHP_VERSION_ID) {
@@ -90,8 +130,8 @@ class Normalizer
             self::$D = self::getData('canonicalDecomposition');
             self::$cC = self::getData('combiningClass');
         }
-        if (null !== ($mbEncoding = 2 & (int) \ini_get('mbstring.func_overload') ? \mb_internal_encoding() : null)) {
-            \mb_internal_encoding('8bit');
+        if (null !== $mbEncoding = 2 & (int) \ini_get('mbstring.func_overload') ? mb_internal_encoding() : null) {
+            mb_internal_encoding('8bit');
         }
         $r = self::decompose($s, $K);
         if ($C) {
@@ -101,7 +141,7 @@ class Normalizer
             $r = self::recompose($r);
         }
         if (null !== $mbEncoding) {
-            \mb_internal_encoding($mbEncoding);
+            mb_internal_encoding($mbEncoding);
         }
         return $r;
     }
@@ -114,7 +154,7 @@ class Normalizer
         $result = $tail = '';
         $i = $s[0] < "\x80" ? 1 : $ulenMask[$s[0] & "\xf0"];
         $len = \strlen($s);
-        $lastUchr = \substr($s, 0, $i);
+        $lastUchr = substr($s, 0, $i);
         $lastUcls = isset($combClass[$lastUchr]) ? 256 : 0;
         while ($i < $len) {
             if ($s[$i] < "\x80") {
@@ -123,8 +163,8 @@ class Normalizer
                     $lastUchr .= $tail;
                     $tail = '';
                 }
-                if ($j = \strspn($s, $ASCII, $i + 1)) {
-                    $lastUchr .= \substr($s, $i, $j);
+                if ($j = strspn($s, $ASCII, $i + 1)) {
+                    $lastUchr .= substr($s, $i, $j);
                     $i += $j;
                 }
                 $result .= $lastUchr;
@@ -134,7 +174,7 @@ class Normalizer
                 continue;
             }
             $ulen = $ulenMask[$s[$i] & "\xf0"];
-            $uchr = \substr($s, $i, $ulen);
+            $uchr = substr($s, $i, $ulen);
             if ($lastUchr < "ᄀ" || "ᄒ" < $lastUchr || $uchr < "ᅡ" || "ᅵ" < $uchr || $lastUcls) {
                 // Table lookup and combining chars composition
                 $ucls = $combClass[$uchr] ?? 0;
@@ -155,10 +195,10 @@ class Normalizer
                 $L = \ord($lastUchr[2]) - 0x80;
                 $V = \ord($uchr[2]) - 0xa1;
                 $T = 0;
-                $uchr = \substr($s, $i + $ulen, 3);
+                $uchr = substr($s, $i + $ulen, 3);
                 if ("ᆧ" <= $uchr && $uchr <= "ᇂ") {
                     $T = \ord($uchr[2]) - 0xa7;
-                    0 > $T && ($T += 0x40);
+                    0 > $T && $T += 0x40;
                     $ulen += 3;
                 }
                 $L = 0xac00 + ($L * 21 + $V) * 28 + $T;
@@ -185,21 +225,21 @@ class Normalizer
             if ($s[$i] < "\x80") {
                 // ASCII chars
                 if ($c) {
-                    \ksort($c);
-                    $result .= \implode('', $c);
+                    ksort($c);
+                    $result .= implode('', $c);
                     $c = [];
                 }
-                $j = 1 + \strspn($s, $ASCII, $i + 1);
-                $result .= \substr($s, $i, $j);
+                $j = 1 + strspn($s, $ASCII, $i + 1);
+                $result .= substr($s, $i, $j);
                 $i += $j;
                 continue;
             }
             $ulen = $ulenMask[$s[$i] & "\xf0"];
-            $uchr = \substr($s, $i, $ulen);
+            $uchr = substr($s, $i, $ulen);
             $i += $ulen;
             if ($uchr < "가" || "힣" < $uchr) {
                 // Table lookup
-                if ($uchr !== ($j = $compatMap[$uchr] ?? $decompMap[$uchr] ?? $uchr)) {
+                if ($uchr !== $j = $compatMap[$uchr] ?? $decompMap[$uchr] ?? $uchr) {
                     $uchr = $j;
                     $j = \strlen($uchr);
                     $ulen = $uchr[0] < "\x80" ? 1 : $ulenMask[$uchr[0] & "\xf0"];
@@ -208,14 +248,14 @@ class Normalizer
                         $j -= $ulen;
                         $i -= $j;
                         if (0 > $i) {
-                            $s = \str_repeat(' ', -$i) . $s;
+                            $s = str_repeat(' ', -$i) . $s;
                             $len -= $i;
                             $i = 0;
                         }
                         while ($j--) {
                             $s[$i + $j] = $uchr[$ulen + $j];
                         }
-                        $uchr = \substr($uchr, 0, $ulen);
+                        $uchr = substr($uchr, 0, $ulen);
                     }
                 }
                 if (isset($combClass[$uchr])) {
@@ -228,7 +268,7 @@ class Normalizer
                 }
             } else {
                 // Hangul chars
-                $uchr = \unpack('C*', $uchr);
+                $uchr = unpack('C*', $uchr);
                 $j = ($uchr[1] - 224 << 12) + ($uchr[2] - 128 << 6) + $uchr[3] - 0xac80;
                 $uchr = "\xe1\x84" . \chr(0x80 + (int) ($j / 588)) . "\xe1\x85" . \chr(0xa1 + (int) ($j % 588 / 28));
                 if ($j %= 28) {
@@ -236,21 +276,21 @@ class Normalizer
                 }
             }
             if ($c) {
-                \ksort($c);
-                $result .= \implode('', $c);
+                ksort($c);
+                $result .= implode('', $c);
                 $c = [];
             }
             $result .= $uchr;
         }
         if ($c) {
-            \ksort($c);
-            $result .= \implode('', $c);
+            ksort($c);
+            $result .= implode('', $c);
         }
         return $result;
     }
     private static function getData($file)
     {
-        if (\file_exists($file = __DIR__ . '/Resources/unidata/' . $file . '.php')) {
+        if (file_exists($file = __DIR__ . '/Resources/unidata/' . $file . '.php')) {
             return require $file;
         }
         return \false;

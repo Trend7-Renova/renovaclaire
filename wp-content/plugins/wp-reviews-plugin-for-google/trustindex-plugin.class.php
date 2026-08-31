@@ -7,6 +7,72 @@ private $platform_name;
 private $shortname;
 private $version;
 public static $permissionNeeded = 'edit_pages';
+public static $allowedAttributesForWidget = [
+'template' => ['id' => true, 'class' => true, 'style' => true],
+'pre' => ['id' => true, 'style' => true, 'class' => true],
+'div' => [
+'id' => true, 'class' => true, 'style' => true, 'aria-label' => true, 'role' => true, 'tabindex' => true,
+'data-template-id' => true,
+'data-css-url' => true,
+'data-no-translation' => true,
+'data-time-locale' => true,
+'data-layout-id' => true,
+'data-layout-category' => true,
+'data-set-id' => true,
+'data-pid' => true,
+'data-language' => true,
+'data-close-locale' => true,
+'data-review-target-width' => true,
+'data-css-version' => true,
+'data-review-text' => true,
+'data-reply-by-locale' => true,
+'data-pager-autoplay-timeout' => true,
+'data-empty' => true,
+'data-time' => true,
+'data-id' => true,
+'data-container' => true,
+'data-collapse-text' => true,
+'data-open-text' => true,
+'data-is-valid' => true,
+'data-domain' => true,
+'data-auto-dark-mode' => true,
+'data-rotate-to' => true,
+'data-slider-loop' => true,
+'data-size' => true,
+'data-load-more-rows' => true,
+'data-column-vertical-separate' => true,
+'data-hide-count' => true,
+'data-fomo-day' => true,
+'data-style' => true,
+'data-src' => true,
+'data-type' => true,
+'data-plugin-version' => true,
+'data-only-rating-locale' => true,
+],
+'a' => [
+'class' => true, 'style' => true, 'href' => true, 'role' => true, 'target' => true, 'rel' => true, 'aria-label' => true,
+'data-subcontent' => true,
+'data-subcontent-target' => true,
+],
+'img' => ['class' => true, 'style' => true, 'src' => true, 'srcset' => true, 'alt' => true, 'width' => true, 'height' => true, 'loading' => true],
+'trustindex-image' => ['data-imgurl' => true, 'class' => true, 'style' => true, 'src' => true, 'srcset' => true, 'alt' => true, 'width' => true, 'height' => true, 'loading' => true],
+'span' => [
+'class' => true, 'style' => true,
+'data-id' => true,
+'data-empty' => true,
+'data-time' => true,
+'data-container' => true,
+'data-collapse-text' => true,
+'data-open-text' => true,
+],
+'p' => ['class' => true, 'style' => true],
+'font' => ['class' => true, 'style' => true],
+'strong' => ['class' => true, 'style' => true],
+'br' => [],
+'i' => ['class' => true, 'style' => true],
+'style' => ['type' => true],
+'script' => ['type' => true, 'src' => true],
+];
 public function __construct($shortname, $pluginFilePath, $version, $pluginName, $platformName)
 {
 $this->shortname = $shortname;
@@ -21,30 +87,30 @@ $tabs = [];
 $tabs[] = [
 'place' => 'left',
 'slug' => 'free-widget-configurator',
-'name' => __('Free Widget Configurator', 'trustindex-plugin')
+'name' => __('Free Widget Configurator', 'wp-reviews-plugin-for-google')
 ];
 if ($this->is_noreg_linked()) {
 $tabs[] = [
 'place' => 'left',
 'slug' => 'my-reviews',
-'name' => __('My reviews', 'trustindex-plugin')
+'name' => __('My reviews', 'wp-reviews-plugin-for-google')
 ];
 }
 $tabs[] = [
 'place' => 'left',
 'slug' => 'get-reviews',
-'name' => __('Get Reviews', 'trustindex-plugin')
+'name' => __('Get Reviews', 'wp-reviews-plugin-for-google')
 ];
 $tabs[] = [
 'place' => 'left',
 'slug' => 'rate-us',
-'name' => __('Rate Us', 'trustindex-plugin')
+'name' => __('Rate Us', 'wp-reviews-plugin-for-google')
 ];
 if (!$this->is_trustindex_connected()) {
 $tabs[] = [
 'place' => 'left',
 'slug' => 'get-more-features',
-'name' => __('Get more Features', 'trustindex-plugin')
+'name' => __('Get more Features', 'wp-reviews-plugin-for-google')
 ];
 }
 $tabs[] = [
@@ -55,7 +121,7 @@ $tabs[] = [
 $tabs[] = [
 'place' => 'right',
 'slug' => 'advanced',
-'name' => __('Advanced', 'trustindex-plugin')
+'name' => __('Advanced', 'wp-reviews-plugin-for-google')
 ];
 return $tabs;
 }
@@ -75,7 +141,7 @@ return admin_url('admin-ajax.php') . '?action='. $this->getWebhookAction();
 public function getProFeatureButton($campaignId)
 {
 
-return '<a class="ti-btn" href="https://www.trustindex.io/?a=sys&c='. $campaignId .'" target="_blank">'. __('Create a Free Account for More Features', 'trustindex-plugin') .'</a>';
+return '<a class="ti-btn" href="https://www.trustindex.io/?a=sys&c='. $campaignId .'" target="_blank">'. __('Create a Free Account for More Features', 'wp-reviews-plugin-for-google') .'</a>';
 }
 public function is_review_download_in_progress()
 {
@@ -104,18 +170,18 @@ return true;
 }
 public function save_details($tmp)
 {
-$name = isset($tmp['name']) ? sanitize_text_field(stripslashes($tmp['name'])) : "";
+$name = isset($tmp['name']) ? sanitize_text_field(wp_unslash($tmp['name'])) : "";
 $name = json_encode($name);
 $details = [
 'id' => isset($tmp['page_id']) ? $tmp['page_id'] : $tmp['id'],
 'name' => $name,
-'address' => isset($tmp['address']) ? sanitize_text_field(stripslashes($tmp['address'])) : "",
-'avatar_url' => isset($tmp['avatar_url']) ? sanitize_text_field(stripslashes($tmp['avatar_url'])) : "",
+'address' => isset($tmp['address']) ? sanitize_text_field(wp_unslash($tmp['address'])) : "",
+'avatar_url' => isset($tmp['avatar_url']) ? sanitize_text_field(wp_unslash($tmp['avatar_url'])) : "",
 'rating_number' => isset($tmp['reviews']['count']) ? (int)$tmp['reviews']['count'] : 0,
 'rating_score' => isset($tmp['reviews']['score']) ? (float)$tmp['reviews']['score'] : 0,
 ];
 if (isset($tmp['access_token'])) {
-$details['access_token'] = sanitize_text_field(stripslashes($tmp['access_token']));
+$details['access_token'] = sanitize_text_field(wp_unslash($tmp['access_token']));
 }
 update_option($this->get_option_name('page-details'), $details, false);
 }
@@ -123,18 +189,19 @@ public function save_reviews($tmp)
 {
 global $wpdb;
 $tableName = $this->get_tablename('reviews');
-$oldReviews = $wpdb->get_results('SELECT reviewId, hidden, highlight FROM `'. $tableName .'` ORDER BY date DESC', ARRAY_A);
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$oldReviews = $wpdb->get_results($wpdb->prepare('SELECT reviewId, hidden, highlight FROM %i ORDER BY date DESC', $tableName), ARRAY_A);
 $oldReviews = array_combine(array_column($oldReviews, 'reviewId'), $oldReviews);
-$wpdb->query('TRUNCATE `'. $tableName .'`');
+$wpdb->query($wpdb->prepare('TRUNCATE %i', $tableName));
 if ($wpdb->last_error) {
-throw new Exception('DB truncate failed: '. $wpdb->last_error);
+throw new Exception('DB truncate failed: '. esc_html($wpdb->last_error));
 }
 foreach ($tmp as $i => $review) {
 foreach ($review as $key => $value) {
 if (is_array($value)) {
 if ($key === 'reviewer') {
 $review[ $key ] = array_map(function($v) {
-return $v ? sanitize_text_field(stripslashes($v)) : $v;
+return $v ? sanitize_text_field(wp_unslash($v)) : $v;
 }, $value);
 }
 else {
@@ -142,10 +209,10 @@ unset($review[ $key ]);
 }
 }
 else if ($key === 'text') {
-$review[ $key ] = $value ? wp_kses_post(stripslashes($value)) : $value;
+$review[ $key ] = $value ? wp_kses_post(wp_unslash($value)) : $value;
 }
 else {
-$review[ $key ] = $value ? sanitize_text_field(stripslashes($value)) : $value;
+$review[ $key ] = $value ? sanitize_text_field(wp_unslash($value)) : $value;
 }
 }
 
@@ -155,6 +222,7 @@ if (isset($review['id']) && isset($oldReviews[$review['id']])) {
 $hidden = $oldReviews[$review['id']]['hidden'];
 $highlight = $oldReviews[$review['id']]['highlight'];
 }
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 $wpdb->insert($tableName, [
 'user' => $review['reviewer']['name'],
 'user_photo' => $review['reviewer']['avatar_url'],
@@ -167,7 +235,7 @@ $wpdb->insert($tableName, [
 'highlight' => $highlight ? $highlight : null,
 ]);
 if ($wpdb->last_error) {
-throw new Exception('DB instert failed: '. $wpdb->last_error);
+throw new Exception('DB insert failed: '. esc_html($wpdb->last_error));
 }
 }
 update_option($this->get_option_name('review-download-modal'), 0, false);
@@ -198,7 +266,7 @@ public function uninstall()
 $this->delete_async_request();
 include $this->get_plugin_dir() . 'include' . DIRECTORY_SEPARATOR . 'uninstall.php';
 if (is_file($this->getCssFile())) {
-unlink($this->getCssFile());
+wp_delete_file($this->getCssFile());
 }
 }
 
@@ -224,7 +292,7 @@ $this->loadI18N();
 include $this->get_plugin_dir() . 'include' . DIRECTORY_SEPARATOR . 'update.php';
 if (get_option($this->get_option_name('activation-redirect'))) {
 delete_option($this->get_option_name('activation-redirect'));
-wp_redirect(admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php'));
+wp_safe_redirect(admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php'));
 exit;
 }
 if (
@@ -253,7 +321,10 @@ TrustindexGutenbergPlugin::instance();
 }
 public function loadI18N()
 {
-load_plugin_textdomain('trustindex-plugin', false, $this->get_plugin_slug() . DIRECTORY_SEPARATOR . 'languages');
+load_textdomain(
+$this->get_plugin_slug(),
+$this->get_plugin_dir() . 'languages/'.$this->get_plugin_slug().'-' . get_locale() . '.mo'
+);
 }
 public function is_enabled()
 {
@@ -266,10 +337,10 @@ global $menu, $submenu;
 $settingsPageUrl = $this->get_plugin_slug() . "/settings.php";
 $settingsPageTitle = $this->platform_name . ' ';
 if (function_exists('mb_strtolower')) {
-$settingsPageTitle .= mb_strtolower(__('Reviews', 'trustindex-plugin'));
+$settingsPageTitle .= mb_strtolower(__('Reviews', 'wp-reviews-plugin-for-google'));
 }
 else {
-$settingsPageTitle .= strtolower(__('Reviews', 'trustindex-plugin'));
+$settingsPageTitle .= strtolower(__('Reviews', 'wp-reviews-plugin-for-google'));
 }
 $topMenu = false;
 foreach ($menu as $key => $item) {
@@ -309,22 +380,26 @@ $settingsPageUrl
 }
 public function add_plugin_action_links($links, $file)
 {
+if (!is_array($links)) {
+$links = [];
+}
 if (basename($file) === basename($this->plugin_file_path)) {
 $platformLink = '<a style="background-color: #1a976a; color: white; font-weight: bold; padding: 3px 8px; border-radius: 4px; position: relative; top: 1px" ';
 if (get_option($this->get_option_name('widget-setted-up'), 0)) {
-$platformLink .= 'href="' . admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php&tab=my-reviews') . '">'. __('Review Management', 'trustindex-plugin');
+$platformLink .= 'href="' . admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php&tab=my-reviews') . '">'. __('Review Management', 'wp-reviews-plugin-for-google');
 }
 else {
 $platformLink .= 'href="' . admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php') . '">';
 if (!$this->is_noreg_linked()) {
-$platformLink .= sprintf(__('Connect %s', 'trustindex-plugin'), $this->platform_name);
+/* translators: %s: Platform name */
+$platformLink .= sprintf(__('Connect %s', 'wp-reviews-plugin-for-google'), $this->platform_name);
 }
 else {
-$platformLink .= __('Create Widget', 'trustindex-plugin');
+$platformLink .= __('Create Widget', 'wp-reviews-plugin-for-google');
 }
 }
 $platformLink .= '</a>';
-$settingsLink = '<a href="' . admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php') . '">' . __('Settings', 'trustindex-plugin') . '</a>';
+$settingsLink = '<a href="' . admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php') . '">' . __('Settings', 'wp-reviews-plugin-for-google') . '</a>';
 array_unshift($links, $platformLink, $settingsLink);
 }
 return $links;
@@ -332,8 +407,8 @@ return $links;
 public function add_plugin_meta_links($meta, $file)
 {
 if (basename($file) === basename($this->plugin_file_path)) {
-$meta[] = '<a href="'. admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php&tab=get-more-features') .'">'. __('Get more Features', 'trustindex-plugin') . ' →</a>';
-$meta[] = '<a href="http://wordpress.org/support/view/plugin-reviews/'. $this->get_plugin_slug() .'" target="_blank" rel="noopener noreferrer">'. __('Rate our plugin', 'trustindex-plugin') . ' <span style="color: #F6BB07; font-size: 1.2em; line-height: 1; position: relative; top: 0.05em;">★★★★★</span></a>';
+$meta[] = '<a href="'. admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php&tab=get-more-features') .'">'. __('Get more Features', 'wp-reviews-plugin-for-google') . ' →</a>';
+$meta[] = '<a href="http://wordpress.org/support/view/plugin-reviews/'. $this->get_plugin_slug() .'" target="_blank" rel="noopener noreferrer">'. __('Rate our plugin', 'wp-reviews-plugin-for-google') . ' <span style="color: #F6BB07; font-size: 1.2em; line-height: 1; position: relative; top: 0.05em;">★★★★★</span></a>';
 }
 return $meta;
 }
@@ -354,7 +429,7 @@ return register_widget('TrustindexWidget_'.$this->getShortName());
 public function get_option_name($opt_name)
 {
 if (!in_array($opt_name, $this->get_option_names())) {
-echo 'Option not registered in plugin (Trustindex class)';
+echo esc_html('Option not registered in plugin (Trustindex class)');
 }
 if (in_array($opt_name, [ 'subscription-id', 'proxy-check' ])) {
 return 'trustindex-'. $opt_name;
@@ -421,6 +496,9 @@ return [
 'fomo-title',
 'fomo-text',
 'fomo-url',
+'fomo-icon-background',
+'fomo-day',
+'fomo-hide-count',
 'cdn-version-control',
 'version-control',
 'preview',
@@ -454,7 +532,7 @@ case 'lang':
 $default = 'en';
 break;
 case 'dateformat':
-$default = 'Y-m-d';
+$default = 'modern';
 break;
 case 'nameformat':
 $default = 1;
@@ -463,7 +541,8 @@ case 'filter':
 global $wpdb;
 $onlyRatingsDefault = false;
 if ($this->is_noreg_linked()) {
-$onlyRatingsDefault = (float)$wpdb->get_var('SELECT COUNT(`id`) FROM `'. $this->get_tablename('reviews') .'` WHERE `text` != ""') >= 3;
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$onlyRatingsDefault = (float)$wpdb->get_var($wpdb->prepare('SELECT COUNT(`id`) FROM %i WHERE `text` != ""', $this->get_tablename('reviews'))) >= 3;
 }
 $default = [
 'stars' => [1, 2, 3, 4, 5],
@@ -523,6 +602,9 @@ case 'fomo-color':
 $params = self::$widget_templates['templates'][$styleId]['params'];
 $default = isset($params['fomo-color']) ? $params['fomo-color'] : '#FF552B';
 break;
+case 'fomo-icon-background':
+$default = 0;
+break;
 case 'fomo-title':
 $default = "";
 $content = $this->getWidgetOption('review-content');
@@ -533,15 +615,29 @@ $default = $matches[1];
 break;
 case 'fomo-text':
 $default = "";
+$params = self::$widget_templates['templates'][$styleId]['params'];
+if (isset($params['fomo-subtitle-text-choices'])) {
+$default = $params['fomo-subtitle-text-choices'][0];
+} else {
 $content = $this->getWidgetOption('review-content');
 preg_match('/<div class="ti-subtitle-text">(.+)<\/div>/U', $content, $matches);
 if (isset($matches[1]) && !$returnDefault) {
 $default = $matches[1];
 }
+}
 break;
 case 'fomo-url':
 
 $default = $this->getReviewPageUrl();
+break;
+case 'fomo-day':
+$params = self::$widget_templates['templates'][$styleId]['params'];
+$default = 7;
+break;
+case 'fomo-hide-count':
+$params = self::$widget_templates['templates'][$styleId]['params'];
+$isOnlineVisitors = isset($params['fomo-title-text']) && strpos($params['fomo-title-text'], '%online-visitors%') !== false;
+$default = $isOnlineVisitors ? 5 : 20;
 break;
 }
 }
@@ -549,6 +645,9 @@ if ($returnDefault) {
 return $default;
 }
 $this->widgetOptions[$name] = get_option($this->get_option_name($name), $default);
+if ('fomo-text' === $name || 'fomo-title' === $name) {
+$this->widgetOptions[$name] = html_entity_decode($this->widgetOptions[$name]);
+}
 return $this->widgetOptions[$name];
 }
 
@@ -568,61 +667,61 @@ $list = [
 'redirect' => 'https://wordpress.org/support/plugin/'. $this->get_plugin_slug() .'/reviews/?rate=5#new-post',
 'text' =>
 /* translators: %s: Name of the plugin */
-sprintf(__('We have worked a lot on the free "%s" plugin.', 'trustindex-plugin'), $this->plugin_name) . '<br />' .
-__('If you love our features, please write a review to help us make the plugin even better.', 'trustindex-plugin') . '<br />' .
+sprintf(__('We have worked a lot on the free "%s" plugin.', 'wp-reviews-plugin-for-google'), $this->plugin_name) . '<br />' .
+__('If you love our features, please write a review to help us make the plugin even better.', 'wp-reviews-plugin-for-google') . '<br />' .
 /* translators: %s: Trustindex CEO */
-sprintf(__('Thank you. Gabor, %s', 'trustindex-plugin'), 'Trustindex CEO'),
+sprintf(__('Thank you. Gabor, %s', 'wp-reviews-plugin-for-google'), 'Trustindex CEO'),
 ],
 'not-using-no-connection' => [
 'type' => 'warning',
 'extra-class' => "",
 /* translators: %s: Platform name */
-'button-text' => sprintf(__('Create a free %s widget! »', 'trustindex-plugin'), $platformName),
+'button-text' => sprintf(__('Create a free %s widget! »', 'wp-reviews-plugin-for-google'), $platformName),
 'is-closeable' => true,
 'hide-on-close' => true,
 'hide-on-open' => true,
 'remind-later-button' => false,
 'redirect' => $defaultRedirect,
 /* translators: %s: Platform name */
-'text' => sprintf(__('Display %s reviews on your website.', 'trustindex-plugin'), $platformName),
+'text' => sprintf(__('Display %s reviews on your website.', 'wp-reviews-plugin-for-google'), $platformName),
 ],
 'not-using-no-widget' => [
 'type' => 'warning',
 'extra-class' => "",
 /* translators: %s: Platform name */
-'button-text' => sprintf(__('Embed the %s reviews widget! »', 'trustindex-plugin'), $platformName),
+'button-text' => sprintf(__('Embed the %s reviews widget! »', 'wp-reviews-plugin-for-google'), $platformName),
 'is-closeable' => true,
 'hide-on-close' => true,
 'hide-on-open' => true,
 'remind-later-button' => true,
 'redirect' => $defaultRedirect,
 /* translators: %s: Platform name */
-'text' => sprintf(__('Build trust and display your %s reviews on your website.', 'trustindex-plugin'), $platformName),
+'text' => sprintf(__('Build trust and display your %s reviews on your website.', 'wp-reviews-plugin-for-google'), $platformName),
 ],
 'review-download-available' => [
 'type' => 'warning',
 'extra-class' => "",
-'button-text' => __('Download your latest reviews! »', 'trustindex-plugin'),
+'button-text' => __('Download your latest reviews! »', 'wp-reviews-plugin-for-google'),
 'is-closeable' => true,
 'hide-on-close' => true,
 'hide-on-open' => true,
 'remind-later-button' => false,
-'redirect' => $defaultRedirect,
+'redirect' => '?page='. $this->get_plugin_slug() .'/settings.php&tab=my-reviews',
 /* translators: %s: Platform name */
-'text' => sprintf(__('You can update your %s reviews.', 'trustindex-plugin'), $platformName),
+'text' => sprintf(__('You can update your %s reviews.', 'wp-reviews-plugin-for-google'), $platformName),
 ],
 'review-download-finished' => [
 'type' => 'warning',
 'extra-class' => "",
 /* translators: %s: Service name (ChatGPT) */
-'button-text' => sprintf(__('Reply with %s! »', 'trustindex-plugin'), 'ChatGPT'),
+'button-text' => sprintf(__('Reply with %s! »', 'wp-reviews-plugin-for-google'), 'ChatGPT'),
 'is-closeable' => true,
 'hide-on-close' => true,
 'hide-on-open' => true,
 'remind-later-button' => false,
-'redirect' => $defaultRedirect,
+'redirect' => '?page='. $this->get_plugin_slug() .'/settings.php&tab=my-reviews',
 /* translators: %s: Platform name */
-'text' => sprintf(__('Your new %s reviews have been downloaded.', 'trustindex-plugin'), $platformName),
+'text' => sprintf(__('Your new %s reviews have been downloaded.', 'wp-reviews-plugin-for-google'), $platformName),
 ],
 ];
 return $type ? $list[$type] : $list;
@@ -773,8 +872,7 @@ $types = [
 'icon' => 'dashicons-info'
 ]
 ];
-return '<div style="margin:20px 0px; padding:10px; '. $types[ $type ]['css'] .' border-radius: 5px">'
-. '<span class="dashicons '. $types[ $type ]['icon'] .'"></span> <strong>'. strtoupper($type) .'</strong>'
+return '<div style="margin:20px 0px; padding:15px; '. $types[ $type ]['css'] .' border-radius: 5px">'
 . ($newline_content ? '<br />' : "")
 . $content
 . '</div>';
@@ -804,14 +902,15 @@ public function shortcode_func($atts)
 {
 $atts = shortcode_atts([ 'data-widget-id' => null, 'no-registration' => null ], $atts);
 if (isset($atts['data-widget-id']) && $atts['data-widget-id']) {
-$content = $this->renderWidgetFrontend($atts['data-widget-id']);
+$content = $this->renderWidgetFrontend(esc_attr($atts['data-widget-id']));
 if ($this->isElementorEditing()) {
+// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 $content .= '<script type="text/javascript" src="https://cdn.trustindex.io/loader.js"></script>';
 }
-return $content;
+return wp_kses($content, self::$allowedAttributesForWidget);
 }
 else if (isset($atts['no-registration']) && $atts['no-registration']) {
-$forcePlatform = $atts['no-registration'];
+$forcePlatform = esc_attr($atts['no-registration']);
 if (substr($forcePlatform, 0, 5) !== 'trust' && substr($forcePlatform, -4) !== 'ilot' && !in_array($forcePlatform, $this->get_platforms())) {
 $avPlatforms = $this->get_platforms();
 $forcePlatform = $avPlatforms[0];
@@ -822,32 +921,44 @@ $filePath = preg_replace('/[^\/\\\\]+([\\\\\/]trustindex-plugin\.class\.php)/', 
 }
 $className = 'TrustindexPlugin_' . $forcePlatform;
 if (!class_exists($className)) {
-return $this->frontEndErrorForAdmins(ucfirst($forcePlatform) . ' plugin is not active or not found!');
+return wp_kses_post($this->frontEndErrorForAdmins(ucfirst($forcePlatform) . ' plugin is not active or not found!'));
 }
-$chosedPlatform = new $className($forcePlatform, $filePath, "do-not-care-13.0", "do-not-care-Widgets for Google Reviews", "do-not-care-Google");
+$chosedPlatform = new $className($forcePlatform, $filePath, "do-not-care-13.3.2", "do-not-care-Widgets for Google Reviews", "do-not-care-Google");
 $chosedPlatform->setNotificationParam('not-using-no-widget', 'active', false);
 if (!$chosedPlatform->is_noreg_linked()) {
-return $this->frontEndErrorForAdmins(sprintf(__('You have to connect your business (%s)!', 'trustindex-plugin'), $forcePlatform));
+/* translators: %s: Platform name */
+return wp_kses_post($this->frontEndErrorForAdmins(sprintf(__('You have to connect your business (%s)!', 'wp-reviews-plugin-for-google'), $forcePlatform)));
 } else if (!$chosedPlatform->getWidgetOption('widget-setted-up')) {
-return $this->frontEndErrorForAdmins('You have to complete your widget setup!');
+return wp_kses_post($this->frontEndErrorForAdmins('You have to complete your widget setup!'));
 } else {
 if ($this->isElementorEditing()) {
-return $chosedPlatform->renderWidgetAdmin(true);
+$html = preg_replace('/<style\b[^>]*>.*?<\/style>/is', '', $chosedPlatform->renderWidgetAdmin(true));
+$html = wp_kses($html, $className::$allowedAttributesForWidget);
+$html .= '<style type="text/css">'.get_option($this->get_option_name('css-content')).'</style>';
+return $html;
 } else {
-return $chosedPlatform->renderWidgetFrontend();
+$html = preg_replace('/<style\b[^>]*>.*?<\/style>/is', '', $chosedPlatform->renderWidgetFrontend());
+$html = wp_kses($html, $className::$allowedAttributesForWidget);
+if (!is_file($chosedPlatform->getCssFile()) || get_option($chosedPlatform->get_option_name('load-css-inline'), 0)) {
+$html .= '<style type="text/css">'.get_option($chosedPlatform->get_option_name('css-content')).'</style>';
+}
+return $html;
 }
 }
 }
 else {
-return $this->frontEndErrorForAdmins(__('Your shortcode is deficient: Trustindex Widget ID is empty! Example: ', 'trustindex-plugin') . '<br /><code>['.$this->get_shortcode_name().' data-widget-id="478dcc2136263f2b3a3726ff"]</code>');
+return wp_kses_post($this->frontEndErrorForAdmins(__('Your shortcode is deficient: Trustindex Widget ID is empty! Example: ', 'wp-reviews-plugin-for-google') . '<br /><code>['.$this->get_shortcode_name().' data-widget-id="478dcc2136263f2b3a3726ff"]</code>'));
 }
 }
-public function frontEndErrorForAdmins($text)
+public function frontEndErrorForAdmins($text, $title = '', $type = 'error')
 {
 if (!current_user_can('manage_options')) {
 return " ";
 }
-return self::get_alertbox('error', ' @ <strong>'. __('Trustindex plugin', 'trustindex-plugin') .'</strong> <i style="opacity: 0.65">('. __('This message is not be visible to visitors in public mode.', 'trustindex-plugin') .')</i><br /><br />'. $text, false);
+if ('' === $title) {
+$title = __('Trustindex plugin', 'wp-reviews-plugin-for-google');
+}
+return self::get_alertbox($type, '<strong>'.$title.'</strong><br />'.$text.'<br /><i style="opacity: 0.65">('. sprintf(__('This message is not be visible to visitors in public mode.') .')</i>', 'wp-reviews-plugin-for-google'), false);
 }
 
 
@@ -879,7 +990,7 @@ $cssContent = wp_remote_retrieve_body($response);
 $cssContent = str_replace('../../../assets', 'https://cdn.trustindex.io/assets', $cssContent);
 $cssContent = str_replace(".ti-widget[data-layout-id='$styleId'][data-set-id='$setId']", '.ti-widget.ti-'. substr($this->getShortName(), 0, 4), $cssContent);
 if (is_wp_error($response) || !$cssContent) {
-echo $this->get_alertbox('error', "Trustindex's system is not available at the moment, please try again later.");
+echo wp_kses_post($this->get_alertbox('error', "Trustindex's system is not available at the moment, please try again later."));
 die;
 }
 if (!$setChange) {
@@ -930,8 +1041,9 @@ return;
 }
 require_once(ABSPATH . 'wp-admin' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'file.php');
 global $wp_filesystem;
+// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler
 set_error_handler(function ($err_severity, $err_msg, $err_file, $err_line, $err_context = []) {
-throw new ErrorException($err_msg, 0, $err_severity, $err_file, $err_line);
+throw new ErrorException(esc_html($err_msg), 0, esc_html($err_severity), esc_html($err_file), esc_html($err_line));
 }, E_WARNING);
 add_filter('filesystem_method', array($this, 'filter_filesystem_method'));
 WP_Filesystem();
@@ -955,8 +1067,8 @@ add_action('admin_notices', function() use ($fileExists, $errorType, $errorMessa
 $html = '
 <div class="notice notice-error" style="margin: 5px 0 15px">
 <p>' .
-'<strong>'. __('ERROR with the following plugin:', 'trustindex-plugin') .'</strong> '. $this->plugin_name .'<br /><br />' .
-__('CSS file could not saved.', 'trustindex-plugin') .' <strong>('. $this->getCssFile() .')</strong> '. __('Your widgets do not display properly!', 'trustindex-plugin') . '<br />';
+'<strong>'. __('ERROR with the following plugin:', 'wp-reviews-plugin-for-google') .'</strong> '. $this->plugin_name .'<br /><br />' .
+__('CSS file could not saved.', 'wp-reviews-plugin-for-google') .' <strong>('. $this->getCssFile() .')</strong> '. __('Your widgets do not display properly!', 'wp-reviews-plugin-for-google') . '<br />';
 if ($errorType === 'filesystem') {
 $html .= '<br />
 <strong>There is an error with your filesystem. We got the following error message:</strong>
@@ -966,16 +1078,22 @@ $html .= '<br />
 }
 else {
 if ($fileExists) {
-$html .= __('CSS file exists and it is not writeable. Delete the file', 'trustindex-plugin');
+$html .= __('CSS file exists and it is not writeable. Delete the file', 'wp-reviews-plugin-for-google');
 }
 else {
-$html .= __('Grant write permissions to upload folder', 'trustindex-plugin');
+$html .= __('Grant write permissions to upload folder', 'wp-reviews-plugin-for-google');
 }
 $html .= '<br />' .
-__('or', 'trustindex-plugin') . '<br />' .
-sprintf(__("enable 'CSS internal loading' in the %s page!", 'trustindex-plugin'), '<a href="'. admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php&tab=advanced') .'>'. __('Advanced', 'trustindex-plugin') .'</a>');
+__('or', 'wp-reviews-plugin-for-google') . '<br />' .
+/* translators: %s: Advanced page link */
+sprintf(__("enable 'CSS internal loading' in the %s page!", 'wp-reviews-plugin-for-google'), '<a href="'. admin_url('admin.php?page=' . $this->get_plugin_slug() . '/settings.php&tab=advanced') .'>'. __('Advanced', 'wp-reviews-plugin-for-google') .'</a>');
 }
-echo $html . '</p></div>';
+echo wp_kses($html, [
+'p' => [], 'strong' => [], 'br' => [],
+'a' => ['href' => true, 'target' => true],
+'div' => ['class' => true, 'style' => true],
+'pre' => ['style' => true],
+]) . '</p></div>';
 });
 }
 return $success;
@@ -993,32 +1111,10 @@ public static $widget_templates = array (
  'floating' => '17,21,52,53,112,114',
  'popup' => '23,30,32,112,114',
  'top-rated-badge' => '97,98,99,100,101,102,103,104',
- 'fomo' => '116,117,118,119,120,121,122,123,124,125,126,127',
+ 'fomo' => '116,117,118,119,120,121,122,123,124,125,126,127,128,129,130',
  ),
  'templates' => 
  array (
- 45 => 
- array (
- 'name' => 'Slider I. - Big picture',
- 'type' => 'slider',
- 'is-active' => false,
- 'is-popular' => false,
- 'is-top-rated-badge' => false,
- 'params' => 
- array (
- ),
- ),
- 46 => 
- array (
- 'name' => 'Slider II. - Big picture',
- 'type' => 'slider',
- 'is-active' => false,
- 'is-popular' => false,
- 'is-top-rated-badge' => false,
- 'params' => 
- array (
- ),
- ),
  4 => 
  array (
  'name' => 'Slider I.',
@@ -1052,9 +1148,9 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 14 => 
+ 46 => 
  array (
- 'name' => 'Slider I. - with header',
+ 'name' => 'Slider II. - Big picture',
  'type' => 'slider',
  'is-active' => false,
  'is-popular' => false,
@@ -1063,17 +1159,26 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 108 => 
+ 45 => 
  array (
- 'name' => 'Slider I. - with Top Rated header and photos',
+ 'name' => 'Slider I. - Big picture',
  'type' => 'slider',
  'is-active' => false,
- 'is-popular' => true,
- 'is-top-rated-badge' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
  'params' => 
  array (
- 'top-rated-badge-border' => false,
- 'default-hide-date' => true,
+ ),
+ ),
+ 14 => 
+ array (
+ 'name' => 'Slider I. - with header',
+ 'type' => 'slider',
+ 'is-active' => true,
+ 'is-popular' => true,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
  ),
  ),
  105 => 
@@ -1089,9 +1194,22 @@ public static $widget_templates = array (
  'default-hide-date' => true,
  ),
  ),
- 39 => 
+ 108 => 
  array (
- 'name' => 'Slider II. - centered',
+ 'name' => 'Slider I. - with Top Rated header and photos',
+ 'type' => 'slider',
+ 'is-active' => false,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => true,
+ 'params' => 
+ array (
+ 'top-rated-badge-border' => false,
+ 'default-hide-date' => true,
+ ),
+ ),
+ 95 => 
+ array (
+ 'name' => 'Slider I. - with AI summary',
  'type' => 'slider',
  'is-active' => false,
  'is-popular' => false,
@@ -1100,9 +1218,9 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 95 => 
+ 39 => 
  array (
- 'name' => 'Slider I. - with AI summary',
+ 'name' => 'Slider II. - centered',
  'type' => 'slider',
  'is-active' => false,
  'is-popular' => false,
@@ -1133,22 +1251,22 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 34 => 
+ 19 => 
  array (
  'name' => 'Slider IV.',
  'type' => 'slider',
- 'is-active' => true,
+ 'is-active' => false,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
  array (
  ),
  ),
- 19 => 
+ 34 => 
  array (
  'name' => 'Slider IV.',
  'type' => 'slider',
- 'is-active' => false,
+ 'is-active' => true,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
@@ -1245,7 +1363,7 @@ public static $widget_templates = array (
  ),
  79 => 
  array (
- 'name' => 'Mansonry grid - with header',
+ 'name' => 'Masonry grid - with header',
  'type' => 'grid',
  'is-active' => false,
  'is-popular' => true,
@@ -1256,7 +1374,7 @@ public static $widget_templates = array (
  ),
  31 => 
  array (
- 'name' => 'Mansonry grid',
+ 'name' => 'Masonry grid',
  'type' => 'grid',
  'is-active' => true,
  'is-popular' => false,
@@ -1523,22 +1641,22 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 57 => 
+ 23 => 
  array (
- 'name' => 'HTML badge V.',
+ 'name' => 'Company badge I. - with popup',
  'type' => 'badge',
- 'is-active' => false,
+ 'is-active' => true,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
  array (
  ),
  ),
- 23 => 
+ 57 => 
  array (
- 'name' => 'Company badge I. - with popup',
+ 'name' => 'HTML badge V.',
  'type' => 'badge',
- 'is-active' => true,
+ 'is-active' => false,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
@@ -1677,17 +1795,6 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 59 => 
- array (
- 'name' => 'Button VIII.',
- 'type' => 'button',
- 'is-active' => false,
- 'is-popular' => false,
- 'is-top-rated-badge' => false,
- 'params' => 
- array (
- ),
- ),
  106 => 
  array (
  'name' => 'Button VIII.',
@@ -1699,9 +1806,9 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 61 => 
+ 59 => 
  array (
- 'name' => 'Button X.',
+ 'name' => 'Button VIII.',
  'type' => 'button',
  'is-active' => false,
  'is-popular' => false,
@@ -1715,6 +1822,17 @@ public static $widget_templates = array (
  'name' => 'Button IX.',
  'type' => 'button',
  'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ ),
+ ),
+ 61 => 
+ array (
+ 'name' => 'Button X.',
+ 'type' => 'button',
+ 'is-active' => false,
  'is-popular' => false,
  'is-top-rated-badge' => false,
  'params' => 
@@ -1991,8 +2109,9 @@ public static $widget_templates = array (
  2 => 'discount-3',
  3 => 'discount-4',
  4 => 'discount-5',
- 5 => 'shipping-box',
- 6 => 'shipping-truck',
+ 5 => 'fire',
+ 6 => 'shipping-box',
+ 7 => 'shipping-truck',
  ),
  'fomo-title-text' => '<u>20%</u> Discount Code: <u>NWA789</u>',
  'fomo-subtitle-text' => '3 days left!',
@@ -2017,8 +2136,9 @@ public static $widget_templates = array (
  2 => 'discount-3',
  3 => 'discount-4',
  4 => 'discount-5',
- 5 => 'shipping-box',
- 6 => 'shipping-truck',
+ 5 => 'fire',
+ 6 => 'shipping-box',
+ 7 => 'shipping-truck',
  ),
  'fomo-title-text' => '<u>20%</u> Discount only for 3 days!',
  'fomo-subtitle-text' => 'Code: <u>NWA89</u>',
@@ -2043,8 +2163,9 @@ public static $widget_templates = array (
  2 => 'discount-3',
  3 => 'discount-4',
  4 => 'discount-5',
- 5 => 'shipping-box',
- 6 => 'shipping-truck',
+ 5 => 'fire',
+ 6 => 'shipping-box',
+ 7 => 'shipping-truck',
  ),
  'fomo-title-text' => '<u>20%</u> Discount from first order!',
  'fomo-subtitle-text' => 'Limited-time welcome gift - don\'t miss out',
@@ -2069,8 +2190,9 @@ public static $widget_templates = array (
  2 => 'discount-3',
  3 => 'discount-4',
  4 => 'discount-5',
- 5 => 'shipping-box',
- 6 => 'shipping-truck',
+ 5 => 'fire',
+ 6 => 'shipping-box',
+ 7 => 'shipping-truck',
  ),
  'fomo-title-text' => '<u>€325</u> Discount until %discount-day%.',
  'fomo-subtitle-text' => 'Join our 25.000+ happy customers',
@@ -2095,8 +2217,9 @@ public static $widget_templates = array (
  2 => 'discount-3',
  3 => 'discount-4',
  4 => 'discount-5',
- 5 => 'shipping-box',
- 6 => 'shipping-truck',
+ 5 => 'fire',
+ 6 => 'shipping-box',
+ 7 => 'shipping-truck',
  ),
  'fomo-title-text' => '<u>FREE</u> Shipping until %discount-day%.',
  'fomo-subtitle-text' => 'Limited time offer - act fast!',
@@ -2121,13 +2244,348 @@ public static $widget_templates = array (
  2 => 'discount-3',
  3 => 'discount-4',
  4 => 'discount-5',
- 5 => 'shipping-box',
- 6 => 'shipping-truck',
+ 5 => 'fire',
+ 6 => 'shipping-box',
+ 7 => 'shipping-truck',
  ),
  'fomo-title-text' => '<u>FREE</u> Shipping Worldwide over $100',
  'fomo-subtitle-text' => 'Try it. Love it. Or get your money back',
  'fomo-verified-block' => false,
  'fomo-custom-text' => true,
+ ),
+ ),
+ 128 => 
+ array (
+ 'name' => 'Fomo Counter Widget I.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'fire',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'fire',
+ 1 => 'trophy',
+ ),
+ 'fomo-title-text' => '%registrations% registrations IN-LAST-TIMEUNIT',
+ 'fomo-days' => 
+ array (
+ 0 => 1,
+ 1 => 7,
+ 2 => 30,
+ ),
+ ),
+ ),
+ 129 => 
+ array (
+ 'name' => 'Fomo Counter Widget II.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'fire',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'fire',
+ 1 => 'trophy',
+ ),
+ 'fomo-title-text' => '%visitors% visitors IN-LAST-TIMEUNIT',
+ 'fomo-days' => 
+ array (
+ 0 => 1,
+ 1 => 7,
+ 2 => 30,
+ ),
+ ),
+ ),
+ 130 => 
+ array (
+ 'name' => 'Fomo Counter Widget III.',
+ 'type' => 'fomo',
+ 'is-active' => true,
+ 'is-popular' => false,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ 'fomo-icon' => 'fire',
+ 'fomo-icon-choices' => 
+ array (
+ 0 => 'fire',
+ 1 => 'trophy',
+ ),
+ 'fomo-title-text' => '%online-visitors% visitors are checking this page now',
+ 'fomo-subtitle-text-choices' => 
+ array (
+ 0 => 'Don\'t miss out!',
+ 1 => 'Order now!',
+ ),
+ 'trans' => 
+ array (
+ 'en' => 
+ array (
+ 'Don\'t miss out!' => 'Don\'t miss out!',
+ 'Order now!' => 'Order now!',
+ ),
+ 'af' => 
+ array (
+ 'Don\'t miss out!' => 'Moenie dit misloop nie!',
+ 'Order now!' => 'Bestel nou!',
+ ),
+ 'ar' => 
+ array (
+ 'Don\'t miss out!' => 'لا تفوتها!',
+ 'Order now!' => 'اطلب الآن!',
+ ),
+ 'az' => 
+ array (
+ 'Don\'t miss out!' => 'Qaçırmayın!',
+ 'Order now!' => 'İndi sifariş edin!',
+ ),
+ 'bg' => 
+ array (
+ 'Don\'t miss out!' => 'Не пропускайте!',
+ 'Order now!' => 'Поръчай сега!',
+ ),
+ 'bn' => 
+ array (
+ 'Don\'t miss out!' => 'মিস করবেন না!',
+ 'Order now!' => 'এখনই অর্ডার করুন!',
+ ),
+ 'bs' => 
+ array (
+ 'Don\'t miss out!' => 'Ne propustite!',
+ 'Order now!' => 'Naručite odmah!',
+ ),
+ 'ca' => 
+ array (
+ 'Don\'t miss out!' => 'No t\'ho perdis!',
+ 'Order now!' => 'Demana ara!',
+ ),
+ 'cs' => 
+ array (
+ 'Don\'t miss out!' => 'Nenechte si to ujít!',
+ 'Order now!' => 'Objednejte nyní!',
+ ),
+ 'cy' => 
+ array (
+ 'Don\'t miss out!' => 'Peidiwch â cholli allan!',
+ 'Order now!' => 'Archebwch nawr!',
+ ),
+ 'da' => 
+ array (
+ 'Don\'t miss out!' => 'Gå ikke glip af det!',
+ 'Order now!' => 'Bestil nu!',
+ ),
+ 'de' => 
+ array (
+ 'Don\'t miss out!' => 'Verpassen Sie es nicht!',
+ 'Order now!' => 'Jetzt bestellen!',
+ ),
+ 'el' => 
+ array (
+ 'Don\'t miss out!' => 'Μην το χάσετε!',
+ 'Order now!' => 'Παραγγείλτε τώρα!',
+ ),
+ 'es' => 
+ array (
+ 'Don\'t miss out!' => '¡No te lo pierdas!',
+ 'Order now!' => '¡Ordene ahora!',
+ ),
+ 'et' => 
+ array (
+ 'Don\'t miss out!' => 'Ära maga maha!',
+ 'Order now!' => 'Telli kohe!',
+ ),
+ 'fa' => 
+ array (
+ 'Don\'t miss out!' => 'از دست ندید!',
+ 'Order now!' => 'همین حالا سفارش دهید!',
+ ),
+ 'fi' => 
+ array (
+ 'Don\'t miss out!' => 'Älä missaa tätä!',
+ 'Order now!' => 'Tilaa nyt!',
+ ),
+ 'fr' => 
+ array (
+ 'Don\'t miss out!' => 'Ne manquez pas ça!',
+ 'Order now!' => 'Commandez maintenant!',
+ ),
+ 'gd' => 
+ array (
+ 'Don\'t miss out!' => 'Na caill a-mach air!',
+ 'Order now!' => 'Òrdaich a-nis!',
+ ),
+ 'gl' => 
+ array (
+ 'Don\'t miss out!' => 'Non o perdas!',
+ 'Order now!' => 'Encarga agora!',
+ ),
+ 'he' => 
+ array (
+ 'Don\'t miss out!' => 'אל תפספסו!',
+ 'Order now!' => 'הזמינו עכשיו!',
+ ),
+ 'hi' => 
+ array (
+ 'Don\'t miss out!' => 'चूकें नहीं!',
+ 'Order now!' => 'अब ऑर्डर दें!',
+ ),
+ 'hr' => 
+ array (
+ 'Don\'t miss out!' => 'Ne propustite!',
+ 'Order now!' => 'Naručite odmah!',
+ ),
+ 'hu' => 
+ array (
+ 'Don\'t miss out!' => 'Ne hagyd ki!',
+ 'Order now!' => 'Rendelj most!',
+ ),
+ 'hy' => 
+ array (
+ 'Don\'t miss out!' => 'Մի բաց թողեք հնարավորությունը։',
+ 'Order now!' => 'Պատվիրեք հիմա!',
+ ),
+ 'id' => 
+ array (
+ 'Don\'t miss out!' => 'Jangan sampai ketinggalan!',
+ 'Order now!' => 'Pesan sekarang!',
+ ),
+ 'is' => 
+ array (
+ 'Don\'t miss out!' => 'Ekki missa af þessu!',
+ 'Order now!' => 'Pantaðu núna!',
+ ),
+ 'it' => 
+ array (
+ 'Don\'t miss out!' => 'Non perdetevelo!',
+ 'Order now!' => 'Ordina ora!',
+ ),
+ 'ja' => 
+ array (
+ 'Don\'t miss out!' => 'お見逃しなく！',
+ 'Order now!' => '今すぐ注文してください！',
+ ),
+ 'ka' => 
+ array (
+ 'Don\'t miss out!' => 'არ გამოტოვოთ!',
+ 'Order now!' => 'შეუკვეთეთ ახლავე!',
+ ),
+ 'kk' => 
+ array (
+ 'Don\'t miss out!' => 'Жіберіп алмаңыз!',
+ 'Order now!' => 'Қазір тапсырыс беріңіз!',
+ ),
+ 'ko' => 
+ array (
+ 'Don\'t miss out!' => '놓치지 마세요!',
+ 'Order now!' => '지금 주문하세요!',
+ ),
+ 'lt' => 
+ array (
+ 'Don\'t miss out!' => 'Nepraleiskite progos!',
+ 'Order now!' => 'Užsisakykite dabar!',
+ ),
+ 'lv' => 
+ array (
+ 'Don\'t miss out!' => 'Nepalaidiet garām!',
+ 'Order now!' => 'Pasūtiet tūlīt!',
+ ),
+ 'mk' => 
+ array (
+ 'Don\'t miss out!' => 'Не пропуштајте!',
+ 'Order now!' => 'Нарачај сега!',
+ ),
+ 'ms' => 
+ array (
+ 'Don\'t miss out!' => 'Jangan lepaskan peluang!',
+ 'Order now!' => 'Pesan sekarang!',
+ ),
+ 'nl' => 
+ array (
+ 'Don\'t miss out!' => 'Mis het niet!',
+ 'Order now!' => 'Bestel nu!',
+ ),
+ 'no' => 
+ array (
+ 'Don\'t miss out!' => 'Ikke gå glipp av dette!',
+ 'Order now!' => 'Bestill nå!',
+ ),
+ 'pl' => 
+ array (
+ 'Don\'t miss out!' => 'Nie przegap!',
+ 'Order now!' => 'Zamów teraz!',
+ ),
+ 'pt' => 
+ array (
+ 'Don\'t miss out!' => 'Não perca!',
+ 'Order now!' => 'Peça agora!',
+ ),
+ 'ro' => 
+ array (
+ 'Don\'t miss out!' => 'Nu ratați!',
+ 'Order now!' => 'Comandă acum!',
+ ),
+ 'ru' => 
+ array (
+ 'Don\'t miss out!' => 'Не пропустите!',
+ 'Order now!' => 'Закажите сейчас!',
+ ),
+ 'sk' => 
+ array (
+ 'Don\'t miss out!' => 'Nenechajte si to ujsť!',
+ 'Order now!' => 'Objednajte si teraz!',
+ ),
+ 'sl' => 
+ array (
+ 'Don\'t miss out!' => 'Ne zamudite!',
+ 'Order now!' => 'Naroči zdaj!',
+ ),
+ 'sq' => 
+ array (
+ 'Don\'t miss out!' => 'Mos e humbisni!',
+ 'Order now!' => 'Porosit tani!',
+ ),
+ 'sr' => 
+ array (
+ 'Don\'t miss out!' => 'Не пропустите!',
+ 'Order now!' => 'Наручите одмах!',
+ ),
+ 'sv' => 
+ array (
+ 'Don\'t miss out!' => 'Missa inte!',
+ 'Order now!' => 'Beställ nu!',
+ ),
+ 'th' => 
+ array (
+ 'Don\'t miss out!' => 'อย่าพลาด!',
+ 'Order now!' => 'สั่งซื้อเลย!',
+ ),
+ 'tr' => 
+ array (
+ 'Don\'t miss out!' => 'Kaçırmayın!',
+ 'Order now!' => 'Hemen sipariş verin!',
+ ),
+ 'uk' => 
+ array (
+ 'Don\'t miss out!' => 'Не пропустіть!',
+ 'Order now!' => 'Замовте зараз!',
+ ),
+ 'vi' => 
+ array (
+ 'Don\'t miss out!' => 'Đừng bỏ lỡ!',
+ 'Order now!' => 'Đặt hàng ngay!',
+ ),
+ 'zh' => 
+ array (
+ 'Don\'t miss out!' => '不要错过！',
+ 'Order now!' => '立即订购！',
+ ),
+ ),
  ),
  ),
  ),
@@ -2140,6 +2598,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-background-large' => 
  array (
@@ -2148,6 +2607,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'ligth-border' => 
  array (
@@ -2156,6 +2616,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'ligth-border-3d-large' => 
  array (
@@ -2164,6 +2625,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'ligth-border-large' => 
  array (
@@ -2172,6 +2634,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'ligth-border-large-red' => 
  array (
@@ -2180,6 +2643,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'drop-shadow' => 
  array (
@@ -2188,6 +2652,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'drop-shadow-large' => 
  array (
@@ -2196,6 +2661,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-minimal' => 
  array (
@@ -2204,6 +2670,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-minimal-large' => 
  array (
@@ -2212,6 +2679,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'soft' => 
  array (
@@ -2220,6 +2688,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-clean' => 
  array (
@@ -2228,6 +2697,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-square' => 
  array (
@@ -2236,6 +2706,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-background-border' => 
  array (
@@ -2244,6 +2715,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'blue' => 
  array (
@@ -2252,6 +2724,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-background-large-purple' => 
  array (
@@ -2260,6 +2733,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-background-image' => 
  array (
@@ -2268,6 +2742,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-contrast' => 
  array (
@@ -2276,6 +2751,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-contrast-large' => 
  array (
@@ -2284,6 +2760,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'light-contrast-large-blue' => 
  array (
@@ -2292,6 +2769,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'dark-background' => 
  array (
@@ -2300,6 +2778,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'dark-minimal' => 
  array (
@@ -2308,6 +2787,7 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'dark-border' => 
  array (
@@ -2316,6 +2796,25 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
+ ),
+ 'trustindex-style' => 
+ array (
+ 'is-active' => true,
+ 'name' => 'Trustindex style',
+ 'reviewer-photo' => true,
+ 'hide-logos' => false,
+ 'hide-stars' => 'custom',
+ 'verified-icon-color' => 'black',
+ ),
+ 'minimal-fill-dottie' => 
+ array (
+ 'is-active' => true,
+ 'name' => 'Minimal Fill Dottie',
+ 'reviewer-photo' => true,
+ 'hide-logos' => false,
+ 'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'dark-contrast' => 
  array (
@@ -2324,6 +2823,16 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
+ ),
+ 'minimal-fill-wave' => 
+ array (
+ 'is-active' => true,
+ 'name' => 'Minimal Fill Wave',
+ 'reviewer-photo' => true,
+ 'hide-logos' => false,
+ 'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
  'dark-background-image' => 
  array (
@@ -2332,6 +2841,25 @@ public static $widget_styles = array (
  'reviewer-photo' => true,
  'hide-logos' => false,
  'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
+ ),
+ 'luxury-fame' => 
+ array (
+ 'is-active' => true,
+ 'name' => 'Luxury Fame',
+ 'reviewer-photo' => true,
+ 'hide-logos' => false,
+ 'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
+ ),
+ 'dark-luxury-fame' => 
+ array (
+ 'is-active' => true,
+ 'name' => 'Dark Luxury Fame',
+ 'reviewer-photo' => true,
+ 'hide-logos' => false,
+ 'hide-stars' => false,
+ 'verified-icon-color' => 'blue',
  ),
 );
 public static $widget_languages = [
@@ -2455,6 +2983,268 @@ public static $widget_nameformats = array (
  'toupper' => true,
  ),
 );
+private static $widget_last_timeunit_texts = array (
+ 'en' => 
+ array (
+ 0 => 'in the last %d hours',
+ 1 => 'in the last %d days',
+ ),
+ 'af' => 
+ array (
+ 0 => 'in die laaste %d uur',
+ 1 => 'in die laaste %d dae',
+ ),
+ 'ar' => 
+ array (
+ 0 => 'في آخر %d ساعة',
+ 1 => 'في آخر %d يوم',
+ ),
+ 'az' => 
+ array (
+ 0 => 'son %d saatda',
+ 1 => 'son %d gündə',
+ ),
+ 'bg' => 
+ array (
+ 0 => 'през последните %d часа',
+ 1 => 'през последните %d дни',
+ ),
+ 'bn' => 
+ array (
+ 0 => 'গত %d ঘন্টায়',
+ 1 => 'গত %d দিনে',
+ ),
+ 'bs' => 
+ array (
+ 0 => 'u posljednjih %d sati',
+ 1 => 'u posljednjih %d dana',
+ ),
+ 'ca' => 
+ array (
+ 0 => 'en les últimes %d hores',
+ 1 => 'en els darrers %d dies',
+ ),
+ 'cs' => 
+ array (
+ 0 => 'v posledních %d hodinách',
+ 1 => 'v posledních %d dnech',
+ ),
+ 'cy' => 
+ array (
+ 0 => 'yn y %d awr ddiwethaf',
+ 1 => 'yn y %d diwrnod diwethaf',
+ ),
+ 'da' => 
+ array (
+ 0 => 'i de sidste %d timer',
+ 1 => 'i de sidste %d dage',
+ ),
+ 'de' => 
+ array (
+ 0 => 'in den letzten %d Stunden',
+ 1 => 'in den letzten %d Tagen',
+ ),
+ 'el' => 
+ array (
+ 0 => 'τις τελευταίες %d ώρες',
+ 1 => 'τις τελευταίες %d ημέρες',
+ ),
+ 'es' => 
+ array (
+ 0 => 'en las últimas %d horas',
+ 1 => 'en los últimos %d días',
+ ),
+ 'et' => 
+ array (
+ 0 => 'viimase %d tunni jooksul',
+ 1 => 'viimase %d päeva jooksul',
+ ),
+ 'fa' => 
+ array (
+ 0 => 'در %d ساعت گذشته',
+ 1 => 'در %d روز گذشته',
+ ),
+ 'fi' => 
+ array (
+ 0 => 'viimeisen %d tunnin aikana',
+ 1 => 'viimeisten %d päivän aikana',
+ ),
+ 'fr' => 
+ array (
+ 0 => 'au cours des dernières %d heures',
+ 1 => 'au cours des %d derniers jours',
+ ),
+ 'gd' => 
+ array (
+ 0 => 'anns na %d uairean mu dheireadh',
+ 1 => 'anns na %d làithean mu dheireadh',
+ ),
+ 'gl' => 
+ array (
+ 0 => 'nas últimas %d horas',
+ 1 => 'nos últimos %d días',
+ ),
+ 'he' => 
+ array (
+ 0 => 'ב-%d שעות האחרונות',
+ 1 => 'ב-%d הימים האחרונים',
+ ),
+ 'hi' => 
+ array (
+ 0 => 'पिछले %d घंटों में',
+ 1 => 'पिछले %d दिनों में',
+ ),
+ 'hr' => 
+ array (
+ 0 => 'u posljednjih %d sati',
+ 1 => 'u posljednjih %d dana',
+ ),
+ 'hu' => 
+ array (
+ 0 => 'az elmúlt %d órában',
+ 1 => 'az elmúlt %d napban',
+ ),
+ 'hy' => 
+ array (
+ 0 => 'վերջին %d ժամվա ընթացքում',
+ 1 => 'վերջին %d օրվա ընթացքում',
+ ),
+ 'id' => 
+ array (
+ 0 => 'dalam %d jam terakhir',
+ 1 => 'dalam %d hari terakhir',
+ ),
+ 'is' => 
+ array (
+ 0 => 'á síðustu %d klukkustundum',
+ 1 => 'síðustu %d daga',
+ ),
+ 'it' => 
+ array (
+ 0 => 'nelle ultime %d ore',
+ 1 => 'negli ultimi %d giorni',
+ ),
+ 'ja' => 
+ array (
+ 0 => '過去 %d 時間',
+ 1 => '過去%d日間',
+ ),
+ 'ka' => 
+ array (
+ 0 => 'ბოლო %d საათში',
+ 1 => 'ბოლო %d დღის განმავლობაში',
+ ),
+ 'kk' => 
+ array (
+ 0 => 'соңғы %d сағатта',
+ 1 => 'соңғы %d күнде',
+ ),
+ 'ko' => 
+ array (
+ 0 => '지난 %d시간 동안',
+ 1 => '지난 %d일 동안',
+ ),
+ 'lt' => 
+ array (
+ 0 => 'per pastarąsias %d valandas',
+ 1 => 'per pastarąsias %d dienų',
+ ),
+ 'lv' => 
+ array (
+ 0 => 'pēdējo %d stundu laikā',
+ 1 => 'pēdējo %d dienu laikā',
+ ),
+ 'mk' => 
+ array (
+ 0 => 'во последните %d часа',
+ 1 => 'во последните %d дена',
+ ),
+ 'ms' => 
+ array (
+ 0 => 'dalam %d jam yang lalu',
+ 1 => 'dalam %d hari yang lalu',
+ ),
+ 'nl' => 
+ array (
+ 0 => 'in de laatste %d uur',
+ 1 => 'in de laatste %d dagen',
+ ),
+ 'no' => 
+ array (
+ 0 => 'i løpet av de siste %d timene',
+ 1 => 'i løpet av de siste %d dagene',
+ ),
+ 'pl' => 
+ array (
+ 0 => 'w ciągu ostatnich %d godzin',
+ 1 => 'w ciągu ostatnich %d dni',
+ ),
+ 'pt' => 
+ array (
+ 0 => 'nas últimas %d horas',
+ 1 => 'nos últimos %d dias',
+ ),
+ 'ro' => 
+ array (
+ 0 => 'în ultimele %d ore',
+ 1 => 'în ultimele %d zile',
+ ),
+ 'ru' => 
+ array (
+ 0 => 'за последние %d часов',
+ 1 => 'за последние %d дней',
+ ),
+ 'sk' => 
+ array (
+ 0 => 'za posledných %d hodín',
+ 1 => 'za posledných %d dní',
+ ),
+ 'sl' => 
+ array (
+ 0 => 'v zadnjih %d urah',
+ 1 => 'v zadnjih %d dneh',
+ ),
+ 'sq' => 
+ array (
+ 0 => 'në %d orët e fundit',
+ 1 => 'në %d ditët e fundit',
+ ),
+ 'sr' => 
+ array (
+ 0 => 'у последњих %d сати',
+ 1 => 'у последњих %d дана',
+ ),
+ 'sv' => 
+ array (
+ 0 => 'under de senaste %d timmarna',
+ 1 => 'under de senaste %d dagarna',
+ ),
+ 'th' => 
+ array (
+ 0 => 'ในช่วง %d ชั่วโมงที่ผ่านมา',
+ 1 => 'ในช่วง %d วันที่ผ่านมา',
+ ),
+ 'tr' => 
+ array (
+ 0 => 'son %d saatte',
+ 1 => 'son %d günde',
+ ),
+ 'uk' => 
+ array (
+ 0 => 'за останні %d годин',
+ 1 => 'за останні %d днів',
+ ),
+ 'vi' => 
+ array (
+ 0 => 'trong %d giờ qua',
+ 1 => 'trong %d ngày qua',
+ ),
+ 'zh' => 
+ array (
+ 0 => '在过去 %d 小时内',
+ 1 => '在过去 %d 天里',
+ ),
+);
 private static $widget_rating_texts = array (
  'en' => 
  array (
@@ -2470,7 +3260,7 @@ private static $widget_rating_texts = array (
  1 => 'onder gemiddeld',
  2 => 'gemiddeld',
  3 => 'goed',
- 4 => 'uitstekend',
+ 4 => 'uitstekende',
  ),
  'ar' => 
  array (
@@ -2750,7 +3540,7 @@ private static $widget_rating_texts = array (
  1 => 'Onder het gemiddelde',
  2 => 'Gemiddeld',
  3 => 'Goed',
- 4 => 'Uitstekend',
+ 4 => 'Uitstekende',
  ),
  'no' => 
  array (
@@ -3874,18 +4664,18 @@ private static $widget_month_names = array (
  ),
  'da' => 
  array (
- 0 => 'Januar',
- 1 => 'Februar',
- 2 => 'Marts',
- 3 => 'April',
- 4 => 'Maj',
- 5 => 'Juni',
- 6 => 'Juli',
- 7 => 'August',
- 8 => 'September',
- 9 => 'Oktober',
- 10 => 'November',
- 11 => 'December',
+ 0 => 'januar',
+ 1 => 'februar',
+ 2 => 'marts',
+ 3 => 'april',
+ 4 => 'maj',
+ 5 => 'juni',
+ 6 => 'juli',
+ 7 => 'august',
+ 8 => 'september',
+ 9 => 'oktober',
+ 10 => 'november',
+ 11 => 'december',
  ),
  'de' => 
  array (
@@ -3907,7 +4697,7 @@ private static $widget_month_names = array (
  0 => 'Iανουάριος',
  1 => 'Φεβρουάριος',
  2 => 'Μάρτιος',
- 3 => 'Aρίλιος',
+ 3 => 'Απρίλιος',
  4 => 'Μάιος',
  5 => 'Iούνιος',
  6 => 'Iούλιος',
@@ -4535,7 +5325,7 @@ public static $widget_date_format_locales = array (
  'cy' => '%d %s yn ôl|heddiw|diwrnod|diwrnod|wythnos|wythnosau|mis|mis|flwyddyn|flynyddoedd',
  'da' => '%d %s siden|i dag|dag|dage|uge|uger|måned|måneder|år|år',
  'de' => 'vor %d %s|Heute|Tag|Tagen|Woche|Wochen|Monat|Monaten|Jahr|Jahren',
- 'el' => 'πριν από %d ημέρα|σήμερα|ημέρα|ημέρες|εβδομάδα|εβδομάδες|μήνα|μήνες|χρόνο|χρόνια',
+ 'el' => 'πριν από %d %s|σήμερα|ημέρα|ημέρες|εβδομάδα|εβδομάδες|μήνα|μήνες|χρόνο|χρόνια',
  'es' => 'hace %d %s|hoy|día|días|semana|semanas|mes|meses|año|años',
  'et' => '%d %s tagasi|täna|päev|päeva|nädal|nädalat|kuu|kuud|aasta|aastat',
  'fa' => '%d %s قبل|امروز|روز|روز|هفته|هفته|ماه|ماه|سال|سال',
@@ -5139,7 +5929,7 @@ private static $page_urls = array (
  'hotels' => 'https://hotels.com/%page_id%',
  'opentable' => 'https://www.opentable.com/%page_id%',
  'foursquare' => 'https://foursquare.com/v/%25page_id%25',
- 'capterra' => 'https://www.capterra.%page_id%/reviews',
+ 'capterra' => 'https://www.capterra.%page_id%',
  'szallashu' => 'https://szallas.hu/%page_id%?#rating',
  'thumbtack' => 'https://www.thumbtack.com/%page_id%',
  'expedia' => 'https://www.expedia.com/%page_id%',
@@ -5231,12 +6021,12 @@ return $html;
 }
 private function parseReviewText($text)
 {
-return preg_replace('/\r\n|\r|\n/', "\n", trim(html_entity_decode($text, ENT_HTML5 | ENT_QUOTES)));
+return wp_kses_post(preg_replace('/\r\n|\r|\n/', "\n", trim(html_entity_decode($text, ENT_HTML5 | ENT_QUOTES))));
 }
 private function getProfileImageUrl($imageUrl, $layoutId, $sizeMultiply = 1) {
 
 $size = $this->getProfileImageSize($layoutId) * $sizeMultiply;
-$imageUrl = preg_replace('/([=-])(?:s\d+|w\d+-h\d+)(-|$)/', "$1w$size-h$size$2", $imageUrl);
+$imageUrl = preg_replace('/([=-])(?:s\d+|w\d+-h\d+)(-|$)/', "\$1w$size-h$size\$2", $imageUrl);
 return $imageUrl;
 }
 
@@ -5251,7 +6041,7 @@ private function getHeaderProfileImageSize($layoutId)
 {
 return 65;
 }
-public function renderWidgetFrontend($tiPublicId = null)
+public function renderWidgetFrontend($tiPublicId = null, $isManualEmbed = false)
 {
 $this->enqueueLoaderScript();
 if ($tiPublicId) {
@@ -5263,15 +6053,17 @@ if (!$tiPublicId) {
 $pageDetails = $this->getPageDetails();
 $styleId = (int)$this->getWidgetOption('style-id');
 if (self::is_amp_active() && self::is_amp_enabled()) {
-return $this->frontEndErrorForAdmins(__('Free plugin features are unavailable with AMP plugin.', 'trustindex-plugin'));
+return $this->frontEndErrorForAdmins(__('Free plugin features are unavailable with AMP plugin.', 'wp-reviews-plugin-for-google'));
 }
 if (self::$widget_templates['templates'][$styleId]['is-top-rated-badge'] && (float)$pageDetails['rating_score'] < self::$topRatedMinimumScore) {
-$text = sprintf(__('Our exclusive "Top Rated" badge is awarded to service providers with a rating of %s and above.', 'trustindex-plugin'), self::$topRatedMinimumScore)
+/* translators: %s: min score (4.5) */
+$text = sprintf(__('Our exclusive "Top Rated" badge is awarded to service providers with a rating of %s and above.', 'wp-reviews-plugin-for-google'), self::$topRatedMinimumScore)
 .'<br />'
-.'<a href="'.admin_url('admin.php?page='.$this->get_plugin_slug().'/settings.php&tab=free-widget-configurator&step=2').'">'.__('Please select another widget', 'trustindex-plugin').'.</a>';
+.'<a href="'.admin_url('admin.php?page='.$this->get_plugin_slug().'/settings.php&tab=free-widget-configurator&step=2').'">'.__('Please select another widget', 'wp-reviews-plugin-for-google').'.</a>';
 return $this->frontEndErrorForAdmins($text);
 }
 if ($reviews = $this->getReviewsForWidgetHtml()) {
+$this->increaseViews();
 $templateId = 'trustindex-'.$this->getShortName().'-widget-html';
 $attributes['data-src'] .= 'wp-widget';
 $attributes['data-template-id'] = $templateId;
@@ -5280,14 +6072,19 @@ $preContent = preg_replace('/<img (.*)src="([^"]+)"(.*)\/?>/U', '<trustindex-ima
 $preContent = str_replace('srcset="', 'data-imgurlset="', $preContent);
 if (is_file($this->getCssFile()) && !get_option($this->get_option_name('load-css-inline'), 0)) {
 $attributes['data-css-url'] = $this->getCssUrl().'?'.filemtime($this->getCssFile());
-} else {
-$preContent .= '<style type="text/css">'.get_option($this->get_option_name('css-content')).'</style>';
 }
 $preContent .= '</template></pre>';
 } else {
-$text = sprintf(__('There are no reviews on your %s platform.', 'trustindex-plugin'), ucfirst($this->getShortName()));
+/* translators: %s: Platform name */
+$text = sprintf(__('There are no reviews on your %s platform.', 'wp-reviews-plugin-for-google'), ucfirst($this->getShortName()));
 
 return $this->frontEndErrorForAdmins($text);
+}
+if ($this->is_trustindex_connected()) {
+$title = __('You are still using the free widget below.', 'wp-reviews-plugin-for-google');
+$text = __('Switch to the Pro version by replacing the shortcode.', 'wp-reviews-plugin-for-google')
+.'<br /><a href="'.esc_url('https://admin.trustindex.io/widget').'" target="_blank" rel="noopener noreferrer">'.__('Find the shortcode in the widget list.', 'wp-reviews-plugin-for-google').'</a>';
+$preContent = $this->frontEndErrorForAdmins($text, $title, 'warning').$preContent;
 }
 }
 $attributesHtml = implode(' ', array_map(function($attribute, $value) {
@@ -5303,16 +6100,16 @@ $this->widgetOptions['style-id'] = $previewData['style-id'];
 $this->widgetOptions['scss-set'] = $previewData['set-id'];
 $this->widgetOptions['review-content'] = "";
 $fileName = $previewData['style-id'].'-'.$previewData['set-id'].'.css';
-wp_enqueue_style('trustindex-widget-preview-'.$fileName, "https://cdn.trustindex.io/assets/widget-presetted-css/v2/$fileName");
+wp_enqueue_style('trustindex-widget-preview-'.$fileName, "https://cdn.trustindex.io/assets/widget-presetted-css/v2/$fileName", [], true);
 if (isset($previewData['verified-by-trustindex']) && $previewData['verified-by-trustindex']) {
 $this->widgetOptionDefaultOverride['verified-by-trustindex'] = 1;
 }
 }
 $reviews = $this->getReviewsForWidgetHtml(true, $isForceDemoReviews, (bool)$previewData);
 if (!$reviews) {
-return self::get_alertbox('error', __('You do not have reviews with the current filters. <br />Change your filters if you would like to display reviews on your page!', 'trustindex-plugin'));
+return self::get_alertbox('error', __('You do not have reviews with the current filters. <br />Change your filters if you would like to display reviews on your page!', 'wp-reviews-plugin-for-google'));
 }
-$html = $this->getWidgetHtml($reviews, (bool)$previewData);
+$html = $this->getWidgetHtml($reviews, (bool)$previewData, true);
 if (!$previewData) {
 if (is_file($this->getCssFile()) && !$this->isElementorEditing()) {
 wp_enqueue_style('trustindex-widget-editor', $this->getCssUrl(), [], filemtime($this->getCssFile()));
@@ -5321,6 +6118,7 @@ $html .= '<style type="text/css">'.get_option($this->get_option_name('css-conten
 }
 }
 if ($this->isElementorEditing()) {
+// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 $html .= '<script type="text/javascript" src="https://cdn.trustindex.io/loader.js"></script>';
 } else {
 $this->enqueueLoaderScript();
@@ -5353,14 +6151,14 @@ public function enqueueLoaderScript()
 if (wp_script_is('trustindex-loader-js', 'registered')) {
 wp_enqueue_script('trustindex-loader-js');
 } else {
-wp_enqueue_script('trustindex-loader-js', 'https://cdn.trustindex.io/loader.js', [], null, [
+wp_enqueue_script('trustindex-loader-js', 'https://cdn.trustindex.io/loader.js', [], true, [
 'strategy' => 'async',
 'in_footer' => true,
 ]);
 }
 }
 private $templateCache = null;
-private function getWidgetHtml($reviews, $isPreview = false)
+private function getWidgetHtml($reviews, $isPreview = false, $isAdmin = false)
 {
 $styleId = (int)$this->getWidgetOption('style-id');
 $setId = $this->getWidgetOption('scss-set');
@@ -5369,12 +6167,18 @@ $language = $this->getWidgetOption('lang', false, $isPreview);
 if (!$content || strpos($content, '<!-- R-LIST -->') === false) {
 if (!$this->templateCache) {
 add_action('http_api_curl', function($handle) {
+// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt
 curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
+// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt
 curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
 }, 10);
+if (strlen($language) > 3) {
+$language = 'en';
+}
 $response = wp_remote_get("https://cdn.trustindex.io/widget-assets/template/v2/$language.json", [ 'timeout' => 300 ]);
 if (is_wp_error($response)) {
-return $this->frontEndErrorForAdmins(__('Could not download the template for the widget.<br />Please reload the page.<br />If the problem persists, please write an email to support@trustindex.io.', 'trustindex-plugin') .'<br /><br />'. print_r($response, true));
+// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+return $this->frontEndErrorForAdmins(__('Could not download the template for the widget.<br />Please reload the page.<br />If the problem persists, please write an email to support@trustindex.io.', 'wp-reviews-plugin-for-google') .'<br /><br />'. print_r($response, true));
 }
 $this->templateCache = json_decode($response['body'], true);
 }
@@ -5383,7 +6187,7 @@ if (!$isPreview) {
 update_option($this->get_option_name('review-content'), $content, false);
 }
 }
-$content = $this->parseWidgetHtml($reviews, $content, $isPreview);
+$content = $this->parseWidgetHtml($reviews, $content, $isPreview, $isAdmin);
 $content = preg_replace('/data-set[_-]id=[\'"][^\'"]*[\'"]/m', 'data-set-id="'. $setId .'"', $content);
 $classAppends = ['ti-' . substr($this->getShortName(), 0, 4)];
 if (!$this->getWidgetOption('show-reviewers-photo', false, $isPreview)) {
@@ -5406,12 +6210,21 @@ $classAppends []= 'ti-hide-fomo-border';
 if (!$this->getWidgetOption('fomo-arrow', false, $isPreview)) {
 $classAppends []= 'ti-hide-fomo-arrow';
 }
+if ('hide' === $this->getWidgetOption('fomo-icon', false, $isPreview)) {
+$classAppends []= 'ti-icon-hide';
+}
+if ($this->getWidgetOption('fomo-icon-background', false, $isPreview)) {
+$classAppends []= 'ti-icon-background';
+}
 } else {
 if (!$this->getWidgetOption('no-rating-text', false, $isPreview)) {
 $classAppends []= 'ti-show-rating-text';
 }
 $classAppends []= 'ti-review-text-mode-'.$this->getWidgetOption('review-text-mode', false, $isPreview);
 $classAppends []= 'ti-'.(in_array($styleId, [36, 37, 38, 39]) ? 'content' : 'text').'-align-'.$this->getWidgetOption('align', false, $isPreview);
+}
+if (self::$widget_styles[$setId]['hide-stars'] === 'custom') {
+$classAppends []= 'ti-custom-stars';
 }
 $content = str_replace('" data-layout-id=', ' '. implode(' ', $classAppends) .'" data-no-translation="true" data-layout-id=', $content);
 if ($this->isRtlLanguage()) {
@@ -5428,35 +6241,54 @@ $styleText .= 'left: auto;right: '.$this->getWidgetOption('fomo-margin', false, 
 } else {
 $styleText .= 'left: '.$this->getWidgetOption('fomo-margin', false, $isPreview).'px;';
 }
-$content = str_replace('" data-layout-id=', '" style="'.$styleText.'" data-layout-id=', $content);
+$hideCount = $this->getWidgetOption('fomo-hide-count', false, $isPreview);
+$content = str_replace('" data-layout-id=', '" style="'.$styleText.'" data-hide-count='.$hideCount.' data-layout-id=', $content);
 }
+$content = str_replace('" data-layout-id=', '" data-plugin-version="'.str_replace('do-not-care-', '', $this->getVersion()).'" data-layout-id=', $content);
 return $content;
 }
 private function getReviewsForWidgetHtml($isDemoReviews = false, $isForceDemoReviews = false, $isPreview = false)
 {
 global $wpdb;
-$sqlRatingField = 'rating';
-if ($this->is_ten_scale_rating_platform()) {
-$sqlRatingField = 'ROUND(rating / 2, 0)';
-}
-$sql = 'SELECT *, rating AS original_rating, '. $sqlRatingField .' AS rating FROM `'. $this->get_tablename('reviews') .'` ';
 $filter = $this->getWidgetOption('filter', false, $isPreview);
-if (isset($filter['stars']) && count($filter['stars']) === 0) {
-$sql .= 'WHERE 0 ';
+$onlyRatings = isset($filter['only-ratings']) && $filter['only-ratings'] ? 1 : 0;
+if (isset($filter['stars']) && count($filter['stars']) === 1 && (int)$filter['stars'][0] === 5) {
+if ($this->is_ten_scale_rating_platform()) {
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$reviews = $wpdb->get_results($wpdb->prepare('SELECT *, rating AS original_rating, ROUND(rating / 2, 0) AS rating FROM %i WHERE hidden = 0 AND ROUND(rating / 2, 0) = 5 ORDER BY date DESC', $this->get_tablename('reviews')));
 } else {
-$sql .= 'WHERE hidden = 0 AND ('. $sqlRatingField .' IN ('. implode(',', $filter['stars']) .')';
-if (in_array(5, $filter['stars'])) {
-$sql .= ' OR rating IS NULL';
-}
-$sql .= ') ';
-if (isset($filter['only-ratings']) && $filter['only-ratings']) {
-$sql .= 'AND text != "" ';
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$reviews = $wpdb->get_results($wpdb->prepare('SELECT *, rating AS original_rating FROM %i WHERE hidden = 0 AND (rating IS NULL OR rating = 5) ORDER BY date DESC', $this->get_tablename('reviews')));
 }
 }
-$sql .= 'ORDER BY date DESC';
-$reviews = $wpdb->get_results($sql);
+else if (isset($filter['stars']) && count($filter['stars']) === 2) {
+if ($this->is_ten_scale_rating_platform()) {
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$reviews = $wpdb->get_results($wpdb->prepare('SELECT *, rating AS original_rating, ROUND(rating / 2, 0) AS rating FROM %i WHERE hidden = 0 AND ROUND(rating / 2, 0) IN (4,5) ORDER BY date DESC', $this->get_tablename('reviews')));
+} else {
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$reviews = $wpdb->get_results($wpdb->prepare('SELECT *, rating AS original_rating FROM %i WHERE hidden = 0 AND (rating IS NULL OR rating IN (4,5)) ORDER BY date DESC', $this->get_tablename('reviews')));
+}
+}
+else {
+if ($this->is_ten_scale_rating_platform()) {
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$reviews = $wpdb->get_results($wpdb->prepare('SELECT *, rating AS original_rating, ROUND(rating / 2, 0) AS rating FROM %i WHERE hidden = 0 ORDER BY date DESC', $this->get_tablename('reviews')));
+} else {
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$reviews = $wpdb->get_results($wpdb->prepare('SELECT *, rating AS original_rating FROM %i WHERE hidden = 0 ORDER BY date DESC', $this->get_tablename('reviews')));
+}
+}
+if ($onlyRatings) {
+for ($i = 0; $i < count($reviews); $i++) {
+if (!$reviews[$i]->text || !trim($reviews[$i]->text)) {
+array_splice($reviews, $i, 1);
+$i--;
+}
+}
+}
 if ($isDemoReviews && ($isForceDemoReviews || !$reviews)) {
-if (!$reviews && !$isForceDemoReviews && $wpdb->get_results('SELECT * FROM `'. $this->get_tablename('reviews') .'`')) {
+if (!$reviews && !$isForceDemoReviews && $this->getReviews()) {
 return [];
 }
 $pageDetails = $this->getPageDetails();
@@ -5490,14 +6322,31 @@ $reviews = $this->getRandomReviews(10);
 }
 return $reviews;
 }
-private function parseWidgetHtml($reviews, $content, $isPreview = false)
+public function getReviews()
+{
+global $wpdb;
+if (!$this->is_noreg_linked()) {
+return [];
+}
+$result = wp_cache_get('ti-reviews-cache-'.$this->getShortName());
+if ($result === false) {
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+$result = $wpdb->get_results($wpdb->prepare('SELECT * FROM %i ORDER BY date DESC', $this->get_tablename('reviews')));
+wp_cache_set('ti-reviews-cache-'.$this->getShortName(), $result, '', 3600);
+}
+return $result;
+}
+private function parseWidgetHtml($reviews, $content, $isPreview = false, $isAdmin = false)
 {
 $pageDetails = $this->getPageDetails();
 $styleId = (int)$this->getWidgetOption('style-id');
 $setId = $this->getWidgetOption('scss-set');
 $language = $this->getWidgetOption('lang', false, $isPreview);
 $widgetTemplate = self::$widget_templates['templates'][$styleId];
-$showStars = $this->getWidgetOption('show-stars', false, $isPreview);
+$showStars = (int) $this->getWidgetOption('show-stars', false, $isPreview);
+if ('custom' === self::$widget_styles[$setId]['hide-stars']) {
+$showStars = 2;
+}
 preg_match('/<!-- R-LIST -->(.*)<!-- R-LIST -->/', $content, $matches);
 if (isset($matches[1])) {
 $reviewContent = "";
@@ -5514,11 +6363,11 @@ $customAttributes .= ' data-time="'. strtotime($r->date) .'"';
 }
 }
 else {
-$date = str_replace(self::$widget_month_names['en'], self::$widget_month_names[$language], date($dateformat, strtotime($r->date)));
+$date = str_replace(self::$widget_month_names['en'], self::$widget_month_names[$language], gmdate($dateformat, strtotime($r->date)));
 }
 }
 $ratingContent = $this->get_rating_stars($r->rating, $showStars);
-if ($showStars) {
+if (1 === $showStars) {
 
 if ($this->is_ten_scale_rating_platform()) {
 $ratingContent .= '<span class="ti-ten-rating-score">'. $this->formatTenRating($r->original_rating, $language) .'</span>';
@@ -5532,6 +6381,9 @@ if (!in_array($platformName, self::$verified_platforms)) {
 $verifiedIconClass = 'ti-verified-review ti-verified-platform';
 $verifiedIconTooltipText = str_replace('%platform%', 'PLATFORM_NAME', self::$widget_verified_platform_texts[$language]);
 }
+if (self::$widget_styles[$setId]['verified-icon-color'] !== 'blue') {
+$verifiedIconClass .= ' ti-color-'.self::$widget_styles[$setId]['verified-icon-color'];
+}
 $ratingContent .= '<span class="'.$verifiedIconClass.'"><span class="ti-verified-tooltip">'.$verifiedIconTooltipText.'</span></span>';
 }
 if (!$this->getWidgetOption('show-reviewers-photo', false, $isPreview)) {
@@ -5539,7 +6391,7 @@ $matches[1] = preg_replace('/<div class="ti-profile-img">.+<\/div>/U', '', $matc
 }
 $text = $this->getReviewHtml($r);
 if ($r->reply && $this->getWidgetOption('show-review-replies', false, $isPreview)) {
-$text .= '<br /><br /><strong class="ti-reply-by-owner-title">'.self::$widget_reply_by_texts[$language].'</strong><br />'.$this->parseReviewText($r->reply);
+$text .= '<br /><br /><span class="ti-reply-by-owner-title">'.self::$widget_reply_by_texts[$language].'</span><br />'.$this->parseReviewText($r->reply);
 }
 $reviewContent .= str_replace([
 '%platform%',
@@ -5589,9 +6441,9 @@ $imageUrl = isset($pageDetails['avatar_url']) && $pageDetails['avatar_url'] ? $p
 $image2xUrl = $imageUrl;
 
 $size = $this->getHeaderProfileImageSize($styleId);
-$imageUrl = preg_replace('/([=-])(s\d+|w\d+-h\d+)/', "$1w$size-h$size", $imageUrl);
+$imageUrl = preg_replace('/([=-])(s\d+|w\d+-h\d+)/', "\$1w$size-h$size", $imageUrl);
 $size *= 2;
-$image2xUrl = preg_replace('/([=-])(s\d+|w\d+-h\d+)/', "$1w$size-h$size", $imageUrl);
+$image2xUrl = preg_replace('/([=-])(s\d+|w\d+-h\d+)/', "\$1w$size-h$size", $imageUrl);
 $profileImageListForButton = "";
 if ($reviews) {
 $max = $widgetTemplate['type'] === 'fomo' ? 3 : 5;
@@ -5657,11 +6509,12 @@ $this->get_rating_stars($this->is_ten_scale_rating_platform() ? $ratingScore / 2
 ], $content);
 if (!in_array($widgetTemplate['type'], [ 'button', 'badge', 'top-rated-badge', 'fomo' ]) && !$this->getWidgetOption('show-logos', false, $isPreview)) {
 $content = preg_replace('/<img class="ti-platform-icon".+>/U', '', $content);
+$content = preg_replace('/<img src="[^"]+\/assets\/platform\/[^"]+".+>/U', '', $content);
 }
 if ($this->is_ten_scale_rating_platform() && $styleId === 11) {
 $content = str_replace('<span class="ti-rating">'. $ratingScore .'</span> ', '', $content);
 }
-if (in_array($styleId, [8, 10, 11, 12, 13, 20, 22, 24, 25, 26, 27, 28, 29, 35, 55, 56, 57, 58, 59, 60, 61, 62, 106, 107, 109, 110, 111, 113, 115]) || $widgetTemplate['type'] === 'fomo') {
+if (in_array($styleId, [8, 10, 11, 12, 13, 14, 20, 22, 24, 25, 26, 27, 28, 29, 35, 55, 56, 57, 58, 59, 60, 61, 62, 106, 107, 109, 110, 111, 113, 115]) || $widgetTemplate['type'] === 'fomo') {
 if ($widgetTemplate['type'] === 'fomo' && !$this->getWidgetOption('fomo-link', false, $isPreview)) {
 $content = preg_replace('/<a href=[\'"]%footer_link%[\'"][^>]*>(.+)<\/a>/mU', '<div class="ti-header">$1</div>', $content);
 } else {
@@ -5671,7 +6524,7 @@ $content = preg_replace('/<!-- HEADER-BUTTON-START.+HEADER-BUTTON-END -->/s', ''
 $content = str_replace(['<!-- HEADER-BUTTON-START', 'HEADER-BUTTON-END -->'], '', $content);
 $footerUrl = $this->getPageUrl();
 
-$footerUrl = in_array($styleId, [8, 13, 26]) ? $this->getReviewWriteUrl() : $this->getReviewPageUrl();
+$footerUrl = in_array($styleId, [8, 13, 14, 26]) ? $this->getReviewWriteUrl() : $this->getReviewPageUrl();
 if ($widgetTemplate['type'] === 'fomo') {
 $footerUrl = $this->getWidgetOption('fomo-url', false, $isPreview);
 }
@@ -5687,7 +6540,9 @@ $content = str_replace('class="ti-widget-container"', 'class="ti-widget-containe
 $iconType = $this->getWidgetOption('fomo-icon', false, $isPreview);
 $iconHtml = '<div class="ti-fomo-icon" data-type="'.$iconType.'"></div>';
 $platformIconHtml = '<img class="ti-platform-icon" src="https://cdn.trustindex.io/assets/platform/'.ucfirst($this->getShortName()).'/icon.svg" alt="'.ucfirst($this->getShortName()).'" width="20" height="20" loading="lazy">';
-if ('profile-images' === $iconType) {
+if ('hide' === $iconType) {
+$iconHtml = '';
+} else if ('profile-images' === $iconType) {
 $iconHtml = '<div class="ti-profile-images">'.$profileImageListForButton.'</div>';
 } else if ('platform' === $iconType) {
 $iconHtml = $platformIconHtml;
@@ -5698,20 +6553,51 @@ if (isset($widgetTemplate['params']['fomo-platform-block']) && $widgetTemplate['
 $platformBlockText = $platformIconHtml;
 }
 $content = str_replace('<!-- PLATFORM-ICON -->', $platformBlockText, $content);
-if ($this->isFomoCustomWidget()) {
+if ($this->isFomoCustomWidget() || $this->getFomoSubtitleTextChoices()) {
 if ($text = $this->getWidgetOption('fomo-title', false, $isPreview)) {
 $content = preg_replace(
 '/<div class="ti-title-text">(.+)<\/div>/U',
-'<div class="ti-title-text">'.html_entity_decode($text).'</div>',
+'<div class="ti-title-text">'.wp_kses($text, ['u' => []]).'</div>',
 $content
 );
 }
 if ($text = $this->getWidgetOption('fomo-text', false, $isPreview)) {
+if ('hide' === $text) {
+$content = preg_replace('/<div class="ti-subtitle-text">(.+)<\/div>/U','', $content);
+} else {
+if (
+isset($widgetTemplate['params']['trans'])
+&& isset($widgetTemplate['params']['trans'][$language])
+&& isset($widgetTemplate['params']['trans'][$language][$text])
+) {
+$text = $widgetTemplate['params']['trans'][$language][$text];
+}
 $content = preg_replace(
 '/<div class="ti-subtitle-text">(.+)<\/div>/U',
-'<div class="ti-subtitle-text">'.html_entity_decode($text).'</div>',
+'<div class="ti-subtitle-text">'.wp_kses($text, ['u' => []]).'</div>',
 $content
 );
+}
+}
+}
+if (isset($widgetTemplate['params']['fomo-days'])) {
+$days = (int)$this->getWidgetOption('fomo-day', false, $isPreview);
+if (strpos($content, '%registrations%') !== false) {
+$count = $this->getRegistrationCount($days);
+$content = str_replace('%registrations%', $count, $content);
+} else if (strpos($content, '%visitors%') !== false) {
+$count = $this->getViewsByDays($days);
+$content = str_replace('%visitors%', $count, $content);
+}
+if (isset($count) && !$isPreview && !$isAdmin && $count < $this->getWidgetOption('fomo-hide-count', false, $isPreview)) {
+$content = "";
+} else {
+$timeunitText = self::$widget_last_timeunit_texts[$language][1];
+if ($days === 1) {
+$timeunitText = self::$widget_last_timeunit_texts[$language][0];
+$days = 24;
+}
+$content = str_replace('IN-LAST-TIMEUNIT', sprintf($timeunitText, $days), $content);
 }
 }
 }
@@ -5759,9 +6645,9 @@ $content = preg_replace('/width="([\d%]+)" height="([\d%]+)"( alt="[^"]+")? widt
 if ($widgetTemplate['is-top-rated-badge']) {
 $topRatedDate = $this->getWidgetOption('top-rated-date', false, $isPreview);
 $topRatedType = $this->getWidgetOption('top-rated-type', false, $isPreview);
-$date = date('Y');
+$date = gmdate('Y');
 if ($topRatedDate === 'last-year') {
-$date = date('Y') - 1;
+$date = gmdate('Y') - 1;
 } else if ($topRatedDate === 'hide' || $widgetTemplate['type'] === 'fomo') {
 $date = '';
 }
@@ -5802,6 +6688,34 @@ public function isFomoCustomWidget()
 $styleId = (int)$this->getWidgetOption('style-id');
 return isset(self::$widget_templates['templates'][$styleId]['params']['fomo-custom-text']) && self::$widget_templates['templates'][$styleId]['params']['fomo-custom-text'];
 }
+public function isFomoHideCountAvailable()
+{
+$content = $this->getWidgetOption('review-content');
+return strpos($content, '%registrations%') !== false || strpos($content, '%online-visitors%') !== false || strpos($content, '%visitors%') !== false;
+}
+public function getFomoSubtitleTextChoices()
+{
+$styleId = (int)$this->getWidgetOption('style-id');
+$params = self::$widget_templates['templates'][$styleId]['params'];
+if (!isset($params['fomo-subtitle-text-choices'])) {
+return [];
+}
+$choices = $params['fomo-subtitle-text-choices'];
+$result = [];
+$language = strtolower(substr(get_locale(), 0, 2));
+if (!isset(self::$widget_languages[$language])) {
+$language = 'en';
+}
+foreach ($choices as $choice) {
+$name = $choice;
+$value = $choice;
+if (isset($params['trans']) && isset($params['trans'][$language]) && isset($params['trans'][$language][$choice])) {
+$value = $params['trans'][$language][$choice];
+}
+$result[$name] = $value;
+}
+return $result;
+}
 public function isRtlLanguage()
 {
 if (in_array($this->getWidgetOption('lang'), array (
@@ -5812,6 +6726,26 @@ if (in_array($this->getWidgetOption('lang'), array (
 return true;
 }
 return false;
+}
+public function getRegistrationCount($days = 1) {
+global $wpdb;
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+return (int) $wpdb->get_var($wpdb->prepare('SELECT COUNT(ID) FROM %i WHERE DATEDIFF(NOW(), user_registered) <= %d', $wpdb->users, $days));
+}
+public function getOnlineUsers($uid, $page = "") {
+if (!$page) {
+$page = '_index';
+}
+$time = time();
+$users = get_option('ti-online-users-'.$page, []);
+$users[$uid] = $time;
+foreach ($users as $i => $t) {
+if ($t < $time - 60) {
+unset($users[$i]);
+}
+}
+update_option('ti-online-users-'.$page, $users, false);
+return count($users);
 }
 public function get_footer_filter_text($lang = 'en')
 {
@@ -5893,7 +6827,7 @@ $rating = 5;
 }
 return $texts[ $rating - 1 ];
 }
-public function get_rating_stars($ratingScore, $platformStars = true)
+public function get_rating_stars($ratingScore, $platformStars)
 {
 $text = "";
 if (!is_numeric($ratingScore)) {
@@ -5901,25 +6835,28 @@ return $text;
 }
 $platform = ucfirst($this->getShortName());
 $altPlatform = $platform;
-if (!$platformStars) {
-$platform = 'Trustindex';
+if (0 === $platformStars) {
+$platform = 'Default';
 }
-$fullStarUrl = '<img class="ti-star" src="https://cdn.trustindex.io/assets/platform/'.$platform.'/star/f.svg" alt="'.$altPlatform.'" width="17" height="17" loading="lazy" />';
+$fullStarUrl = '<img class="ti-star" src="https://cdn.trustindex.io/assets/platform/'.$platform.'/star/f.svg" alt="'.$altPlatform.' star %star-number%" width="17" height="17" loading="lazy" />';
+if (2 === $platformStars) {
+$fullStarUrl = '<span class="ti-star f"></span>';
+}
 for ($si = 1; $si <= $ratingScore; $si++) {
-$text .= $fullStarUrl;
+$text .= str_replace('%star-number%', $si, $fullStarUrl);
 }
 $fractional = $ratingScore - floor($ratingScore);
-if(0.25 <= $fractional) {
+if (0.25 <= $fractional) {
 if ($fractional < 0.75) {
-$text .= preg_replace('/f(\.svg)?"/', 'h$1"', $fullStarUrl);
+$text .= preg_replace('/f(\.svg)?"/', 'h$1"', str_replace('%star-number%', $si.'.'.$fractional, $fullStarUrl));
 }
 else {
-$text .= $fullStarUrl;
+$text .= str_replace('%star-number%', $si, $fullStarUrl);
 }
 $si++;
 }
 for (; $si <= 5; $si++) {
-$text .= preg_replace('/f(\.svg)?"/', 'e$1"', $fullStarUrl);
+$text .= preg_replace('/f(\.svg)?"/', 'e$1"', str_replace('%star-number%', $si, $fullStarUrl));
 }
 return $text;
 }
@@ -5948,7 +6885,7 @@ $r->text = $exampleReview['text'];
 $r->original_rating = $i == max(0, $count-2) ? 4 : 5;
 $r->rating = $r->original_rating;
 $r->highlight = null;
-$r->date = date('Y-m-d', strtotime('-'. ($i * 2) .' days'));
+$r->date = gmdate('Y-m-d', strtotime('-'. ($i * 2) .' days'));
 $r->reviewId = null;
 $r->reply = null;
 if ($this->is_ten_scale_rating_platform()) {
@@ -5962,10 +6899,6 @@ return $reviews;
 }
 public function get_plugin_current_version()
 {
-add_action('http_api_curl', function($handle) {
-curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
-}, 10);
 $response = wp_remote_get('https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&request[slug]='. $this->get_plugin_slug());
 if (is_wp_error($response)) {
 return false;
@@ -5982,7 +6915,7 @@ public function post_request($url, $args)
 {
 $response = wp_remote_post($url, $args);
 if (is_wp_error($response)) {
-echo $this->get_alertbox('error', '<br />Error with wp_remote_post, error message: <br /><b>'. $response->get_error_message() .'</b>');
+echo wp_kses_post($this->get_alertbox('error', '<br />Error with wp_remote_post, error message: <br /><b>'. $response->get_error_message() .'</b>'));
 die;
 }
 return wp_remote_retrieve_body($response);
@@ -6068,7 +7001,7 @@ public function list_trustindex_widgets_ajax()
 $ti_widgets = $this->get_trustindex_widgets();
 if ($this->is_trustindex_connected()): ?>
 <?php if ($ti_widgets): ?>
-<h2><?php echo __('Your saved widgets', 'trustindex-plugin'); ?></h2>
+<h2><?php echo esc_html(__('Your saved widgets', 'wp-reviews-plugin-for-google')); ?></h2>
 <?php foreach ($ti_widgets as $wc): ?>
 <p><strong><?php echo esc_html($wc['name']); ?>:</strong></p>
 <p>
@@ -6081,23 +7014,24 @@ if ($this->is_trustindex_connected()): ?>
 </p>
 <?php endforeach; ?>
 <?php else: ?>
-<?php echo self::get_alertbox("warning",
-__("You have no widget saved!", 'trustindex-plugin') . " "
-. "<a target='_blank' href='" . "https://admin.trustindex.io/" . "widget'>". __("Let's go, create amazing widgets for free!", 'trustindex-plugin')."</a>"
-); ?>
+<?php echo wp_kses_post(self::get_alertbox("warning",
+esc_html(__("You have no widget saved!", 'wp-reviews-plugin-for-google')) . " "
+. "<a target='_blank' href='" . "https://admin.trustindex.io/" . "widget'>". esc_html(__("Let's go, create amazing widgets for free!", 'wp-reviews-plugin-for-google'))."</a>"
+)); ?>
 <?php endif; ?>
 <?php else: ?>
-<?php echo self::get_alertbox("warning",
-__("You have not set up your Trustindex account yet!", 'trustindex-plugin') . " "
-. sprintf(__("Go to <a href='%s'>plugin setup page</a> to complete the one-step setup guide and enjoy the full functionalization!", 'trustindex-plugin'), admin_url('admin.php?page='.$this->get_plugin_slug().'/settings.php&tab=advanced'))
-); ?>
+<?php echo wp_kses_post(self::get_alertbox("warning",
+esc_html(__("You have not set up your Trustindex account yet!", 'wp-reviews-plugin-for-google')) . " "
+/* translators: %s: URL */
+. wp_kses(sprintf(__("Go to <a href='%s'>plugin setup page</a> to complete the one-step setup guide and enjoy the full functionalization!", 'wp-reviews-plugin-for-google'), admin_url('admin.php?page='.$this->get_plugin_slug().'/settings.php&tab=advanced')))
+)); ?>
 <?php endif;
 wp_die();
 }
 public function trustindex_add_scripts($hook)
 {
 if ($hook === 'widgets.php') {
-wp_enqueue_script('trustindex_script', $this->get_plugin_file_url('static/js/admin-widget.js'), [], $this->getVersion());
+wp_enqueue_script('trustindex_script', $this->get_plugin_file_url('static/js/admin-widget.js'), [], $this->getVersion(), ['in_footer' => false]);
 wp_enqueue_style('trustindex_style', $this->get_plugin_file_url('static/css/admin-widget.css'), [], $this->getVersion());
 }
 else if ($hook === 'post.php') {
@@ -6113,20 +7047,20 @@ if (file_exists($this->get_plugin_dir() . 'static' . DIRECTORY_SEPARATOR . 'css'
 wp_enqueue_style('trustindex_settings_style_'. $this->getShortName(), $this->get_plugin_file_url('static/css/admin-page-settings.css'), [], $this->getVersion());
 }
 if (file_exists($this->get_plugin_dir() . 'static' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'admin-page-settings-common.js')) {
-wp_enqueue_script('trustindex_settings_script_common_'. $this->getShortName(), $this->get_plugin_file_url('static/js/admin-page-settings-common.js'), [], $this->getVersion());
+wp_enqueue_script('trustindex_settings_script_common_'. $this->getShortName(), $this->get_plugin_file_url('static/js/admin-page-settings-common.js'), [], $this->getVersion(), ['in_footer' => false]);
 }
 if(file_exists($this->get_plugin_dir() . 'static' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'admin-page-settings-connect.js')) {
-wp_enqueue_script('trustindex_settings_script_connect_'. $this->getShortName(), $this->get_plugin_file_url('static/js/admin-page-settings-connect.js'), [], $this->getVersion());
+wp_enqueue_script('trustindex_settings_script_connect_'. $this->getShortName(), $this->get_plugin_file_url('static/js/admin-page-settings-connect.js'), [], $this->getVersion(), ['in_footer' => false]);
 }
 if (file_exists($this->get_plugin_dir() . 'static' . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'spectrum.css')) {
 wp_enqueue_style('trustindex_settings_spectrum_'. $this->getShortName(), $this->get_plugin_file_url('static/css/spectrum.css'), [], $this->getVersion());
 }
 if (file_exists($this->get_plugin_dir() . 'static' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'spectrum.js')) {
-wp_enqueue_script('trustindex_settings_spectrum_'. $this->getShortName(), $this->get_plugin_file_url('static/js/spectrum.js'), [], $this->getVersion());
+wp_enqueue_script('trustindex_settings_spectrum_'. $this->getShortName(), $this->get_plugin_file_url('static/js/spectrum.js'), [], $this->getVersion(), ['in_footer' => false]);
 }
 }
 }
-wp_register_script('trustindex_admin_notification', $this->get_plugin_file_url('static/js/admin-notification.js') );
+wp_register_script('trustindex_admin_notification', $this->get_plugin_file_url('static/js/admin-notification.js'), [], $this->getVersion(), ['in_footer' => false]);
 wp_enqueue_script('trustindex_admin_notification');
 wp_enqueue_style('trustindex_admin_notification', $this->get_plugin_file_url('static/css/admin-notification.css'), [], $this->getVersion());
 }
@@ -6176,32 +7110,22 @@ return $pluginReturn;
 public function get_wp_details()
 {
 $data = [
-'domain' => $_SERVER['SERVER_NAME'],
+'domain' => isset($_SERVER['SERVER_NAME']) ? sanitize_text_field(wp_unslash($_SERVER['SERVER_NAME'])) : '',
 'current_theme' => [ 'slug' => get_template() ],
 'themes' => [],
 'plugins' => []
 ];
-if (function_exists('wp_get_theme')) {
 $theme = wp_get_theme();
-}
-else {
-$theme = get_theme(get_current_theme());
-}
 $data['current_theme']['name'] = $theme['Name'];
-$data['current_theme']['author'] = strip_tags($theme['Author']);
+$data['current_theme']['author'] = wp_strip_all_tags($theme['Author']);
 $data['current_theme']['version'] = $theme['Version'];
-if (function_exists('wp_get_themes')) {
 $themes = wp_get_themes();
-}
-else {
-$themes = get_themes();
-}
 if ($themes) {
 foreach ($themes as $slug => $theme) {
 $data['themes'][] = [
 'slug' => $theme['Template'],
 'name' => $theme['Name'],
-'author' => strip_tags($theme['Author']),
+'author' => wp_strip_all_tags($theme['Author']),
 'version' => $theme['Version']
 ];
 }
@@ -6215,7 +7139,7 @@ foreach ($plugins as $slug => $plugin) {
 $data['plugins'][] = [
 'slug' => explode('/', $slug)[0],
 'name' => $plugin['Name'],
-'author' => strip_tags($plugin['Author']),
+'author' => wp_strip_all_tags($plugin['Author']),
 'version' => $plugin['Version']
 ];
 }
@@ -6290,7 +7214,7 @@ if (!class_exists('WP_Block_Type_Registry')) {
 return;
 }
 if (!WP_Block_Type_Registry::get_instance()->is_registered('trustindex/block-selector')) {
-wp_register_script('trustindex-block-editor', $this->get_plugin_file_url('static/block-editor/block-editor.js'), [ 'wp-blocks', 'wp-editor' ], true);
+wp_register_script('trustindex-block-editor', $this->get_plugin_file_url('static/block-editor/block-editor.js'), [ 'wp-blocks', 'wp-editor' ], true, ['in_footer' => false]);
 register_block_type('trustindex/block-selector', [ 'editor_script' => 'trustindex-block-editor' ]);
 }
 }
@@ -6373,7 +7297,52 @@ check both actual name and lowercase name because LIKE is case sensitive in this
 and there is a possibility that $wpdb->prefix is something like "JxdFg_"
 (2024-08-23: "jxdfg_trustindex_google_reviews" table existed but this query returned false)
 */
-return ($wpdb->get_var("SHOW TABLES LIKE '$tableName'") == $tableName) || ($wpdb->get_var("SHOW TABLES LIKE '". strtolower($tableName) ."'") == strtolower($tableName));
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+return ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tableName)) == $tableName) || ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', strtolower($tableName))) == strtolower($tableName));
+}
+
+
+public function emptyViews()
+{
+if (!$this->is_table_exists('views')) {
+return false;
+}
+global $wpdb;
+$tableName = $this->get_tablename('views');
+$wpdb->query($wpdb->prepare('TRUNCATE %i', $tableName));
+return true;
+}
+public function increaseViews()
+{
+if (!$this->is_table_exists('views')) {
+return false;
+}
+global $wpdb;
+$tableName = $this->get_tablename('views');
+$today = gmdate('Y-m-d');
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$viewsToday = (int) $wpdb->get_var($wpdb->prepare('SELECT viewed FROM %i WHERE date = %s', $tableName, $today));
+if (!$viewsToday) {
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+$wpdb->insert($tableName, [
+'date' => $today,
+'viewed' => 1,
+]);
+} else {
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$wpdb->update($tableName, ['viewed' => $viewsToday + 1], ['date' => $today]);
+}
+return true;
+}
+public function getViewsByDays($days = 7)
+{
+if (!$this->is_table_exists('views')) {
+return 0;
+}
+global $wpdb;
+$tableName = $this->get_tablename('views');
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+return (int) $wpdb->get_var($wpdb->prepare('SELECT SUM(viewed) FROM %i WHERE DATEDIFF(NOW(), date) <= %d', $tableName, $days));
 }
 }
 ?>

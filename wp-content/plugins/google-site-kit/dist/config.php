@@ -7,5 +7,5 @@
  */
 
 return array(
-	'features' => array( 'googleTagGateway','gtagUserData','privacySandboxModule','proactiveUserEngagement','setupFlowRefresh' ),
+	'features' => array( 'googleTagGateway','gtagUserData','featureDiscoveryHub','pdfGeneration','rrmExpressSetup','setupFlowRefresh','setupFlowRefreshPhase4','siteGoals' ),
 );

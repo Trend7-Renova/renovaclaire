@@ -42,14 +42,14 @@ foreach (array (
 $list []= 'ti-widget-css-'. $platform;
 }
 foreach (array (
- 0 => 'instagram',
- 1 => 'facebook',
- 2 => 'youtube',
- 3 => 'google',
- 4 => 'twitter',
- 5 => 'tiktok',
- 6 => 'pinterest',
- 7 => 'vimeo',
+ 0 => 'facebook',
+ 1 => 'google',
+ 2 => 'instagram',
+ 3 => 'pinterest',
+ 4 => 'tiktok',
+ 5 => 'twitter',
+ 6 => 'vimeo',
+ 7 => 'youtube',
 ) as $platform) {
 $list []= 'trustindex-feed-widget-css-'. $platform;
 }
@@ -89,6 +89,17 @@ $tag = str_replace([
 ], $tag);
 }
 return $tag;
+}, 9999999);
+add_filter('script_loader_tag', function($tag) {
+if (!function_exists('borlabsCookieApi')) {
+return $tag;
+}
+$isLoaderScript = strpos($tag, 'trustindex') !== false && strpos($tag, '/loader') !== false;
+$isAlreadyIgnored = strpos($tag, 'data-borlabs-cookie-script-blocker-ignore') !== false;
+if (!$isLoaderScript || $isAlreadyIgnored) {
+return $tag;
+}
+return preg_replace('/<script(?=[\s>])/', '<script data-borlabs-cookie-script-blocker-ignore', $tag, 1);
 }, 9999999);
 $localizationFiles = get_option('litespeed.conf.optm-localize_domains');
 $isJson = false;

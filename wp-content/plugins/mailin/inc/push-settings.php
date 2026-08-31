@@ -46,6 +46,7 @@ if ( ! class_exists( 'SIB_Push_Settings' ) ) {
 
 		public function getBypassWordPressHttpClient() {
 			$storedValue = $this->get('bypassWordPressHttpClient');
+			if (!function_exists('curl_exec')) return false; // No curl, force use WP_Http
 			if ($storedValue === null) return true; // Bypass by default
 			return $storedValue ? true : false;
 		}
@@ -266,6 +267,16 @@ if ( ! class_exists( 'SIB_Push_Settings' ) ) {
 
 		public function setHideAdminBarShortcut($value) {
 			return $this->set('hideAdminBarShortcut', $value ? true : false);
+		}
+
+		public function getSendOnlyToThisDomain() {
+			$storedValue = $this->get('sendOnlyToThisDomain');
+			if ($storedValue === null) return true; // Default to true
+			return $storedValue ? true : false;
+		}
+
+		public function setSendOnlyToThisDomain($value) {
+			return $this->set('sendOnlyToThisDomain', $value ? true : false);
 		}
 
 		public function save() {

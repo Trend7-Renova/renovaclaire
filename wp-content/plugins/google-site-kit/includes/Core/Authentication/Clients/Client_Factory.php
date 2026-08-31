@@ -63,6 +63,16 @@ final class Client_Factory {
 
 		$http_client        = $client->getHttpClient();
 		$http_client_config = self::get_http_client_config( $http_client->getConfig() );
+
+		/**
+		 * Filters the Guzzle HTTP client configuration used for Google API requests.
+		 *
+		 * @since 1.177.0
+		 *
+		 * @param array $http_client_config Guzzle HTTP client configuration array.
+		 */
+		$http_client_config = apply_filters( 'googlesitekit_http_client_config', $http_client_config );
+
 		// In Guzzle 6+, the HTTP client is immutable, so only a new instance can be set.
 		$client->setHttpClient( new Client( $http_client_config ) );
 
@@ -132,7 +142,7 @@ final class Client_Factory {
 		// In our case however, the client is namespaced to be used by Site Kit only.
 		$config['headers']['User-Agent'] = Google_Proxy::get_application_name();
 
-		/** This filter is documented in wp-includes/class-http.php */
+		/** This filter is documented in wp-includes/class-http.php. */
 		$ssl_verify = apply_filters( 'https_ssl_verify', true, null );
 		// If SSL verification is enabled (default) use the SSL certificate bundle included with WP.
 		if ( $ssl_verify ) {

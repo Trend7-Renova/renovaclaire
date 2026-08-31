@@ -5,7 +5,7 @@
  * @package Rhubarb\RedisCache
  */
 
-defined( '\\ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 global $wp_object_cache;
 
@@ -44,10 +44,6 @@ $info['Credis'] = class_exists( 'Credis_Client' ) ? 'v1.14.0' : 'Not loaded';
 
 if ( defined( 'PHP_VERSION' ) ) {
     $info['PHP Version'] = PHP_VERSION;
-}
-
-if ( defined( 'HHVM_VERSION' ) ) {
-    $info['HHVM Version'] = HHVM_VERSION;
 }
 
 $info['Plugin Version'] = WP_REDIS_VERSION;

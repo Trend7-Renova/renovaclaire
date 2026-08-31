@@ -6,8 +6,12 @@ class Meow_MGL_Core {
 	private $gallery_layout = 'tiles';
 	private $is_gallery_used = true; // TODO: Would be nice to detect if the gallery is actually used on the current page.
 	private $skeleton_handler;
-	
+	private $pro_module = false;
+
+	private $preview_cutoff = 12; // Limit the number of images to show in the preview (for performance reasons)
+
 	private static $plugin_option_name = 'mgl_options';
+	private $pro;
 	private $option_name = 'mgl_options';
 	private $infinite_layouts = [
 		'tiles',
@@ -20,19 +24,25 @@ class Meow_MGL_Core {
 
 	private $rewrittenMwlData = [];
 
+	// Holds the image counts of the last preview render (used by the block editor).
+	public $last_preview_counts = [ 'total' => 0, 'shown' => 0 ];
+
 	public function __construct() {
 		load_plugin_textdomain( MGL_DOMAIN, false, MGL_PATH . '/languages' );
 
+		//TODO: Move Skeleton into PRO
 		// Initialize skeleton handler
 		require_once( MGL_PATH . '/classes/skeleton.php' );
 		$this->skeleton_handler = new Meow_MGL_Skeleton();
 
 		// Initializes the classes needed
-		MeowCommon_Helpers::is_rest() && new Meow_MGL_Rest( $this );
+		MeowKit_MGL_Helpers::is_rest() && new Meow_MGL_Rest( $this );
 
 		// The gallery build process should only be enabled if the request is non-asynchronous
-		if ( !MeowCommon_Helpers::is_asynchronous_request()  ) {
-			add_filter( 'wp_get_attachment_image_attributes', array( $this, 'wp_get_attachment_image_attributes' ), 25, 3 );
+		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'wp_get_attachment_image_attributes' ), 25, 3 );
+
+		if ( !MeowKit_MGL_Helpers::is_asynchronous_request()  ) {
+
 			if ( is_admin() || $this->is_gallery_used ) {
 				new Meow_MGL_Run( $this );
 			}
@@ -40,9 +50,9 @@ class Meow_MGL_Core {
 
 		// Load the Pro version *after* loading the Run class due to the JS file was gatherd into one file.
 
-		$pro_module = class_exists( 'MeowPro_MGL_Core' );
-		if ( $pro_module ) {
-			new MeowPro_MGL_Core( $this );
+		$this->pro_module = class_exists( 'MeowPro_MGL_Core' );
+		if ( $this->pro_module ) {
+			$this->pro = new MeowPro_MGL_Core( $this );
 		} else {
 			add_shortcode( 'meow-collection', array( $this, 'collection' ) );
 		}
@@ -56,6 +66,11 @@ class Meow_MGL_Core {
 
 		global $wpmgl;
 		$wpmgl = $this;
+
+		if ( $this->pro_module ) {
+			global $wpmgl_pro;
+			$wpmgl_pro = $this->pro;
+		}
 	}
 
 	function collection() {
@@ -88,9 +103,12 @@ class Meow_MGL_Core {
 			$sizes = '80vw';
 		else if ( $this->gallery_layout === 'justified' )
 			$sizes = '(max-width: 800px) 80vw, 50vw';
+
 		$sizes = apply_filters( 'mgl_sizes', $sizes, $this->gallery_layout, $attachment, $attr );
+		
 		if ( !empty( $sizes ) )
 			$attr['sizes'] = $sizes;
+		
 		return $attr;
 	}
 
@@ -98,8 +116,17 @@ class Meow_MGL_Core {
 		return $this->rewrittenMwlData;
 	}
 
-	function gallery( $atts, $isPreview = false ) {
+	// Get the IDs of the image attachments attached to the current post.
+	private function get_attached_image_ids() {
+		$attachments = get_attached_media( 'image' );
+		return array_map( function( $x ) { return $x->ID; }, $attachments );
+	}
+
+	function gallery( $atts, $options = [] ) {
 		$atts = apply_filters( 'shortcode_atts_gallery', $atts, null, $atts, 'gallery' );
+
+		$isPreview = isset( $options['isPreview'] ) ? $options['isPreview'] : false;
+		$isRest = isset( $options['isRest'] ) ? $options['isRest'] : false;
 
 		// Sanitize the atts to avoid XSS
 		$atts = array_map( function( $x ) { 
@@ -124,19 +151,23 @@ class Meow_MGL_Core {
 		$image_ids = array();
 		$layout = '';
 
-		if ( isset( $atts['id'] ) && isset( $atts['ids'] ) ) {
+		// All potential attributes that can be used to get the images for the gallery
+		$has_id  = isset( $atts['id'] )  && !empty( $atts['id'] );
+		$has_ids = isset( $atts['ids'] ) && !empty( $atts['ids'] );
+		$has_include = isset( $atts['include'] ) && !empty( $atts['include'] );
+		$has_tags    = isset( $atts['tags'] ) && !empty( $atts['tags'] );
+		$has_posts   = isset( $atts['posts'] ) && !empty( $atts['posts'] );
+		$has_latest_posts = isset( $atts['latest_posts'] ) && !empty( $atts['latest_posts'] );
+		$has_attachments = isset( $atts['attachments'] ) && ( $atts['attachments'] === 'true' || $atts['attachments'] === true || $atts['attachments'] === 1 || $atts['attachments'] === '1' );
 
-			// Check if the ids are empty, then we can use the id
-			if ( empty( $atts['ids'] ) ) {
-				unset( $atts['ids'] );
-			} else {
-				error_log( "⚠️ Meow Gallery: in gallery $atts[id] both 'id' and 'ids' attributes are used in the same shortcode. 'id' will be ignored." );
-			}
+		if ( $has_id && $has_ids ) {
+			unset( $atts['ids'] );
+			error_log( "⚠️ Meow Gallery: in gallery $atts[id] both 'id' and 'ids' attributes are used in the same shortcode. 'id' will be ignored." );
 		}
 
 		// Get the IDs
 		#region media_ids
-		if ( (isset( $atts['id'] ) && !empty($atts['id']) ) && !isset( $atts['ids'] ) ) {
+		if ( $has_id && !$has_ids ) {
 			$shortcode_id = $atts['id'];
 
 			try {
@@ -153,23 +184,87 @@ class Meow_MGL_Core {
 			$image_ids = $shortcode['medias']['thumbnail_ids'];
 			unset( $shortcode['medias'] );
 
-			if ( isset( $shortcode['layout'] ) ) {
-				$layout = $shortcode['layout'];
-				unset( $shortcode['layout'] );
+			//* We merge $atts into $shortcode ( not $shortcode into $atts ) so we can override the gallery settings even when using the ID.
+			// Override specifics: "default" layout from atts should be the layout from shortcode
+			if( array_key_exists('layout', $atts) && $atts['layout'] == 'default' )
+			{ 
+				$atts['layout'] = $shortcode['layout'];
 			}
 
-			$atts = array_merge( $atts, $shortcode );
+			$atts = array_merge( $shortcode, $atts );
 		}
 
-		if ( isset( $atts['ids'] ) ) {
+		// Real Media Library folder path (e.g. rml="2025/France/Tours").
+		// Re-evaluated here (not only from the top) so it also works when the value
+		// comes from a saved gallery loaded via [gallery id="..."]. The logic lives
+		// in Meow_MGL_RML::get_image_ids() to keep this method clean.
+		$has_rml = isset( $atts['rml'] ) && !empty( $atts['rml'] );
+		if ( $has_rml ) {
+			$rml_ids = Meow_MGL_RML::get_image_ids( $atts['rml'] );
+			if ( is_wp_error( $rml_ids ) ) {
+				return "<p class='meow-error'><b>Meow Gallery:</b> " . esc_html( $rml_ids->get_error_message() ) . "</p>";
+			}
+			$image_ids = implode( ',', $rml_ids );
+		}
+
+		if ( $has_ids ) {
 			$image_ids = $atts['ids'];
 		}
-		if ( isset( $atts['include'] ) ) {
+
+		if ( $has_include ) {
 			$image_ids = is_array( $atts['include'] ) ? implode( ',', $atts['include'] ) : $atts['include'];
 			$atts['include'] = $image_ids;
 		}
 
-		if ( isset( $atts['latest_posts'] ) ) {
+		// Tags support
+		if ( $has_tags ) {
+			$tags = is_array( $atts['tags'] ) ? $atts['tags'] : array_map( 'trim', explode( ',', $atts['tags'] ) );
+			
+			// Try multiple common taxonomies used for media tagging
+			$taxonomies_to_try = [ 'post_tag', 'media_tag', 'attachment_tag', 'attachment_category' ];
+			$taxonomies_to_try = apply_filters( 'mgl_tags_taxonomies', $taxonomies_to_try );
+			
+			$tagged_media_ids = [];
+			
+			foreach ( $taxonomies_to_try as $taxonomy ) {
+				if ( !taxonomy_exists( $taxonomy ) ) {
+					continue;
+				}
+				
+				$args = [
+					'post_type' => 'attachment',
+					'post_status' => 'inherit',
+					'posts_per_page' => -1,
+					'fields' => 'ids',
+					'tax_query' => [
+						[
+							'taxonomy' => $taxonomy,
+							'field' => 'slug',
+							'terms' => $tags,
+						]
+					]
+				];
+				
+				$query = new WP_Query( $args );
+				if ( !empty( $query->posts ) ) {
+					$tagged_media_ids = array_merge( $tagged_media_ids, $query->posts );
+				}
+			}
+			
+			$tagged_media_ids = array_unique( $tagged_media_ids );
+			
+			if ( !empty( $tagged_media_ids ) ) {
+				if ( !empty( $image_ids ) ) {
+					// Merge with existing IDs
+					$existing_ids = is_array( $image_ids ) ? $image_ids : explode( ',', $image_ids );
+					$image_ids = implode( ',', array_unique( array_merge( $existing_ids, $tagged_media_ids ) ) );
+				} else {
+					$image_ids = implode( ',', $tagged_media_ids );
+				}
+			}
+		}
+
+		if ( $has_latest_posts ) {
 			$num_posts = intval( $atts['latest_posts'] );
 
 			if ( $num_posts > 0 ) {
@@ -177,7 +272,7 @@ class Meow_MGL_Core {
 				$latest_posts = get_posts( [ 'numberposts' => $num_posts ] );
 				$latest_posts_ids = array_map( function( $x ) { return $x->ID; }, $latest_posts );
 
-				if ( isset( $atts['posts'] ) ) {
+				if ( $has_posts ) {
 					error_log( "⚠️ Meow Gallery: in gallery $atts[id] both 'latest_posts' and 'posts' attributes are used in the same shortcode. 'latest_posts' will be merged with 'posts'.");
 					$atts['posts'] = array_merge( $latest_posts_ids, explode(',', $atts['posts']) );
 				}
@@ -188,8 +283,15 @@ class Meow_MGL_Core {
 
 		}
 
+		if( $has_attachments ) {
+			$attachmentIds = $this->get_attached_image_ids();
+			if ( !empty( $attachmentIds ) ) {
+				$image_ids = implode( ',', $attachmentIds );
+			}
+		}
+
 		$posts_ids = [];
-		if (isset($atts['posts'])) {
+		if ( $has_posts ) {
 			
 			$posts_ids = is_array( $atts['posts'] ) ? $atts['posts'] : explode( ',', $atts['posts'] );
 			$featured_images = [];
@@ -211,6 +313,7 @@ class Meow_MGL_Core {
 			$posts_ids = array_values($posts_ids);
 		}
 
+
 		// Filter the IDs
 		$ids = is_array( $image_ids ) ? $image_ids : explode( ',', $image_ids );
 		$ids = apply_filters( 'mgl_ids', $ids, $atts );
@@ -218,36 +321,80 @@ class Meow_MGL_Core {
 
 		#endregion
 
-		// Use attached images if still empty
-		if ( empty( $image_ids ) ) {
-			$attachments = get_attached_media( 'image' );
-			$attachmentIds = array_map( function($x) { return $x->ID; }, $attachments );
+		// Fall back to the attachments of the current post if the gallery is empty and the option is enabled.
+		if ( empty( $image_ids ) && !$has_attachments && $this->get_option( 'use_attachments_on_empty', false ) ) {
+			$attachmentIds = $this->get_attached_image_ids();
 			if ( !empty( $attachmentIds ) ) {
 				$image_ids = implode( ',', $attachmentIds );
+				$has_attachments = true;
 			}
-			else {
-				return "<p class='meow-error'><b>Meow Gallery:</b> The gallery is empty.</p>";
+		}
+
+		// Use attached images if still empty
+		if ( empty( $image_ids ) ) {
+
+			if( $has_attachments ) {
+				return "<p class='meow-error'><b>Meow Gallery:</b> No attached medias were found in the current post.</p>";
 			}
+
+			return "<p class='meow-error'><b>Meow Gallery:</b> The gallery is empty.</p>";
 		}
 
 		if ( $isPreview ) {
 			$check = explode( ',', $image_ids );
-			$check = array_slice( $check, 0, 40 );
+			$total = count( $check );
+			$check = array_slice( $check, 0, $this->preview_cutoff );
+			$this->last_preview_counts = [ 'total' => $total, 'shown' => count( $check ) ];
 			$image_ids = implode( ',', $check );
+		}
+
+		// Limit images on archive/listing pages (not viewing the full single post)
+		$should_truncate = $this->get_option( 'truncate_on_listing', true );
+		$is_archive_context = !is_singular() && !is_admin() && !$isPreview && !$isRest && $should_truncate;
+		$is_archive_context = apply_filters( 'mgl_is_archive_context', $is_archive_context, $atts );
+		if ( $is_archive_context ) {
+			$archive_limit = intval( $this->get_option( 'truncate_count', 4 ) );
+
+			if( $archive_limit === 0 ) {
+				return ""; // If the user does not want the gallery to be shown at all on listing pages
+			}
+
+			if ( $archive_limit > 0 ) {
+				$check = explode( ',', $image_ids );
+				if ( count( $check ) > $archive_limit ) {
+					$check = array_slice( $check, 0, $archive_limit );
+					$image_ids = implode( ',', $check );
+					$atts['is_truncated'] = true; // Flag to potentially show "view more" indicator
+				}
+			}
 		}
 
 		// Ordering
 		if ( isset( $atts['orderby'] ) || isset( $atts['order_by'] ) ) {
-			
+
+			$orderby = '';
+			$order   = 'asc';
+
+			if ( isset( $atts['order'] ) ) {
+				$order = $atts['order'];
+			}
+
 			if ( isset( $atts['orderby'] ) ) {
 				$orderby = $atts['orderby'];
-				$order   = isset( $atts['order'] ) ? $atts['order'] : 'asc';
 			}
 
 			if ( isset( $atts['order_by'] ) ) {
-				$orderby = explode( '-', $atts['order_by'] )[0];
-				$order   = explode( '-', $atts['order_by'] )[1];
+				$orderby = $atts['order_by'];
 			}
+
+			if( strpos( $orderby, '-' ) != false ) {
+				$left = explode( '-', $orderby )[0];
+				$right   = explode( '-', $orderby )[1];
+
+				$orderby = $left;
+				$order   = $right;
+			}
+
 
 			$image_ids = explode( ',', $image_ids );
 			$image_ids = Meow_MGL_OrderBy::run( $image_ids, $orderby, $order );
@@ -341,12 +488,19 @@ class Meow_MGL_Core {
 			$data_atts
 		);
 
-		// Run at /wp-includes/formatting.php on line 3501
-		$textarr = preg_split( '/(<.*>)/U', $html , -1, PREG_SPLIT_DELIM_CAPTURE);
-		if ( $textarr === false ) {
-			$error = preg_last_error();
-			error_log( "[MEOW GALLERY] Regex: " . preg_last_error_msg() . " (Code $error)" );
-			return "<p class='meow-error'><b>Meow Gallery:</b> There was an error while building the gallery. Check your PHP Logs.</p>";
+		// Run at /wp-includes/formatting.php on line 6037
+		// WordPress returns early if the text is simple ASCII without emoji-like content,
+		// so we only need to check preg_split if WordPress would actually run it.
+		$needs_emoji_check = str_contains( $html, '&#x' ) || 
+			!( ( function_exists( 'mb_check_encoding' ) && mb_check_encoding( $html, 'ASCII' ) ) || ! preg_match( '/[^\x00-\x7F]/', $html ) );
+		
+		if ( $needs_emoji_check ) {
+			$textarr = preg_split( '/(<.*>)/U', $html , -1, PREG_SPLIT_DELIM_CAPTURE);
+			if ( $textarr === false ) {
+				$error = preg_last_error();
+				error_log( "[MEOW GALLERY] Regex: " . preg_last_error_msg() . " (Code $error)" );
+				return "<p class='meow-error'><b>Meow Gallery:</b> The gallery is too large for your Wordpress pcre.backtrack_limit, increase it in your server settings, or reduce your gallery size.";
+			}
 		}
 		
 		//The Gallery Container is where the images in the right layout will be rendered.
@@ -355,7 +509,8 @@ class Meow_MGL_Core {
 		// Add skeleton loading placeholder to prevent layout shift
 		$skeleton_loading = $this->get_option( 'skeleton_loading', true );
 		if ( $skeleton_loading ) {
-			$html .= $this->skeleton_handler->get_skeleton_html( $layout, $gallery_options );
+			$image_count = count( $gallery_images );
+			$html .= $this->skeleton_handler->get_skeleton_html( $layout, $gallery_options, $image_count );
 		}
 		
 		// Use the DOM to generate the images (so that lightboxes can hook into them, and for better SEO)
@@ -367,7 +522,9 @@ class Meow_MGL_Core {
 			foreach ( $gallery_images as $image ) {
 				if ( !empty( $image['link_href'] ) ) {
 					// If there is a link, we will get the alt from the image id so we have a proper aria-label
-					$aria = get_post_meta( $image['id'], '_wp_attachment_image_alt', true );
+					$aria_label = __('Open image', MGL_DOMAIN);
+					$aria_value = esc_attr( get_post_meta( $image['id'], '_wp_attachment_image_alt', true ) );
+					$aria = !empty( $aria_value ) ? $aria_label . ': ' . $aria_value : $aria_label;
 
 					$custom_link_classes = apply_filters( 'mgl_custom_link_classes', '', $image );
 					$html .= '<a class="' . $custom_link_classes . '" href="' . $image['link_href'] . '" target="' . $image['link_target'] . '" rel="' . $image['link_rel'] . 
@@ -544,20 +701,25 @@ class Meow_MGL_Core {
 	}
 
 	function reset_options() {
+		delete_option( 'mgl_db_version');
 		delete_option( $this->option_name );
 	}
 
 	function list_options() {
 		return array(
 			'layout' => 'tiles',
-			'captions' => 'none',
+			'ç' => 'none',
 			'link' => null,
+			'caption_source' => 'caption',
 			'captions_alignment' => 'center',
 			'captions_background' => 'fade-black',
 			'animation' => false,
 			'image_size' => 'srcset',
-			'infinite' => false,
-			'infinite_buffer' => 0,
+			'truncate_on_listing' => true,
+			'truncate_count' => 4,
+			'use_attachments_on_empty' => false,
+			'debug_logs' => false,
+			
 			'rendering_mode' => 'dom', // Can be 'dom' or 'js'
 			'tiles_gutter' => 10,
 			'tiles_gutter_tablet' => 10,
@@ -586,7 +748,7 @@ class Meow_MGL_Core {
 			'carousel_arrow_nav_enabled' => true,
 			'carousel_dot_nav_enabled' => true,
 			'carousel_infinite' => false,
-			'map_engine' => '',
+			'map_engine' => 'googlemaps',
 			'map_height' => 500,
 			'map_zoom' => 10,
 			'map_gutter' => 10,
@@ -595,9 +757,33 @@ class Meow_MGL_Core {
 			'mapbox_token' => '',
 			'mapbox_style' => '{"username":"", "style_id":""}',
 			'maptiler_token' => '',
+			
+			// Stylish effect options
+			'stylish_enabled' => false,
+			'stylish_border_radius' => 6,
+			'stylish_border_width' => 0,
+			'stylish_border_color' => '#ffffff',
+			'stylish_shadow_opacity' => 0.08,
+			'stylish_shadow_opacity_hover' => 0.12,
+			'stylish_hover_lift' => 2,
+			'stylish_transition_speed' => 250,
+
+			//PRO OPTIONS
+			'infinite' => false,
+			'infinite_buffer' => 0,
 			'right_click' => false,
 			'gallery_shortcode_override_disabled' => false,
-			'skeleton_loading' => true,
+			'skeleton_loading' => false,
+		);
+	}
+
+	function list_pro_options() {
+		return array(
+			'infinite' => false,
+			'infinite_buffer' => 0,
+			'right_click' => false,
+			'gallery_shortcode_override_disabled' => false,
+			'skeleton_loading' => false,
 		);
 	}
 
@@ -608,10 +794,14 @@ class Meow_MGL_Core {
 	}
 
 	// Upgrade from the old way of storing options to the new way.
+	
 	function check_options( $options = [] ) {
 		$plugin_options = $this->list_options();
+		$pro_options = $this->list_pro_options();
+
 		$options = empty( $options ) ? [] : $options;
 		$hasChanges = false;
+
 		foreach ( $plugin_options as $option => $default ) {
 			// The option already exists
 			if ( isset( $options[$option] ) ) {
@@ -623,6 +813,16 @@ class Meow_MGL_Core {
 			delete_option( 'mgl_' . $option );
 			$hasChanges = true;
 		}
+
+		if( !$this->pro_module ) {
+			foreach ( $pro_options as $pro_option => $default ) {
+				if ( $options[$pro_option] !== $default ) {
+					$options[$pro_option] = $default;
+					$hasChanges = true;
+				}
+			}
+		}
+
 		if ( $hasChanges ) {
 			update_option( $this->option_name , $options );
 		}
@@ -647,26 +847,70 @@ class Meow_MGL_Core {
 
 	# endregion
 
+	function get_caption_from_source( $image ) {
+		$caption_source = $this->get_option( 'caption_source', 'caption' );
+		$caption = '';
+
+		switch ( $caption_source ) {
+			case 'title':
+				$caption = $image->title;
+				break;
+			case 'caption':
+				$caption = $image->caption;
+				break;
+			case 'description':
+				$caption = $image->description;
+				break;
+			case 'alt':
+				$caption = $image->alt;
+				break;
+			default:
+				$caption = $image->caption;
+				break;
+		}
+
+		return $caption;
+	}
+
 	function get_gallery_images( array $image_ids, array $atts, string $layout, string $size, array $posts_ids = []) {
 		global $wpdb;
+
+		// Enable the image-attribute rewriting (and the 'mgl_sizes' filter) for the duration of this method.
+		// This matters when get_gallery_images() is called directly (e.g. infinite scroll via REST) without
+		// going through gallery(), which is what normally sets these on the initial page load.
+		$previous_gallery_process = $this->gallery_process;
+		$previous_gallery_layout = $this->gallery_layout;
+		$this->gallery_process = true;
+		$this->gallery_layout = $layout;
 
 		// Escape the array of IDs for SQL
 		$ids = array_map( 'intval', $image_ids );
 		$ids_str = implode( ',', $ids );
 
-		$query = "SELECT p.ID id, p.post_excerpt caption, m.meta_value meta
-			FROM $wpdb->posts p, $wpdb->postmeta m
-			WHERE m.meta_key = '_wp_attachment_metadata'
-			AND p.ID = m.post_id
+		$query = "SELECT
+					p.ID id,
+					p.post_title title,
+					p.post_content description,
+					p.post_excerpt caption,
+					pm.meta_value alt,
+					pm2.meta_value meta
+
+			FROM $wpdb->posts p
+			LEFT JOIN $wpdb->postmeta pm  ON pm.post_id = p.ID  AND pm.meta_key  = '_wp_attachment_image_alt'
+			LEFT JOIN $wpdb->postmeta pm2 ON pm2.post_id = p.ID AND pm2.meta_key = '_wp_attachment_metadata'
+
+			WHERE p.post_type = 'attachment'
+
 			AND p.ID IN (" . $ids_str . ")
 		";
+
 		$res = $wpdb->get_results( $query );
 
 		$ids = explode( ',', $ids_str );
 		$images = [];
 		foreach ( $res as $r ) {
 			$images[$r->id] = [
-				'caption' => $r->caption,
+				'caption' => $this->get_caption_from_source( $r ),
 				'meta' => unserialize( $r->meta ),
 			];
 		}
@@ -678,7 +922,10 @@ class Meow_MGL_Core {
 		$ids = apply_filters( 'mgl_sort', $cleanIds, $images, $layout, $atts );
 
 		if ($layout === 'map') {
-			return $this->get_map_images( $ids, $images, $atts );
+			$map_result = $this->get_map_images( $ids, $images, $atts );
+			$this->gallery_process = $previous_gallery_process;
+			$this->gallery_layout = $previous_gallery_layout;
+			return $map_result;
 		}
 
 		$result = [];
@@ -733,11 +980,19 @@ class Meow_MGL_Core {
 			$result[] = array_merge( $image, $mergedArray, $orientation );
 		}
 
+		$this->gallery_process = $previous_gallery_process;
+		$this->gallery_layout = $previous_gallery_layout;
+
 		return $result;
 	}
 
 	private function get_image_class( $id, $layout, $noLightbox ) {
-    $base_class = $layout === 'carousel' ? 'skip-lazy' : 'wp-image-' . $id;
+    $base_class = 'wp-image-' . $id;
+	
+	if( $layout === 'carousel' ) {
+		$base_class .= ' skip-lazy';
+	}
+
     if ( $noLightbox ) {
       $base_class .= ' no-lightbox';
     }
@@ -761,7 +1016,7 @@ class Meow_MGL_Core {
 		if ( empty( $image_size ) || $image_size === 'srcset' ) {
 			$img_html = wp_get_attachment_image( $id, $size, false, [
 				'class' => $this->get_image_class( $id, $layout, $noLightbox ),
-				'draggable' => $layout === 'carousel' ? 'false' : null
+				'draggable' => $layout === 'carousel' ? 'false' : null,
 			]);
 		}
 		else {
@@ -790,6 +1045,7 @@ class Meow_MGL_Core {
 				'src'      => true,
 				'srcset'   => true,
 				'loading'  => true,
+				'tabindex' => true,
 				'sizes'    => true,
 				'class'    => true,
 				'id'       => true,
@@ -947,6 +1203,7 @@ class Meow_MGL_Core {
 		}
 		$gallery['medias'] = maybe_unserialize( $gallery['medias'] );
 		$gallery['posts'] = $gallery['posts'] ? maybe_unserialize( $gallery['posts'] ) : null;
+		$gallery['tags'] = $gallery['tags'] ? unserialize( $gallery['tags'] ) : null;
 
 		return $gallery;
 	}
@@ -967,39 +1224,51 @@ class Meow_MGL_Core {
 				'lead_image_id' => $gallery['lead_image_id'],
 				'order_by' => $gallery['order_by'],
 				'is_post_mode' => ( bool )$gallery['is_post_mode'],
+				'dynamic_source' => $gallery['dynamic_source'],
 				'hero' => ( bool )$gallery['is_hero_mode'],
 				'posts' => $gallery['posts'] ? maybe_unserialize( $gallery['posts'] ) : null,
 				'latest_posts' => $gallery['latest_posts'],
+				'tags' => $gallery['tags'] ? unserialize( $gallery['tags'] ) : null,
+				'dynamic_source' => $gallery['dynamic_source'],
+				'rml' => $gallery['rml'] ?? null,
 				'updated' => strtotime( $gallery['updated_at'] )
 			];
 		}
 		return $galleries;
 	}
 
-	public function get_galleries( $offset = 0, $limit = 10, $order = 'DESC', $page = 1 ) {
+	public function get_galleries( $offset = 0, $limit = 10, $order = 'DESC', $sort = null, $page = 1, $search = '' ) {
 		global $wpdb;
 		$shortcodes_table = $wpdb->prefix . 'mgl_gallery_shortcodes';
-		
-		// Check if table exists, if not fall back to option
-		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$shortcodes_table'" ) === $shortcodes_table;
-		
-		if ( !$table_exists ) {
-			throw new Exception( __( 'Table does not exist. Make sure you have the latest version of the plugin.', MGL_DOMAIN ));
-			return;
-		}
-		
-		// Use the new table
+		Meow_MGL_Migrations::check_db();
+
 		// Get total count
-		$total = $wpdb->get_var( "SELECT COUNT( * ) FROM $shortcodes_table" );
+		$total = 0;
+		if ( empty( $search ) ) {
+			$total = $wpdb->get_var( "SELECT COUNT( * ) FROM $shortcodes_table" );
+		} else {
+			$total = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( * ) FROM $shortcodes_table WHERE name LIKE %s", '%' . $wpdb->esc_like( $search ) . '%' ) );
+		}
+
 		// Calculate offset based on page if provided
 		if ($page > 1 && $offset === 0) {
 			$offset = ($page - 1) * $limit;
 		}
 		
 		// Get shortcodes with pagination and sorting
+	    $sort_accessor_to_column = [
+			'info' => 'name',
+			'updated' => 'updated_at',
+			'rank' => 'pref_rank',
+		];
+		
+		$sort = $sort_accessor_to_column[$sort] ?? 'pref_rank';
+		$order = in_array( strtoupper( $order ), ['ASC', 'DESC'] ) ? strtoupper( $order ) : 'DESC';
+
+		// Sort by rank DESC first, then by updated_at for equal ranks
 		$query = $wpdb->prepare(
-			"SELECT * FROM $shortcodes_table ORDER BY updated_at $order LIMIT %d, %d",
-			$offset, $limit
+			"SELECT * FROM $shortcodes_table WHERE name LIKE %s ORDER BY $sort $order, updated_at DESC LIMIT %d, %d",
+			'%' . $wpdb->esc_like( $search ) . '%', $offset, $limit
 		);
 		
 		$results = $wpdb->get_results( $query, ARRAY_A );
@@ -1018,6 +1287,10 @@ class Meow_MGL_Core {
 				'hero' => ( bool )$gallery['is_hero_mode'],
 				'posts' => $gallery['posts'] ? maybe_unserialize( $gallery['posts'] ) : null,
 				'latest_posts' => $gallery['latest_posts'],
+				'tags' => $gallery['tags'] ? unserialize( $gallery['tags'] ) : null,
+				'dynamic_source' => $gallery['dynamic_source'],
+				'rml' => $gallery['rml'] ?? null,
+				'rank' => intval( $gallery['pref_rank'] ?? 0 ),
 				'updated' => strtotime( $gallery['updated_at'] )
 			];
 		}
@@ -1072,21 +1345,18 @@ class Meow_MGL_Core {
 		return $collection;
 	}
 
-	public function get_collections( $offset = 0, $limit = 10, $order = 'DESC', $page = 1 ) {
+	public function get_collections( $offset = 0, $limit = 10, $order = 'DESC', $page = 1, $search = '' ) {
 		global $wpdb;
 		$collections_table = $wpdb->prefix . 'mgl_collections';
 		$shortcodes_table = $wpdb->prefix . 'mgl_gallery_shortcodes';
-		
-		// Check if table exists, if not fall back to option
-		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$collections_table'" ) === $collections_table;
-		
-		if ( !$table_exists ) {
-			throw new Exception( __( 'Table does not exist. Make sure you have the latest version of the plugin.', MGL_DOMAIN ));
-			return;
-		}
-		
+		Meow_MGL_Migrations::check_db();
+
 		// Get total count
-		$total = $wpdb->get_var( "SELECT COUNT( * ) FROM $collections_table" );
+		if( empty( $search ) ) {
+			$total = $wpdb->get_var( "SELECT COUNT( * ) FROM $collections_table" );
+		} else {
+			$total = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( * ) FROM $collections_table WHERE name LIKE %s", '%' . $wpdb->esc_like( $search ) . '%' ) );
+		}
 		// Calculate offset based on page if provided
 		if ($page > 1 && $offset === 0) {
 			$offset = ($page - 1) * $limit;
@@ -1094,8 +1364,8 @@ class Meow_MGL_Core {
 		
 		// Get collections with pagination and sorting
 		$query = $wpdb->prepare(
-			"SELECT * FROM $collections_table ORDER BY updated_at $order LIMIT %d, %d",
-			$offset, $limit
+			"SELECT * FROM $collections_table WHERE name LIKE %s ORDER BY updated_at $order LIMIT %d, %d",
+			'%' . $wpdb->esc_like( $search ) . '%', $offset, $limit
 		);
 		
 		$collections = $wpdb->get_results( $query, ARRAY_A );
@@ -1126,6 +1396,8 @@ class Meow_MGL_Core {
 						'hero' => ( bool )$gallery['is_hero_mode'],
 						'posts' => $gallery['posts'] ? unserialize( $gallery['posts'] ) : null,
 						'latest_posts' => $gallery['latest_posts'],
+						'tags' => $gallery['tags'] ? unserialize( $gallery['tags'] ) : null,
+						'dynamic_source' => $gallery['dynamic_source'],
 						'updated' => strtotime( $gallery['updated_at'] )
 					];
 					$galleries[] = $gallery_item;

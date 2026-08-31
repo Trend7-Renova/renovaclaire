@@ -6,6 +6,8 @@
  * @copyright 2024 Google LLC
  * @license   https://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://sitekit.withgoogle.com
+ *
+ * phpcs:disable PHPCS.Commenting.RequireDocTagDescription -- Pre-existing violations; tracked for follow-up cleanup.
  */
 
 namespace Google\Site_Kit\Core\Consent_Mode;
@@ -144,7 +146,7 @@ class Consent_Mode implements Provides_Feature_Metrics {
 		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php'; // For Plugin_Upgrader and Plugin_Installer_Skin.
 		require_once ABSPATH . 'wp-admin/includes/plugin-install.php'; // For plugins_api.
 
-		$api = plugins_api(
+		$api = (object) plugins_api(
 			'plugin_information',
 			array(
 				'slug'   => $slug,

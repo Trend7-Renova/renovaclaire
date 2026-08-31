@@ -23,18 +23,16 @@ class Email_Assets {
 	/**
 	 * CDN base URL for email assets.
 	 *
-	 * TODO: Change to the production URL when the assets are uploaded to production bucket in #11551.
-	 *
 	 * @since 1.173.0
 	 * @var string
 	 */
-	const BASE_URL = 'https://storage.googleapis.com/pue-email-assets-dev/';
+	const BASE_URL = 'https://sitekit-static.withgoogle.com/';
 
 	/**
 	 * Asset registry.
 	 *
 	 * Maps asset slugs to their full CDN filenames.
-	 * Format: 'asset-slug' => 'YYYY-MM-DD-asset-slug.ext'
+	 * Format: 'asset-slug' => 'YYYY-MM-DD-asset-slug.ext'.
 	 *
 	 * @since 1.173.0
 	 * @var array
@@ -50,6 +48,7 @@ class Email_Assets {
 		'icon-search'                   => '2025-12-01-icon-search.png',
 		'icon-views'                    => '2025-12-01-icon-views.png',
 		'icon-visitors'                 => '2025-12-01-icon-visitors.png',
+		'icon-star'                     => '2026-03-03-icon-star.png',
 		'conversions-timeline-green'    => '2025-12-01-conversions-timeline-green.png',
 		'conversions-timeline-red'      => '2025-12-01-conversions-timeline-red.png',
 		'notification-icon-star'        => '2025-12-01-notification-icon-star.png',

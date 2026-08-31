@@ -6,6 +6,8 @@
  * @copyright 2021 Google LLC
  * @license   https://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://sitekit.withgoogle.com
+ *
+ * phpcs:disable PHPCS.Commenting.RequireDocTagDescription -- Pre-existing violations; tracked for follow-up cleanup.
  */
 
 namespace Google\Site_Kit\Core\Authentication;
@@ -72,7 +74,7 @@ final class Authentication implements Provides_Feature_Metrics {
 	private $user_options = null;
 
 	/**
-	 * User_Input
+	 * User_Input.
 	 *
 	 * @since 1.90.0
 	 *
@@ -154,14 +156,6 @@ final class Authentication implements Provides_Feature_Metrics {
 	 * @var Token
 	 */
 	protected $token;
-
-	/**
-	 * Owner_ID instance.
-	 *
-	 * @since 1.16.0
-	 * @var Owner_ID
-	 */
-	protected $owner_id;
 
 	/**
 	 * Has_Connected_Admins instance.
@@ -257,7 +251,6 @@ final class Authentication implements Provides_Feature_Metrics {
 		$this->verification_file              = new Verification_File( $this->user_options );
 		$this->profile                        = new Profile( $this->user_options );
 		$this->token                          = new Token( $this->user_options );
-		$this->owner_id                       = new Owner_ID( $this->options );
 		$this->has_connected_admins           = new Has_Connected_Admins( $this->options, $this->user_options );
 		$this->has_multiple_admins            = new Has_Multiple_Admins( $this->transients );
 		$this->connected_proxy_url            = new Connected_Proxy_URL( $this->options );
@@ -278,7 +271,6 @@ final class Authentication implements Provides_Feature_Metrics {
 		$this->verification_meta()->register();
 		$this->has_connected_admins->register();
 		$this->has_multiple_admins->register();
-		$this->owner_id->register();
 		$this->connected_proxy_url->register();
 		$this->disconnected_reason->register();
 		$this->initial_version->register();
@@ -840,7 +832,6 @@ final class Authentication implements Provides_Feature_Metrics {
 	 * @return array Filtered $data.
 	 */
 	private function inline_js_base_data( $data ) {
-		$data['isOwner']             = $this->owner_id->get() === get_current_user_id();
 		$data['splashURL']           = esc_url_raw( $this->context->admin_url( 'splash' ) );
 		$data['proxySetupURL']       = '';
 		$data['proxyPermissionsURL'] = '';
@@ -1007,7 +998,7 @@ final class Authentication implements Provides_Feature_Metrics {
 	}
 
 	/**
-	 * Add allowed redirect host to safe wp_safe_redirect
+	 * Add allowed redirect host to safe wp_safe_redirect.
 	 *
 	 * @since 1.0.0
 	 *
@@ -1088,7 +1079,11 @@ final class Authentication implements Provides_Feature_Metrics {
 
 					// Only show the comparison if URLs don't match as it is possible
 					// they could already match again at this point, although they most likely won't.
-					if ( ! $this->connected_proxy_url->matches_url( $current_url ) ) {
+					// A stored value the plugin can't decode reads as no URL.
+					// Ensure the currently-connected URL isn't empty;
+					// if it is, we shouldn't output the old/new URLs, because the
+					// old URL will be blank.
+					if ( ! empty( $connected_url ) && ! $this->connected_proxy_url->matches_url( $current_url ) ) {
 						$content .= sprintf(
 							'<ul><li>%s</li><li>%s</li></ul>',
 							sprintf(
@@ -1386,17 +1381,6 @@ final class Authentication implements Provides_Feature_Metrics {
 	 */
 	public function get_has_multiple_admins_instance() {
 		return $this->has_multiple_admins;
-	}
-
-	/**
-	 * Helper method to return owner_id property.
-	 *
-	 * @since 1.131.0
-	 *
-	 * @return Owner_ID
-	 */
-	public function get_owner_id_instance() {
-		return $this->owner_id;
 	}
 
 	/**

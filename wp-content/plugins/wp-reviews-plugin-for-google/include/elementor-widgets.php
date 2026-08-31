@@ -5,19 +5,26 @@ use Elementor\Widget_Base;
 defined('ABSPATH') or die('No script kiddies please!');
 class TrustrindexElementorWidget_Google extends Widget_Base {
 private $pluginManagerInstance;
-private $shortName;
-private $platformName;
+private $shortName = 'google';
+private $platformName = 'Google';
+private $shortCodeName = 'trustindex';
 public function __construct($data = [], $args = null) {
 parent::__construct($data, $args);
+$this->pluginManagerInstance = null;
+if (is_array($args) && isset($args[0]) && is_object($args[0])) {
 $this->pluginManagerInstance = $args[0];
+}
+if ($this->pluginManagerInstance) {
 $this->shortName = $this->pluginManagerInstance->getShortName();
 $this->platformName = $this->pluginManagerInstance->get_platform_name($this->shortName);
+$this->shortCodeName = $this->pluginManagerInstance->get_shortcode_name();
+}
 }
 public function get_name() {
 return $this->platformName;
 }
 public function get_title() {
-return $this->platformName .' '. __('Reviews', 'trustindex-plugin') . ' - Trustindex';
+return $this->platformName .' '. __('Reviews', 'wp-reviews-plugin-for-google') . ' - Trustindex';
 }
 public function get_icon() {
 return 'eicon-star';
@@ -27,7 +34,7 @@ return ['trustindex', 'general'];
 }
 protected function register_controls(): void
 {
-$this->start_controls_section('content_section', [ 'label' => __('Widget type', 'trustindex-plugin') ]);
+$this->start_controls_section('content_section', [ 'label' => __('Widget type', 'wp-reviews-plugin-for-google') ]);
 $this->add_control('type', [
 'type' => \Elementor\Controls_Manager::CHOOSE,
 'label' => '',
@@ -37,7 +44,7 @@ $this->add_control('type', [
 'free' => [
 'title' => '',
 'icon' => '',
-'label' => ucfirst(__('free', 'trustindex-plugin')) . ' widget',
+'label' => ucfirst(__('free', 'wp-reviews-plugin-for-google')) . ' widget',
 ],
 'pro' => [
 'title' => '',
@@ -52,16 +59,18 @@ if (defined('\Elementor\Controls_Manager::NOTICE')) {
 $this->add_control('custom_panel_notice', [
 'type' => \Elementor\Controls_Manager::NOTICE,
 'notice_type' => 'success',
-'heading' => __('UPGRADE to PRO Features', 'trustindex-plugin'),
-'content' => sprintf(__('Automatic review update, creating unlimited review widgets, downloading and displaying all reviews, %d review platforms available!', 'trustindex-plugin'), 135)
-. '<br /><br /><a href="https://www.trustindex.io/?a=sys&c=wp-google-elementor" target="_blank">'.__('Create a Free Account for More Features', 'trustindex-plugin').'</a>',
+'heading' => __('UPGRADE to PRO Features', 'wp-reviews-plugin-for-google'),
+/* translators: %d: number */
+'content' => sprintf(__('Automatic review update, creating unlimited review widgets, downloading and displaying all reviews, %d review platforms available!', 'wp-reviews-plugin-for-google'), 137)
+. '<br /><br /><a href="https://www.trustindex.io/?a=sys&c=wp-google-elementor" target="_blank">'.__('Create a Free Account for More Features', 'wp-reviews-plugin-for-google').'</a>',
 'condition' => [ 'type' => 'free' ],
 ]);
 }
 $this->add_control('embed_code', [
 'type' => \Elementor\Controls_Manager::TEXTAREA,
 'label' => 'Widget shortcode',
-'placeholder' => sprintf(__('Paste the widget shortcode from the Advanced Widget Editor on the %s.', 'trustindex-plugin'), 'admin.trusintdex.io'),
+/* translators: %s: admin.trustindex.io */
+'placeholder' => sprintf(__('Paste the widget shortcode from the Advanced Widget Editor on the %s.', 'wp-reviews-plugin-for-google'), 'admin.trusintdex.io'),
 'label_block' => true,
 'condition' => [ 'type' => 'pro' ],
 ]);
@@ -70,7 +79,7 @@ $this->end_controls_section();
 protected function render()
 {
 $settings = $this->get_settings_for_display();
-$shortcode = '['.$this->pluginManagerInstance->get_shortcode_name().' no-registration='.$this->pluginManagerInstance->getShortName().']';
+$shortcode = '['.$this->shortCodeName.' no-registration='.$this->shortName.']';
 if ('pro' === $settings['type'] && $settings['embed_code']) {
 $shortcode = $settings['embed_code'];
 }

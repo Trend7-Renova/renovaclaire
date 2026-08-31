@@ -6,6 +6,8 @@
  * @copyright 2022 Google LLC
  * @license   https://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://sitekit.withgoogle.com
+ *
+ * phpcs:disable PHPCS.Commenting.RequireDocTagDescription -- Pre-existing violations; tracked for follow-up cleanup.
  */
 
 namespace Google\Site_Kit\Core\Util;
@@ -41,7 +43,7 @@ class Auto_Updates {
 	 * Auto updated not forced.
 	 *
 	 * @since 1.93.0
-	 * @var false
+	 * @var null
 	 */
 	const AUTO_UPDATE_NOT_FORCED = null;
 

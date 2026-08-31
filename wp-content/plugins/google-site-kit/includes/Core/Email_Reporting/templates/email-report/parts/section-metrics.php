@@ -23,10 +23,18 @@ $section_parts = $section['section_parts'];
 // Get the first metric's change_context for the subtitle.
 $first_part = reset( $section_parts );
 $subtitle   = $first_part['data']['change_context'] ?? '';
+
+// The subtitle and change column are only meaningful when at least one metric has a comparison value.
+$has_any_change = ! empty(
+	array_filter(
+		$section_parts,
+		static fn( $part_config ) => isset( $part_config['data']['change'] )
+	)
+);
 ?>
 <table role="presentation" width="100%" style="margin-bottom:24px;">
 	<tr>
-		<td style="background-color: #FFFFFF; border-radius: 16px; padding: 16px;">
+		<td class="card" style="background-color: #FFFFFF; border-radius: 16px; padding: 16px;">
 			<?php
 			// Render section header.
 			$icon_url = $get_asset_url( 'icon-' . esc_html( $section_icon ) );
@@ -41,12 +49,15 @@ $subtitle   = $first_part['data']['change_context'] ?? '';
 			?>
 
 			<table role="presentation" width="100%" style="margin-bottom:12px;">
+				<?php if ( $has_any_change ) : ?>
 				<tr>
 					<td>&nbsp;</td>
-					<td class="subtitle" width="110" style="text-align: right; font-size:12px; line-height:16px; font-weight:500; color:#6C726E; width: 110px;">
+					<td class="text-secondary subtitle" width="110"
+						style="text-align: right; font-size:12px; line-height:16px; font-weight:500; color:#6C726E; width: 110px;">
 						<?php echo esc_html( $subtitle ); ?>
 					</td>
 				</tr>
+				<?php endif; ?>
 				<?php
 				$total_parts = count( $section_parts );
 				$current     = 0;
@@ -63,17 +74,18 @@ $subtitle   = $first_part['data']['change_context'] ?? '';
 					}
 					?>
 				<tr>
-					<td
+					<td class="border"
 						style="vertical-align: top; border-bottom: <?php echo esc_attr( $border_style ); ?>; padding: 12px 0;">
-						<div
+						<div class="text-secondary"
 							style="font-size:12px; line-height:16px; font-weight:500; color:#6C726E; margin-bottom:4px;">
 							<?php echo esc_html( $data['label'] ); ?>
 						</div>
-						<div style="font-size:14px; line-height:20px; font-weight:500;">
+						<div class="text-primary" style="font-size:14px; line-height:20px; font-weight:500;">
 							<?php echo esc_html( $data['value'] ); ?>
 						</div>
 					</td>
-					<td
+					<?php if ( $has_any_change ) : ?>
+					<td class="border"
 						style="text-align: right; vertical-align: middle; border-bottom: <?php echo esc_attr( $border_style ); ?>; padding: 12px 0;">
 						<?php
 							$render_shared_part(
@@ -84,6 +96,7 @@ $subtitle   = $first_part['data']['change_context'] ?? '';
 							);
 						?>
 					</td>
+					<?php endif; ?>
 				</tr>
 					<?php
 				}

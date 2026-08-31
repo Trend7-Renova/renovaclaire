@@ -33,6 +33,8 @@ class Resource_Data_Availability_Date {
 	 */
 	const CUSTOM_DIMENSION_SLUGS = array(
 		'googlesitekit_post_type',
+		'googlesitekit_event_provider',
+		'googlesitekit_form_id',
 	);
 
 	const RESOURCE_TYPE_AUDIENCE         = 'audience';
@@ -167,8 +169,8 @@ class Resource_Data_Availability_Date {
 	 *
 	 * @since 1.127.0
 	 *
-	 * @param array/null  $available_audience_names Optional. List of available audience resource names. If not provided, it will be fetched from settings.
-	 * @param string/null $property_id Optional. Property ID. If not provided, it will be fetched from settings.
+	 * @param array|null  $available_audience_names Optional. List of available audience resource names. If not provided, it will be fetched from settings.
+	 * @param string|null $property_id Optional. Property ID. If not provided, it will be fetched from settings.
 	 */
 	public function reset_all_resource_dates( $available_audience_names = null, $property_id = null ) {
 
