@@ -25,8 +25,8 @@ add_action('rest_api_init', function () {
             $connaissance = $libellesConnaissance[$data['connaissance']] ?? $data['connaissance'];
             $message = '<br><b>Nom</b><br>';
             $message .= $nom;
-            $message .= '<br><b>Code postal du projet</b><br>';
-            $message .= $data['code_postal'];
+            $message .= '<br><b>Commune du projet</b><br>';
+            $message .= $data['commune'];
             $message .= '<br><b>Email</b><br>';
             $message .= $data['email'];
             $message .= '<br><b>Téléphone</b><br>';

@@ -99,6 +99,11 @@
 
 }
 
+.posts-cta {
+    display: flex;
+    justify-content: center;
+    padding-top: var(--gap);
+}
 .section.post-type-post {
 }
 .post-type-post figure {

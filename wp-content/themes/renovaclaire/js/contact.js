@@ -18,7 +18,8 @@ App.modules.contact = (() => {
     function chargerAutosave() {
         valeurs = JSON.parse(localStorage.getItem('valeurs') || '{}');
         for (const [id, valeur] of Object.entries(valeurs)) {
-            document.getElementById(id).value = valeur;
+            const Field = document.getElementById(id);
+            if (Field) Field.value = valeur;
         }
     }
     return {

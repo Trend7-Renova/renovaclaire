@@ -32,6 +32,9 @@
 
 	{% if posts_last_3 | length > 0%}
 		{% include 'home/posts.twig' with {posts : posts_last_3 }%}
+		<nav class="posts-cta">
+			<a href="/blog" class="bouton"><span>Découvrir nos articles</span>{{svg('fleche')}}</a>
+		</nav>
 	{% endif %}
 <br>
 

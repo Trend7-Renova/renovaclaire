@@ -1,5 +1,6 @@
 .text-wide {
-    background-color: #fff4e0;
+    background-color: var(--or);
+    color: black;
 
     margin-inline: calc(-1 * var(--small-gap));
 
@@ -20,7 +21,15 @@
         gap: var(--gap);
 
         h2 {
-            color: var(--couleur-principale);
+            color: black;
+        }
+
+        .bouton {
+            color: black;
+
+            &:after {
+                background-color: white;
+            }
         }
     }
 }
